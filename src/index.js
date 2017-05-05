@@ -8,9 +8,7 @@ import config from './config'
 firebase.initializeApp(config.config);
 console.log(App);
 startUp();
-if (Object.keys(App) === []) {
-  console.log('empty destiny');
-}
+
 function startUp () {
 
 ReactDOM.render(

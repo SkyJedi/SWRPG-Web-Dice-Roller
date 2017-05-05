@@ -10,35 +10,41 @@ class App extends Component {
     super(props);
     this.state = {
       destinyPoint: {},
-      destinyRef: firebase.database().ref().child('destiny')
+      destinyRef: firebase.database().ref().child('destiny'),
+      imageMap: []
     };
   }
 
   componentDidMount() {
     this.state.destinyRef.on('value', snap => {
+      if (snap.val() != null) {
       this.setState({
         destinyPoint: snap.val()
-      });
+        });
+      } else {
+        this.setState({
+          destinyPoint: 0
+          });
+      }
+
     });
   }
 
 
   destinyAdd () {
     var newDestinyPointRef = this.state.destinyRef.push();
-    newDestinyPointRef.set('white');
+    newDestinyPointRef.set('lightside');
     console.log('adding a Destiny Point');
-    console.log(this.state.destinyPoint);
-
   }
   destinyRemove () {
-    if (this.state.destinyPoint != null) {
+    if (this.state.destinyPoint !== 0) {
       console.log('removing a Destiny Point');
       this.state.destinyRef.child(Object.keys(this.state.destinyPoint)[Object.keys(this.state.destinyPoint).length-1]).remove();
     }
-    console.log(this.state.destinyPoint);
-    }
+  }
 
   render() {
+    console.log(this.state.destinyPoint);
     return (
       <div className='App'>
         <div className="destiny-container">
@@ -46,6 +52,15 @@ class App extends Component {
             <button className="btnAdd" onClick={this.destinyAdd.bind(this)}>⬆</button>
             <button className="btnAdd" onClick={this.destinyRemove.bind(this)}>⬇</button>
           </div>
+
+          <div className="tokens">
+            {Object.values(this.state.destinyPoint).map(imageName=>
+              <span>
+              <img src={`/images/${imageName}.png`} />
+              </span>
+            )}
+          </div>
+
         </div>
       </div>
     );
