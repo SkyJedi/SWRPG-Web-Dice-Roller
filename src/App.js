@@ -5,29 +5,38 @@ import './App.css';
 
 class App extends Component {
 
+
   constructor(props) {
     super(props);
     this.state = {
-      destinyPoint: [],
-      database: firebase.database().ref()
+      destinyPoint: {},
+      destinyRef: firebase.database().ref().child('destiny')
     };
   }
-  updateDB (infoUpdate) {
-    this.state.database.child('destiny').set(infoUpdate);
+
+  componentDidMount() {
+    this.state.destinyRef.on('value', snap => {
+      this.setState({
+        destinyPoint: snap.val()
+      });
+    });
   }
 
+
   destinyAdd () {
+    var newDestinyPointRef = this.state.destinyRef.push();
+    newDestinyPointRef.set('white');
     console.log('adding a Destiny Point');
-    this.state.destinyPoint.push('white');
     console.log(this.state.destinyPoint);
-    this.updateDB(this.state.destinyPoint);
+
   }
   destinyRemove () {
-    console.log('removing a Destiny Point');
-    this.state.destinyPoint.pop();
+    if (this.state.destinyPoint != null) {
+      console.log('removing a Destiny Point');
+      this.state.destinyRef.child(Object.keys(this.state.destinyPoint)[Object.keys(this.state.destinyPoint).length-1]).remove();
+    }
     console.log(this.state.destinyPoint);
-    this.updateDB(this.state.destinyPoint);
-  }
+    }
 
   render() {
     return (
