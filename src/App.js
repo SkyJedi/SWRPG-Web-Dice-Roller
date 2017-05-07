@@ -25,7 +25,6 @@ class App extends Component {
           destinyPoint: 0
           });
       }
-
     });
   }
 
@@ -40,8 +39,6 @@ class App extends Component {
     }
   }
   flip (v, k) {
-
-    console.log(k);
     if (v === 'lightside') {
       this.state.destinyRef.child(k).set('darkside');
     } else {
@@ -59,7 +56,6 @@ class App extends Component {
           </div>
           <div style={{float: 'left', paddingLeft: 15, lineHeight: 9}}>
             {Object.entries(this.state.destinyPoint).map(([k,v])=>
-
               <span
               className="token"
               key={k}
@@ -70,7 +66,6 @@ class App extends Component {
               </span>
             )}
           </div>
-
         </div>
       </div>
     );
