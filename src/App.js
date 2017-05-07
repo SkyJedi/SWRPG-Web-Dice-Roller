@@ -11,7 +11,6 @@ class App extends Component {
     this.state = {
       destinyPoint: {},
       destinyRef: firebase.database().ref().child('destiny'),
-      imageMap: []
     };
   }
 
@@ -34,17 +33,23 @@ class App extends Component {
   destinyAdd () {
     var newDestinyPointRef = this.state.destinyRef.push();
     newDestinyPointRef.set('lightside');
-    console.log('adding a Destiny Point');
   }
   destinyRemove () {
     if (this.state.destinyPoint !== 0) {
-      console.log('removing a Destiny Point');
       this.state.destinyRef.child(Object.keys(this.state.destinyPoint)[Object.keys(this.state.destinyPoint).length-1]).remove();
+    }
+  }
+  flip (v, k) {
+
+    console.log(k);
+    if (v === 'lightside') {
+      this.state.destinyRef.child(k).set('darkside');
+    } else {
+      this.state.destinyRef.child(k).set('lightside');
     }
   }
 
   render() {
-    console.log(this.state.destinyPoint);
     return (
       <div className='App'>
         <div className="destiny-container">
@@ -52,11 +57,16 @@ class App extends Component {
             <button className="btnAdd" onClick={this.destinyAdd.bind(this)}>⬆</button>
             <button className="btnAdd" onClick={this.destinyRemove.bind(this)}>⬇</button>
           </div>
+          <div style={{float: 'left', paddingLeft: 15, lineHeight: 9}}>
+            {Object.entries(this.state.destinyPoint).map(([k,v])=>
 
-          <div className="tokens">
-            {Object.values(this.state.destinyPoint).map(imageName=>
-              <span>
-              <img src={`/images/${imageName}.png`} />
+              <span
+              className="token"
+              key={k}
+              onClick={this.flip.bind(this, v, k)}>
+              <img
+                src={`/images/${v}.png`}
+                alt= {v} />
               </span>
             )}
           </div>
