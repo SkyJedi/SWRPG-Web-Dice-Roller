@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import * as firebase from 'firebase';
-import './Destiny.css';
+import './Default.css';
 
+var channel = window.location.pathname.slice(1).toLowerCase();
 
 class Destiny extends Component {
-
 
   constructor(props) {
     super(props);
     this.state = {
       destinyPoint: {},
-      destinyRef: firebase.database().ref().child('destiny'),
+      destinyRef: firebase.database().ref().child(`${channel}`).child('destiny'),
     };
   }
 
@@ -28,11 +28,11 @@ class Destiny extends Component {
     });
   }
 
-  destinyAdd () {
+  destinyAdd() {
     var newDestinyPointRef = this.state.destinyRef.push();
     newDestinyPointRef.set('lightside');
   }
-  destinyRemove () {
+  destinyRemove() {
     if (this.state.destinyPoint !== 0) {
       this.state.destinyRef.child(Object.keys(this.state.destinyPoint)[Object.keys(this.state.destinyPoint).length-1]).remove();
     }
@@ -50,8 +50,8 @@ class Destiny extends Component {
       <div className='App'>
         <div className="destiny-box">
           <div style={{float: 'left', marginLeft: 6}}>
-            <button className="btnAdd" onClick={this.destinyAdd.bind(this)}>⬆</button>
-            <button className="btnAdd" onClick={this.destinyRemove.bind(this)}>⬇</button>
+            <button className='btnAdd' onClick={this.destinyAdd.bind(this)}>⬆</button>
+            <button className='btnAdd' onClick={this.destinyRemove.bind(this)}>⬇</button>
           </div>
           <div style={{marginLeft: 40}}>
             {Object.entries(this.state.destinyPoint).map(([k,v])=>
