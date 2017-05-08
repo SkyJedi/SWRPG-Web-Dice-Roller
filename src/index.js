@@ -23,7 +23,6 @@ function setChanName(chanName) {
 }
 
 function signOut() {
-  firebase.auth().currentUser.delete();
   window.location = `/`;
 }
 
@@ -38,7 +37,7 @@ function startUp () {
   var user = firebase.auth().currentuser;
   var webApp =
   <div>
-    <button className='btnAdd' style={{float: 'right'}} onClick={signOut}> X</button>
+    <button className='btnAdd' style={{float: 'right'}} onClick={signOut}>X</button>
     <Destiny />
     <Message />
     <span>{user} </span>
