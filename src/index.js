@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import Destiny from './Destiny';
 import Channel from './Channel';
 import Message from './Message';
+import Dice from './Dice';
 import './index.css';
 import * as firebase from 'firebase';
 import config from './config';
@@ -39,6 +40,7 @@ function startUp () {
   <div>
     <button className='btnAdd' style={{float: 'right'}} onClick={signOut}>X</button>
     <Destiny />
+    <Dice />
     <Message />
     <span>{user} </span>
   </div>;

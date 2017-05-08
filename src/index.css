@@ -16,7 +16,7 @@ body {
 .btnAdd {
   -webkit-border-radius: 8;
   -moz-border-radius: 8;
-  border-radius: 8px;
+  border-radius: 4px;
   font-family: Georgia;
   color: #ffffff;
   font-size: 20px;
@@ -48,4 +48,50 @@ input[type=text], select {
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
+}
+
+.dice-box {
+  box-sizing: content-box;
+  display: inline-block;
+  width: 150px;
+  min-height: 60px;
+  padding: 5px;
+  overflow: hidden;
+  border: none;
+  font: normal 23px/1 Tahoma, Geneva, sans-serif;
+  color: rgba(255,255,255,1);
+  text-align: center;
+  text-overflow: ellipsis;
+  letter-spacing: 1px;
+  background: #ecf0f1;
+  box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.3) ;
+}
+
+.dice-amount {
+  display: inline-block;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  width: 25px;
+  height: 50px;
+  position: relative;
+  top: 0;
+  bottom: 0;
+  margin: 2px;
+  border: none;
+  font: normal 40px/normal Tahoma, Geneva, sans-serif;
+  color: rgba(0,0,0,1);
+  text-align: center;
+  -o-text-overflow: clip;
+  text-overflow: clip;
+}
+
+.dice-container {
+  max-width: 60px;
+  max-height: 60px;
+}
+.dice  {
+    max-width:  30;
+    max-height: 30;
+    padding: 4;
 }
