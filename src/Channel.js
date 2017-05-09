@@ -11,15 +11,12 @@ class Channel extends Component {
 
   render() {
     return (
-      <div className="App">
-      <form onSubmit={this.setChannel.bind(this)}>
-      <p>
-          <input type="text" ref="uname" name="username" placeholder="User Name" />
-          <input type="text" ref="channel" name="channel" placeholder="Channel" />
-      </p>
       <div>
-      <button>Enter</button>
-      </div>
+      <form onSubmit={this.setChannel.bind(this)}>
+        <input className='login-input' ref="channel" name="channel" placeholder="Channel" />
+        <div>
+        <button className='login-button'>Enter</button>
+        </div>
       </form>
       </div>
     );

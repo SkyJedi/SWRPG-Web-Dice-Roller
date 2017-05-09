@@ -50,7 +50,7 @@ class Dice extends Component {
           <button className='btnAdd' onClick={this.addDie.bind(this, diceColor)}>⬆</button>
           <button className='btnAdd' onClick={this.removeDie.bind(this, diceColor)}>⬇</button>
           </div>
-          <div className='dice-amount' style={{float: 'left', marginLeft: 15}}>
+          <div className='dice-amount' style={{float: 'left', marginLeft: 10}}>
             <span>{this.state.diceRoll[diceColor]}</span>
           </div>
           <div className='dice-container' style={{float: 'left', marginLeft: 15}}>
@@ -68,7 +68,7 @@ class Dice extends Component {
         <button className='btnAdd' onClick={this.addDie.bind(this, 'polyhedral')}>⬆</button>
         <button className='btnAdd' onClick={this.removeDie.bind(this, 'polyhedral')}>⬇</button>
         </div>
-        <div className='dice-amount' style={{float: 'left', marginLeft: 15}}>
+        <div className='dice-amount' style={{float: 'left', marginLeft: 10}}>
           <span>{this.state.diceRoll.polyhedral}</span>
         </div>
         <div className='dice-container' style={{float: 'left', marginLeft: 15}}>
