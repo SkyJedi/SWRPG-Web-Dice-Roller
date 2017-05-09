@@ -28,10 +28,10 @@ class Message extends Component {
   }
   render() {
     return (
-      <div className="App">
+      <div className='App'>
       <div>
         {Object.entries(this.state.message).reverse().map(([k,v])=>
-          <div key={k}>
+          <div className='message' key={k}>
           <span>{v}</span>
           </div>
         )}
