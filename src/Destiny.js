@@ -32,12 +32,12 @@ class Destiny extends Component {
 
   destinyAdd() {
     this.state.destinyRef.push().set('lightside');
-    this.state.messageRef.push().set('Added a light side point.')
+    this.state.messageRef.push().set('Added a light side point.');
   }
   destinyRemove() {
     if (this.state.destinyPoint !== 0) {
       this.state.destinyRef.child(Object.keys(this.state.destinyPoint)[Object.keys(this.state.destinyPoint).length-1]).remove();
-      this.state.messageRef.push().set('Removed a destiny point.')
+      this.state.messageRef.push().set('Removed a destiny point.');
     }
   }
   flip (v, k) {

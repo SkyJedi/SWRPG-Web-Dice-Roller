@@ -9,7 +9,8 @@ body {
   text-align: left;
 }
 .destiny-box {
-  min-Height: 80px;
+  margin-top: 10;
+  min-height: 80px;
   max-width: 400;
 }
 
