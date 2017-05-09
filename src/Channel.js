@@ -11,7 +11,7 @@ class Channel extends Component {
 
   render() {
     return (
-      <div>
+      <div className='login-box'>
       <form onSubmit={this.setChannel.bind(this)}>
         <input className='login-input' ref="channel" name="channel" placeholder="Channel" />
         <div>

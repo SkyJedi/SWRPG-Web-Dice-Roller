@@ -26,20 +26,54 @@ class Dice extends Component {
   }
 
   addDie(diceColor) {
-    console.log('adding to ' + diceColor);
     this.state.rollRef.child(diceColor).set(this.state.diceRoll[diceColor]+1);
-    console.log(this.state.diceRoll[diceColor]);
   }
   removeDie(diceColor) {
     if (this.state.diceRoll[diceColor] > 0) {
-      console.log('removing from ' + diceColor);
       this.state.rollRef.child(diceColor).set(this.state.diceRoll[diceColor]-1);
-      console.log(this.state.diceRoll[diceColor]);
     }
   }
   reset() {
     this.state.rollRef.set({yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0});
   }
+
+  roll() {
+    var diceFaces = {
+        yellow: ['', 's', 's', 'ss', 'ss', 'a', 'sa', 'sa', 'sa', 'aa', 'aa', 't'],
+        green: ['', 's', 's', 'ss', 'a', 'a', 'sa', 'aa'],
+        blue: ['', '', 's', 'sa', 'aa', 'a'],
+        red: ['', 'f', 'f', 'ff', 'ff', 't', 't', 'ft', 'ft', 'tt', 'tt', 'd'],
+        purple: ['', 'f', 'ff', 't', 't', 't', 'tt', 'ft'],
+        black: ['', '', 'f', 'f', 't', 't'],
+        white: ['n', 'n', 'n', 'n', 'n', 'n', 'nn', 'l', 'l', 'll', 'll', 'll']
+        },
+        rollResults = {},
+        rolledDice = {};
+
+      for (var i = 0; i < Object.keys(this.state.diceRoll).length; i++) {
+        if (this.state.diceRoll[Object.keys(this.state.diceRoll)[i]] !== 0) {
+          rolledDice[Object.keys(this.state.diceRoll)[i]] = Object.values(this.state.diceRoll)[i];
+        }
+      }
+      console.log(rolledDice);
+
+      var color = '';
+      var tempArry = [];
+      for (var j = 0; j < Object.keys(rolledDice).length; j++) {
+        color = Object.keys(rolledDice)[j];
+        tempArry = [];
+        for (var k = 0; k < rolledDice[color]; k++) {
+            tempArry.push(diceFaces[color][(Math.floor(Math.random() * diceFaces[color].length) + 1)-1]);
+        }
+        rollResults[color] = tempArry;
+      }
+      console.log(rollResults);
+
+
+
+      this.state.rollRef.set({yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0});
+    }
+
 
   render() {
     return (
@@ -76,7 +110,7 @@ class Dice extends Component {
         </div>
       </div>
       <div className='App' style={{marginLeft:6}}>
-        <input type='button' ref='roll' className='lrgButton' value='Roll' />
+        <input type='button' ref='roll' className='lrgButton' onClick={this.roll.bind(this)} value='Roll' />
         <input type='button' ref='reset' className='lrgButton' style={{background: '#9e9e9e'}} onClick={this.reset.bind(this)} value='Reset' />
       </div>
       </div>

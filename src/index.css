@@ -6,32 +6,23 @@ body {
 
 .App {
   display: block;
-  text-align: left;
 }
 
-.login.box {
-  position: absolute;
-  top: 30px;
-  right: 25%;
-  left: 25%;
+.login-box {
+  padding-top: 2em;
+  margin: 0 25% 0 25%;
 }
 
 .login-input {
-  display: inline-block;
-  -webkit-box-sizing: content-box;
-  -moz-box-sizing: content-box;
-  box-sizing: content-box;
-  position: relative;
   top: 30px;
-  right: 25%;
-  left: 25%;
-  padding: 10px 20px;
+  margin: 5px 0 0 0;
+  padding: 10px;
   border: 1px solid #b7b7b7;
   -webkit-border-radius: 3px;
   border-radius: 3px;
+  text-align: center;
   font: normal 21px/normal Tahoma, Geneva, sans-serif;
   color: rgba(0,0,0,1);
-  text-align: center;
   -o-text-overflow: clip;
   text-overflow: clip;
   background: rgba(252,252,252,1);
@@ -45,23 +36,13 @@ body {
 }
 
 .login-button {
-  display: inline-block;
-  position: relative;
-  top: 40px;
-  right: 40%;
-  left: 40%;
-  -webkit-box-sizing: content-box;
-  -moz-box-sizing: content-box;
-  box-sizing: content-box;
   width: 70px;
-  height: 30px;
   cursor: pointer;
-  margin: 5px;
-  padding: 4px;
+  margin: 5px 0% 0 0%;
   border: 1px solid #018dc4;
   -webkit-border-radius: 3px;
   border-radius: 3px;
-  font: normal 16px/normal "Times New Roman", Times, serif;
+  font: normal 21px/normal Tahoma, Geneva, sans-serif;
   color: rgba(255,255,255,0.9);
   text-align: center;
   -o-text-overflow: clip;
