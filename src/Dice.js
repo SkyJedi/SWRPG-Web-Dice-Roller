@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import * as firebase from 'firebase';
 import './index.css';
 
-var channel = window.location.pathname.slice(1).toLowerCase();
-var diceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', 'white'];
+var channel = window.location.pathname.slice(1).toLowerCase(),
+    diceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', 'white'],
+    symbolOrder = ['s', 'a', '!', 'f', 't', 'd', 'l', 'n'];
 
 class Dice extends Component {
   constructor() {
@@ -36,10 +37,18 @@ class Dice extends Component {
   reset() {
     this.state.rollRef.set({yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0});
   }
+  printsymbols (number, symbol) {
+    var message = '';
+    console.log(number);
+      for (var n = 0; number > n; n++){
+        message += `<img class=diceface src=/images/${symbol}.png /> `;
+      }
+      return message;
+  }
 
   roll() {
     var diceFaces = {
-        yellow: ['', 's', 's', 'ss', 'ss', 'a', 'sa', 'sa', 'sa', 'aa', 'aa', 't'],
+        yellow: ['', 's', 's', 'ss', 'ss', 'a', 'sa', 'sa', 'sa', 'aa', 'aa', '!'],
         green: ['', 's', 's', 'ss', 'a', 'a', 'sa', 'aa'],
         blue: ['', '', 's', 'sa', 'aa', 'a'],
         red: ['', 'f', 'f', 'ff', 'ff', 't', 't', 'ft', 'ft', 'tt', 'tt', 'd'],
@@ -49,7 +58,9 @@ class Dice extends Component {
         },
         rollResults = {},
         rolledDice = {},
-        message = '';
+        message = '',
+        sides = '',
+        rolledSymbols = {};
 
         console.log(message);
 
@@ -59,25 +70,64 @@ class Dice extends Component {
         }
       }
       var color = '';
-      var tempArry = [];
-      for (var j = 0; j < 7; j++) {
+      for (var j = 0; j < Object.keys(diceFaces).length; j++) {
         color = diceOrder[j];
-        tempArry = [];
+        var tempArry = [];
         for (var k = 0; k < rolledDice[color]; k++) {
             var diceSide = diceFaces[color][(Math.floor(Math.random() * diceFaces[color].length) + 1)-1]
             tempArry.push(diceSide);
+            sides += diceSide
             message += `<img class=diceface src=/images/dice/${color}/${color}-${diceSide}.png /> `;
         }
         rollResults[color] = tempArry;
       }
+
+      message += '</div> <div>';
+      for(var l=0; symbolOrder.length > l; l++){
+        var count = 0;
+        for(var m=0; sides.length > m; m++){
+          if(sides.charAt(m) === symbolOrder[l]){
+          ++count;
+          }
+        }
+        rolledSymbols[symbolOrder[l]] = count;
+      }
+      console.log(rolledSymbols);
+      var number = 0;
+      if (rolledSymbols['s'] > rolledSymbols['f']) {
+        number = rolledSymbols['s'] - rolledSymbols['f'];
+        message += this.printsymbols(number, 'success');
+      } else {
+        number = rolledSymbols['f'] - rolledSymbols['s'];
+        message += this.printsymbols(number, 'fail');
+      }
+      if (rolledSymbols['a'] > rolledSymbols['t']) {
+        number = rolledSymbols['a'] - rolledSymbols['t'];
+        message += this.printsymbols(number, 'advantage');
+      } else {
+        number = rolledSymbols['t'] - rolledSymbols['a'];
+        message += this.printsymbols(number, 'threat');
+      }
+      if (rolledSymbols['!'] !== 0) {
+        number = rolledSymbols['!'];
+        message += this.printsymbols(number, 'triumph');
+      }
+      if (rolledSymbols['d'] !== 0) {
+        number = rolledSymbols['d'];
+        message += this.printsymbols(number, 'despair');
+      }
+      if (rolledSymbols['l'] !== 0) {
+        number = rolledSymbols['l'];
+        message += this.printsymbols(number, 'lightside');
+      }
+      if (rolledSymbols['n'] !== 0) {
+        number = rolledSymbols['n'];
+        message += this.printsymbols(number, 'darkside');
+      }
+
+
       this.state.messageRef.push().set(message);
-
-      console.log(rollResults);
-      console.log(message);
-
-
       this.reset()
-      //this.state.rollRef.set({yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0});
     }
 
 
@@ -85,7 +135,7 @@ class Dice extends Component {
     return (
       <div style={{maxWidth:500}}>
       {diceOrder.map((diceColor) =>
-        <div className='dice-box' style={{marginLeft:6}}>
+        <div key={diceColor} className='dice-box' style={{marginLeft:6}}>
           <div style={{float: 'left', marginLeft: 2, padding: 0}}>
           <button className='btnAdd' onClick={this.addDie.bind(this, diceColor)}>⬆</button>
           <button className='btnAdd' onClick={this.removeDie.bind(this, diceColor)}>⬇</button>
