@@ -48,30 +48,36 @@ class Dice extends Component {
         white: ['n', 'n', 'n', 'n', 'n', 'n', 'nn', 'l', 'l', 'll', 'll', 'll']
         },
         rollResults = {},
-        rolledDice = {};
+        rolledDice = {},
+        message = '';
+
+        console.log(message);
 
       for (var i = 0; i < Object.keys(this.state.diceRoll).length; i++) {
         if (this.state.diceRoll[Object.keys(this.state.diceRoll)[i]] !== 0) {
           rolledDice[Object.keys(this.state.diceRoll)[i]] = Object.values(this.state.diceRoll)[i];
         }
       }
-      console.log(rolledDice);
-
       var color = '';
       var tempArry = [];
-      for (var j = 0; j < Object.keys(rolledDice).length; j++) {
-        color = Object.keys(rolledDice)[j];
+      for (var j = 0; j < 7; j++) {
+        color = diceOrder[j];
         tempArry = [];
         for (var k = 0; k < rolledDice[color]; k++) {
-            tempArry.push(diceFaces[color][(Math.floor(Math.random() * diceFaces[color].length) + 1)-1]);
+            var diceSide = diceFaces[color][(Math.floor(Math.random() * diceFaces[color].length) + 1)-1]
+            tempArry.push(diceSide);
+            message += `<img class=diceface src=/images/dice/${color}/${color}-${diceSide}.png /> `;
         }
         rollResults[color] = tempArry;
       }
+      this.state.messageRef.push().set(message);
+
       console.log(rollResults);
+      console.log(message);
 
 
-
-      this.state.rollRef.set({yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0});
+      this.reset()
+      //this.state.rollRef.set({yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0});
     }
 
 

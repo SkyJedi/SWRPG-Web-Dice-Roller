@@ -89,6 +89,12 @@ body {
     padding: 4;
 }
 
+.diceface  {
+    width:  30px;
+    height: 30px;
+    padding: 0px;
+}
+
 input[type=text], select {
     width: 20%;
     padding: 12px 20px;
@@ -204,7 +210,7 @@ input[type=text], select {
   -moz-box-sizing: content-box;
   box-sizing: content-box;
   width: 500px;
-  height: 40px;
+  min-height: 40px;
   margin: 5px;
   padding: 4px;
   overflow: hidden;

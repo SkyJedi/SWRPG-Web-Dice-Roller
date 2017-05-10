@@ -26,13 +26,21 @@ class Message extends Component {
       }
     });
   }
+
+htmlDecode(input){
+ var e = document.createElement('div');
+ e.innerHTML = input;
+ return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
+}
+
   render() {
     return (
       <div className='App'>
       <div>
         {Object.entries(this.state.message).reverse().map(([k,v])=>
           <div className='message' key={k}>
-          <span>{v}</span>
+
+          <div dangerouslySetInnerHTML={{ __html: v }} />
           </div>
         )}
       </div>
