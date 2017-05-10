@@ -125,7 +125,6 @@ class Dice extends Component {
         message += this.printsymbols(number, 'darkside');
       }
 
-
       this.state.messageRef.push().set(message);
       this.reset()
     }
