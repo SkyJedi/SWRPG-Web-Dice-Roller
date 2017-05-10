@@ -77,7 +77,7 @@ class Dice extends Component {
             var diceSide = diceFaces[color][(Math.floor(Math.random() * diceFaces[color].length) + 1)-1]
             tempArry.push(diceSide);
             sides += diceSide
-            message += `<img class=diceface src=/images/dice/${color}/${color}-${diceSide}.png /> `;
+            message += `<img class=diceface src=/images/dice/${color}-${diceSide}.png /> `;
         }
         rollResults[color] = tempArry;
       }
