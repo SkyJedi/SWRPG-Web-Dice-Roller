@@ -39,7 +39,6 @@ class Dice extends Component {
   }
   printsymbols (number, symbol) {
     var message = '';
-    console.log(number);
       for (var n = 0; number > n; n++){
         message += `<img class=diceface src=/images/${symbol}.png /> `;
       }
@@ -60,9 +59,8 @@ class Dice extends Component {
         rolledDice = {},
         message = '',
         sides = '',
-        rolledSymbols = {};
-
-        console.log(message);
+        rolledSymbols = {},
+        polyhedralRoll = [];
 
       for (var i = 0; i < Object.keys(this.state.diceRoll).length; i++) {
         if (this.state.diceRoll[Object.keys(this.state.diceRoll)[i]] !== 0) {
@@ -81,6 +79,13 @@ class Dice extends Component {
         }
         rollResults[color] = tempArry;
       }
+      console.log(this.refs.polyhedral.value);
+      for(var n = 0; n < rolledDice['polyhedral']; n++) {
+        polyhedralRoll.push(Math.floor(Math.random() * this.refs.polyhedral.value + 1));
+        message += polyhedralRoll[n] + ' ';
+      }
+
+      console.log(polyhedralRoll);
 
       message += '</div> <div>';
       for(var l=0; symbolOrder.length > l; l++){
@@ -92,7 +97,6 @@ class Dice extends Component {
         }
         rolledSymbols[symbolOrder[l]] = count;
       }
-      console.log(rolledSymbols);
       var number = 0;
       if (rolledSymbols['s'] > rolledSymbols['f']) {
         number = rolledSymbols['s'] - rolledSymbols['f'];
