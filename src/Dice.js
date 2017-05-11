@@ -68,8 +68,6 @@ class Dice extends Component {
         }
       }
 
-      console.log(Object.keys(rolledDice).length);
-
       if (Object.keys(rolledDice).length === 0) {
         return;
       }
