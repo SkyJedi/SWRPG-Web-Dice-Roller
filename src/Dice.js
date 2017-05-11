@@ -67,6 +67,13 @@ class Dice extends Component {
           rolledDice[Object.keys(this.state.diceRoll)[i]] = Object.values(this.state.diceRoll)[i];
         }
       }
+
+      console.log(Object.keys(rolledDice).length);
+
+      if (Object.keys(rolledDice).length === 0) {
+        return;
+      }
+
       var color = '';
       for (var j = 0; j < Object.keys(diceFaces).length; j++) {
         color = diceOrder[j];
@@ -79,13 +86,10 @@ class Dice extends Component {
         }
         rollResults[color] = tempArry;
       }
-      console.log(this.refs.polyhedral.value);
       for(var n = 0; n < rolledDice['polyhedral']; n++) {
         polyhedralRoll.push(Math.floor(Math.random() * this.refs.polyhedral.value + 1));
         message += polyhedralRoll[n] + ' ';
       }
-
-      console.log(polyhedralRoll);
 
       message += '</div> <div>';
       for(var l=0; symbolOrder.length > l; l++){
