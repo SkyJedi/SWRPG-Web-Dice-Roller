@@ -95,6 +95,10 @@ body {
     padding: 0px;
 }
 
+.messagetext {
+    vertical-align: top;
+}
+
 input[type=text], select {
     width: 20%;
     padding: 12px 20px;

@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import * as firebase from 'firebase';
 import './index.css';
 
-var channel = window.location.pathname.slice(1).toLowerCase();
+var channel = window.location.pathname.slice(1).toLowerCase(),
+    user = window.location.search.slice(1);
+
 
 class Destiny extends Component {
 
@@ -32,21 +34,21 @@ class Destiny extends Component {
 
   destinyAdd() {
     this.state.destinyRef.push().set('lightside');
-    this.state.messageRef.push().set('Added a light side point.');
+    this.state.messageRef.push().set(`${user} added a light side point.`);
   }
   destinyRemove() {
     if (this.state.destinyPoint !== 0) {
       this.state.destinyRef.child(Object.keys(this.state.destinyPoint)[Object.keys(this.state.destinyPoint).length-1]).remove();
-      this.state.messageRef.push().set('Removed a destiny point.');
+      this.state.messageRef.push().set(`${user} removed a destiny point.`);
     }
   }
   flip (v, k) {
     if (v === 'lightside') {
       this.state.destinyRef.child(k).set('darkside');
-      this.state.messageRef.push().set('Used a light side point.')
+      this.state.messageRef.push().set(`${user} used a light side point.`)
     } else {
       this.state.destinyRef.child(k).set('lightside');
-      this.state.messageRef.push().set('Used a dark side point.')
+      this.state.messageRef.push().set(`${user} used a dark side point.`)
     }
   }
 

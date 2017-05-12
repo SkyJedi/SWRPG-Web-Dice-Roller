@@ -19,8 +19,8 @@ if (channel !== undefined) {
   setChanPage();
 }
 
-function setChanName(chanName) {
-  window.location = `/${chanName}`;
+function setChanName(chanName, userName) {
+  window.location = `/${chanName}?${userName}`;
 }
 
 function signOut() {

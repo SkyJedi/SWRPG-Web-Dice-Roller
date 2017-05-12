@@ -3,6 +3,7 @@ import * as firebase from 'firebase';
 import './index.css';
 
 var channel = window.location.pathname.slice(1).toLowerCase(),
+    user = window.location.search.slice(1),
     diceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', 'white'],
     symbols = ['success', 'advantage', 'triumph', 'fail', 'threat', 'despair', 'lightside', 'darkside'],
     symbolOrder = ['s', 'a', '!', 'f', 't', 'd', 'l', 'n'];
@@ -93,6 +94,8 @@ class Dice extends Component {
       if (Object.keys(rolledDice).length === 0) {
         return;
       }
+
+      message += `<span class=messagetext> ${user} rolled: </span>`;
 
       var color = '';
       for (var j = 0; j < Object.keys(diceFaces).length; j++) {
