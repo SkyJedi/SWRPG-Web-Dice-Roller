@@ -56,6 +56,7 @@ class Dice extends Component {
       return message;
   }
 
+
   roll() {
     var diceFaces = {
           yellow: ['', 's', 's', 'ss', 'ss', 'a', 'sa', 'sa', 'sa', 'aa', 'aa', '!'],
@@ -165,7 +166,10 @@ class Dice extends Component {
       }
 
       this.state.messageRef.push().set(message);
-      this.reset()
+
+      if (this.refs.resetCheck.checked === false){
+        this.reset()
+      }
     }
 
 
@@ -210,6 +214,7 @@ class Dice extends Component {
       <div className='App' style={{marginLeft:6}}>
         <input type='button' ref='roll' className='lrgButton' onClick={this.roll.bind(this)} value='Roll' />
         <input type='button' ref='reset' className='lrgButton' style={{background: '#9e9e9e'}} onClick={this.reset.bind(this)} value='Reset' />
+        <label><input type="checkbox" ref='resetCheck' /> Save previous dice pool</label>
       </div>
       </div>
     );
