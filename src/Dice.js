@@ -8,8 +8,8 @@ var channel = window.location.pathname.slice(1).toLowerCase(),
     symbolOrder = ['s', 'a', '!', 'f', 't', 'd', 'l', 'n'];
 
 class Dice extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       diceRoll: {},
       rollRef: firebase.database().ref().child(`${channel}`).child('roll'),
@@ -57,7 +57,7 @@ class Dice extends Component {
   }
 
 
-  roll() {
+  roll(props) {
     var diceFaces = {
           yellow: ['', 's', 's', 'ss', 'ss', 'a', 'sa', 'sa', 'sa', 'aa', 'aa', '!'],
           green: ['', 's', 's', 'ss', 'a', 'a', 'sa', 'aa'],
@@ -178,14 +178,14 @@ class Dice extends Component {
       <div style={{maxWidth:500}}>
       {diceOrder.map((diceColor) =>
         <div key={diceColor} className='dice-box' style={{marginLeft:6}}>
-          <div style={{float: 'left', marginLeft: 2, padding: 0}}>
+          <div style={{float: 'left', marginLeft: 0, padding: 0}}>
           <button className='btnAdd' onClick={this.addDie.bind(this, diceColor)}>⬆</button>
           <button className='btnAdd' onClick={this.removeDie.bind(this, diceColor)}>⬇</button>
           </div>
           <div className='dice-amount' style={{float: 'left', marginLeft: 10}}>
             <span>{this.state.diceRoll[diceColor]}</span>
           </div>
-          <div className='dice-container' style={{float: 'left', marginLeft: 15}}>
+          <div className='dice-container' onClick={this.addDie.bind(this, diceColor)} style={{float: 'left', marginLeft: 15}}>
             <img
               className='dice'
               key={diceColor}
