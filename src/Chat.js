@@ -31,18 +31,19 @@ class Chat extends Component {
   sendchat(stop) {
     stop.preventDefault();
     this.state.chatRef.push().set(`${user}: ${this.refs.chatInput.value}`);
+    this.refs.chatInput.value = '';
   }
 
   render() {
     return (
       <div className='App' style={{float: 'right'}}>
-      <form onSubmit={this.sendchat.bind(this)}>
+      <form ref='chatForm' onSubmit={this.sendchat.bind(this)}>
       <input className='chatinput' ref='chatInput' required/>
       <button ref='send' className='lrgButton'>Send</button>
       </form>
       <div>
         {Object.entries(this.state.chat).reverse().map(([k,v])=>
-          <div className='message' style={{maxWidth: '20em', minHeight: '0px'}} key={k}>
+          <div className='message' style={{maxWidth: '20em', minHeight: '0px', lineHeight: 1.2}} key={k}>
           <div>{v}</div>
           </div>
         )}
