@@ -4,6 +4,7 @@ import './index.css';
 
 var channel = window.location.pathname.slice(1).toLowerCase(),
     diceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', 'white'],
+    symbols = ['success', 'advantage', 'triumph', 'fail', 'threat', 'despair', 'lightside', 'darkside'],
     symbolOrder = ['s', 'a', '!', 'f', 't', 'd', 'l', 'n'];
 
 class Dice extends Component {
@@ -36,7 +37,17 @@ class Dice extends Component {
   }
   reset() {
     this.state.rollRef.set({yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0});
+    diceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', 'white'];
   }
+  expandExtras() {
+    if (diceOrder.length < 8) {
+      diceOrder.push('success', 'advantage', 'triumph', 'fail', 'threat', 'despair', 'lightside', 'darkside');
+      this.state.rollRef.set({yellow:this.state.diceRoll['yellow'], green:this.state.diceRoll['green'], blue:this.state.diceRoll['blue'], red:this.state.diceRoll['red'], purple:this.state.diceRoll['purple'], black:this.state.diceRoll['black'], white:this.state.diceRoll['white'], polyhedral:this.state.diceRoll['polyhedral'], success:0, advantage:0, triumph:0, fail:0, threat:0, despair:0, lightside:0, darkside:0});
+    } else {
+      this.reset();
+    }
+  }
+
   printsymbols (number, symbol) {
     var message = '';
       for (var n = 0; number > n; n++){
@@ -47,13 +58,23 @@ class Dice extends Component {
 
   roll() {
     var diceFaces = {
-        yellow: ['', 's', 's', 'ss', 'ss', 'a', 'sa', 'sa', 'sa', 'aa', 'aa', '!'],
-        green: ['', 's', 's', 'ss', 'a', 'a', 'sa', 'aa'],
-        blue: ['', '', 's', 'sa', 'aa', 'a'],
-        red: ['', 'f', 'f', 'ff', 'ff', 't', 't', 'ft', 'ft', 'tt', 'tt', 'd'],
-        purple: ['', 'f', 'ff', 't', 't', 't', 'tt', 'ft'],
-        black: ['', '', 'f', 'f', 't', 't'],
-        white: ['n', 'n', 'n', 'n', 'n', 'n', 'nn', 'l', 'l', 'll', 'll', 'll']
+          yellow: ['', 's', 's', 'ss', 'ss', 'a', 'sa', 'sa', 'sa', 'aa', 'aa', '!'],
+          green: ['', 's', 's', 'ss', 'a', 'a', 'sa', 'aa'],
+          blue: ['', '', 's', 'sa', 'aa', 'a'],
+          red: ['', 'f', 'f', 'ff', 'ff', 't', 't', 'ft', 'ft', 'tt', 'tt', 'd'],
+          purple: ['', 'f', 'ff', 't', 't', 't', 'tt', 'ft'],
+          black: ['', '', 'f', 'f', 't', 't'],
+          white: ['n', 'n', 'n', 'n', 'n', 'n', 'nn', 'l', 'l', 'll', 'll', 'll']
+        },
+        symbolFaces = {
+          success: 's',
+          advantage: 'a',
+          triumph: '!',
+          fail: 'f',
+          threat: 't',
+          despair: 'd',
+          lightside: 'l',
+          darkside: 'n'
         },
         rollResults = {},
         rolledDice = {},
@@ -84,6 +105,18 @@ class Dice extends Component {
         }
         rollResults[color] = tempArry;
       }
+
+      for (var o = 0; o < Object.keys(symbolFaces).length; o++) {
+        color = symbols[o];
+        tempArry = [];
+        for (var p = 0; p < rolledDice[color]; p++) {
+            tempArry.push(symbolFaces[color]);
+            sides += symbolFaces[color];
+            message += `<img class=diceface src=/images/${color}.png /> `;
+        }
+        rollResults[color] = tempArry;
+      }
+
       for(var n = 0; n < rolledDice['polyhedral']; n++) {
         polyhedralRoll.push(Math.floor(Math.random() * this.refs.polyhedral.value + 1));
         message += polyhedralRoll[n] + ' ';
@@ -170,6 +203,10 @@ class Dice extends Component {
         <input className='polyhedral' ref='polyhedral' defaultValue='100' />
         </div>
       </div>
+      <input type='button' ref='extras' className='lrgButton' style={{verticalAlign:'text-bottom'}} onClick={this.expandExtras.bind(this)} value='Extras' />
+
+      <div />
+
       <div className='App' style={{marginLeft:6}}>
         <input type='button' ref='roll' className='lrgButton' onClick={this.roll.bind(this)} value='Roll' />
         <input type='button' ref='reset' className='lrgButton' style={{background: '#9e9e9e'}} onClick={this.reset.bind(this)} value='Reset' />
