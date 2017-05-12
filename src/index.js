@@ -4,6 +4,7 @@ import Destiny from './Destiny';
 import Channel from './Channel';
 import Message from './Message';
 import Dice from './Dice';
+import Chat from './Chat';
 import './index.css';
 import * as firebase from 'firebase';
 import config from './config';
@@ -40,6 +41,7 @@ function startUp () {
   <div style={{minWidth: '500px'}}>
     <button className='btnAdd' style={{float: 'right'}} onClick={signOut}>X</button>
     <Destiny />
+    <Chat />
     <Dice />
     <Message />
     <span>{user} </span>
