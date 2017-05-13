@@ -178,7 +178,7 @@ class Dice extends Component {
 
   render() {
     return (
-      <div style={{maxWidth:500}}>
+      <div style={{maxWidth:550}}>
       {diceOrder.map((diceColor) =>
         <div key={diceColor} className='dice-box' style={{marginLeft:6}}>
           <div style={{float: 'left', marginLeft: 0, padding: 0}}>
@@ -207,10 +207,10 @@ class Dice extends Component {
           <span>{this.state.diceRoll.polyhedral}</span>
         </div>
         <div className='dice-container' style={{float: 'left', marginLeft: 15}}>
-        <input className='polyhedral' ref='polyhedral' defaultValue='100' />
+        <input className='textinput' style={{width: '3em', marginTop: '9px', textAlign: 'center'}} ref='polyhedral' defaultValue='100' />
         </div>
       </div>
-      <input type='button' ref='extras' className='lrgButton' style={{verticalAlign:'text-bottom'}} onClick={this.expandExtras.bind(this)} value='Extras' />
+      <input type='button' ref='extras' className='lrgButton' style={{verticalAlign:'bottom'}} onClick={this.expandExtras.bind(this)} value='Symbols' />
 
       <div />
 

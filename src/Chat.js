@@ -38,7 +38,7 @@ class Chat extends Component {
     return (
       <div className='App' style={{float: 'right'}}>
       <form ref='chatForm' onSubmit={this.sendchat.bind(this)}>
-      <input className='chatinput' ref='chatInput' required/>
+      <input className='textinput' ref='chatInput' required/>
       <button ref='send' className='lrgButton'>Send</button>
       </form>
       <div>
