@@ -8,6 +8,7 @@ class Channel extends Component {
     var channel = this.refs.channel.value;
     var user = this.refs.user.value;
     this.props.setFormChan(channel, user);
+    console.log(this.props);
   }
 
   render() {
@@ -24,8 +25,7 @@ class Channel extends Component {
       </form>
         <div style={{paddingTop: '2em'}}>
           <span>Created by SkyJedi</span> <div />
-          <h6>A web assistant for Fantasy Flight Games, Star Wars: Edge of the Empire, Age of Rebellion, and Force and Destiny</h6>
-
+          <h6>An assistant (dice roller, destiny tracking, chat) for Fantasy Flight Games, Star Wars: Edge of the Empire, Age of Rebellion, and Force and Destiny</h6>
         </div>
       </div>
     );

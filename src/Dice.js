@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as firebase from 'firebase';
 import './index.css';
+var crit = require("./Crit.js");
 
 var channel = window.location.pathname.slice(1).toLowerCase(),
     user = window.location.search.slice(1),
@@ -16,14 +17,21 @@ class Dice extends Component {
       rollRef: firebase.database().ref().child(`${channel}`).child('roll'),
       message: {},
       messageRef: firebase.database().ref().child(`${channel}`).child('message'),
+      showOptions: 'none',
+      optionsRef: firebase.database().ref().child(`${channel}`).child('options')
     };
   }
 
   componentDidMount() {
-    this.state.rollRef.set({yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0});
+    this.reset();
     this.state.rollRef.on('value', snap => {
       this.setState({
         diceRoll: snap.val()
+        });
+      });
+    this.state.optionsRef.on('value', snap => {
+      this.setState({
+        showOptions: snap.val()
         });
       });
   }
@@ -39,6 +47,7 @@ class Dice extends Component {
   reset() {
     this.state.rollRef.set({yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0});
     diceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', 'white'];
+    this.state.optionsRef.set('none');
   }
   expandExtras() {
     if (diceOrder.length < 8) {
@@ -57,6 +66,27 @@ class Dice extends Component {
       return message;
   }
 
+  dropMenu() {
+    if (this.state.showOptions !== 'none'){
+      this.state.optionsRef.set('none');
+    } else {
+      this.state.optionsRef.set('block');
+    }
+  }
+
+  critical(critical, stop) {
+    stop.preventDefault();
+    var critRoll = crit.d100(this.refs.modifier.value);
+    var critText = ''
+    if (critical === 'critical') {
+      critText = crit.crit(critRoll[0]);
+    } else {
+      critText = crit.shipcrit(critRoll[0]);
+    }
+
+    critText = user + ' ' + critRoll[1] + `<p>` + critText + `</p>`
+    this.state.messageRef.push().set(critText);
+  }
 
   roll(props) {
     var diceFaces = {
@@ -126,7 +156,7 @@ class Dice extends Component {
         message += polyhedralRoll[n] + ' ';
       }
 
-      message += '</div> <div>';
+      message += '<br>';
       for(var l=0; symbolOrder.length > l; l++){
         var count = 0;
         for(var m=0; sides.length > m; m++){
@@ -167,7 +197,7 @@ class Dice extends Component {
         number = rolledSymbols['n'];
         message += this.printsymbols(number, 'darkside');
       }
-
+      console.log(message);
       this.state.messageRef.push().set(message);
 
       if (this.refs.resetCheck.checked === false){
@@ -211,12 +241,22 @@ class Dice extends Component {
 
       <div />
 
-      <div className='App' style={{marginLeft:6}}>
+      <div className='App'>
         <input type='button' ref='roll' className='lrgButton' onClick={this.roll.bind(this)} value='Roll' />
         <input type='button' ref='reset' className='lrgButton' style={{background: '#9e9e9e'}} onClick={this.reset.bind(this)} value='Reset' />
+        <input type='button' ref='specialRollsDropDown' onClick={this.dropMenu.bind(this)} className='lrgButton' style={{width: '100px'}} value='Special Rolls'/>
         <label><input type="checkbox" ref='resetCheck' /> Save previous dice pool</label>
       </div>
+      <div className='App' style={{display: this.state.showOptions}}>
+        <form onSubmit={this.critical.bind(this, 'critical')}>
+          <button className='lrgButton' style={{width: '100px'}}>Critical</button>
+          <input className='textinput' ref='modifier' name='modifier' placeholder='modifier' style={{width: '70px', paddingLeft: '5px'}}/>
+        </form>
+        <form onSubmit={this.critical.bind(this, 'shipcritical')}>
+          <button className='lrgButton' style={{width: '100px'}}>Ship Critical</button>
+        </form>
       </div>
+    </div>
     );
   }
 }

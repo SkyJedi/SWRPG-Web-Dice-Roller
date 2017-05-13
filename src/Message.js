@@ -32,7 +32,7 @@ class Message extends Component {
       <div className='App'>
       <div>
         {Object.entries(this.state.message).reverse().map(([k,v])=>
-          <div className='message' key={k}>
+          <div className='message' style={{lineHeight: '1.2'}} key={k}>
 
           <div dangerouslySetInnerHTML={{ __html: v }} />
           </div>
