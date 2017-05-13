@@ -20,6 +20,7 @@ h1 {
 .destiny-box {
   min-height: 80px;
   max-width: 550px;
+  margin-top: 0.5em;
 }
 
 .textinput {
@@ -64,9 +65,9 @@ h1 {
 }
 
 .tokens  {
-    width:  60;
-    height: 60;
-    padding: 4;
+    width:  60px;
+    height: 60px;
+    padding: 0px;
 }
 
 .diceface  {

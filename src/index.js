@@ -36,7 +36,6 @@ function setChanPage () {
 }
 
 function startUp () {
-  var user = firebase.auth().currentuser;
   var webApp =
   <div style={{minWidth: '900px'}}>
     <button className='btnAdd' style={{float: 'right'}} onClick={signOut}>X</button>
@@ -44,7 +43,6 @@ function startUp () {
     <Chat />
     <Dice />
     <Message />
-    <span>{user} </span>
   </div>;
 
 

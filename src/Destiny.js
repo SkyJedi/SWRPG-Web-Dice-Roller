@@ -60,9 +60,10 @@ class Destiny extends Component {
             <button className='btnAdd' onClick={this.destinyAdd.bind(this)}>⬆</button>
             <button className='btnAdd' onClick={this.destinyRemove.bind(this)}>⬇</button>
           </div>
-          <div style={{marginLeft: '45px', marginTop: '5px', paddingTop: '5px'}}>
+          <div style={{marginLeft: '45px'}}>
             {Object.entries(this.state.destinyPoint).map(([k,v])=>
               <span
+              className='tokens'
               key={k}
               onClick={this.flip.bind(this, v, k)}>
               <img
