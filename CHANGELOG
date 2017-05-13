@@ -1,3 +1,6 @@
+1.0.7
+  -Added Critical and Ship Critical
+
 1.0.6
   -Added Chat
 
@@ -8,7 +11,7 @@
   -tweaked the arrow sizes, added click on die to add die
 
 1.0.3
-  -added keep dicepool checkbox
+  -added keep dice pool checkbox
 
 1.0.2
   -added symbols to roll
