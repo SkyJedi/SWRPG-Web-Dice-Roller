@@ -32,7 +32,7 @@ h1 {
   box-sizing: content-box;
   width: 15em;
   height: 2em;
-  margin: 1px;
+  margin: 2px;
   padding: 2px;
   vertical-align: middle;
   border: 1px solid #b7b7b7;
@@ -140,7 +140,7 @@ input[type=text], select {
   width: 70px;
   height: 30px;
   cursor: pointer;
-  margin: 5px;
+  margin: 2px;
   padding: 4px;
   vertical-align: middle;
   border-radius: 1px;

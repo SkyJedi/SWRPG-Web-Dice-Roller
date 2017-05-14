@@ -33,7 +33,7 @@ function roll(diceRoll, polyhedralValue, diceOrder, symbols, symbolOrder, user) 
     }
 
     if (Object.keys(rolledDice).length === 0) {
-      return;
+      return 0;
     }
 
     message += `<span class=messagetext> ${user} rolled: </span>`;
@@ -108,7 +108,7 @@ function roll(diceRoll, polyhedralValue, diceOrder, symbols, symbolOrder, user) 
       number = rolledSymbols['n'];
       message += printsymbols(number, 'darkside');
     }
-    return message;
+    return [message, rollResults];
   }
 
   function printsymbols (number, symbol) {

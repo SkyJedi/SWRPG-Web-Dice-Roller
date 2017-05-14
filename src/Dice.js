@@ -20,7 +20,8 @@ class Dice extends Component {
       message: {},
       messageRef: firebase.database().ref().child(`${channel}`).child('message'),
       showOptions: 'none',
-      optionsRef: firebase.database().ref().child(`${channel}`).child('options')
+      optionsRef: firebase.database().ref().child(`${channel}`).child('options'),
+      destinyRef: firebase.database().ref().child(`${channel}`).child('destiny')
     };
   }
 
@@ -65,7 +66,7 @@ class Dice extends Component {
     if (this.state.showOptions !== 'none'){
       this.state.optionsRef.set('none');
     } else {
-      this.state.optionsRef.set('block');
+      this.state.optionsRef.set('inline-block');
     }
   }
 
@@ -78,13 +79,13 @@ class Dice extends Component {
     } else {
       critText = crit.shipcrit(critRoll[0]);
     }
-
     critText = user + ' ' + critRoll[1] + `<p>` + critText + `</p>`
     this.state.messageRef.push().set(critText);
   }
 
   roll() {
-      var message = rolldice.roll(this.state.diceRoll, this.refs.polyhedral.value, diceOrder, symbols, symbolOrder, user);
+    console.log(this.state.diceRoll);
+      var message = rolldice.roll(this.state.diceRoll, this.refs.polyhedral.value, diceOrder, symbols, symbolOrder, user)[0];
       if (message !== undefined) {
         this.state.messageRef.push().set(message);
       }
@@ -92,6 +93,32 @@ class Dice extends Component {
         this.reset()
       }
     }
+
+  destinyRoll(){
+    var destinyResult = rolldice.roll({white:1}, this.refs.polyhedral.value, diceOrder, symbols, symbolOrder, user);
+    var message = destinyResult[0] + `<br/> Adding to the Destiny Pool`;
+    destinyResult = destinyResult[1]['white'][0];
+    console.log(destinyResult);
+    switch(destinyResult) {
+      case 'l':
+        this.state.destinyRef.push().set('lightside');
+        break;
+      case 'll':
+        this.state.destinyRef.push().set('lightside');
+        this.state.destinyRef.push().set('lightside');
+        break;
+      case "n":
+        this.state.destinyRef.push().set('darkside');
+        break;
+      case 'nn':
+        this.state.destinyRef.push().set('darkside');
+        this.state.destinyRef.push().set('darkside');
+        break;
+      default:
+        break;
+    }
+    this.state.messageRef.push().set(message);
+  }
 
 
   render() {
@@ -129,21 +156,21 @@ class Dice extends Component {
 
       <div />
 
-      <div className='App'>
+      <div style={{display: 'inline-block'}}>
         <input type='button' ref='roll' className='lrgButton' onClick={this.roll.bind(this)} value='Roll' />
         <input type='button' ref='reset' className='lrgButton' style={{background: '#9e9e9e'}} onClick={this.reset.bind(this)} value='Reset' />
         <input type='button' ref='specialRollsDropDown' onClick={this.dropMenu.bind(this)} className='lrgButton' style={{width: '100px'}} value='Special Rolls'/>
         <label><input type="checkbox" ref='resetCheck' /> Save previous dice pool</label>
       </div>
-      <div className='App' style={{display: this.state.showOptions}}>
+      <div style={{display: this.state.showOptions}}>
         <form onSubmit={this.critical.bind(this, 'critical')}>
           <button className='lrgButton' style={{width: '100px'}}>Critical</button>
+          <button className='lrgButton' style={{width: '100px'}}>Ship Critical</button>
           <input className='textinput' ref='modifier' name='modifier' placeholder='modifier' style={{width: '70px', paddingLeft: '5px'}}/>
         </form>
-        <form onSubmit={this.critical.bind(this, 'shipcritical')}>
-          <button className='lrgButton' style={{width: '100px'}}>Ship Critical</button>
-        </form>
+          <input type='button' style={{width: '100px'}} ref='destinyRoll' className='lrgButton' onClick={this.destinyRoll.bind(this)} value='Roll Destiny' />
       </div>
+      <div/>
     </div>
     );
   }
