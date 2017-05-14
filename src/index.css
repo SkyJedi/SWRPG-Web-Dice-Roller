@@ -14,6 +14,8 @@ h1 {
 
 .login-box {
   padding-top: 2em;
+  padding-left: 10px;
+  padding-right: 10px;
   text-align: center;
 }
 

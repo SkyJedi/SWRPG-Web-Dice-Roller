@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import * as firebase from 'firebase';
 import './index.css';
-var crit = require("./Crit.js");
+var crit = require("./functions/Crit.js");
+var rolldice = require("./functions/Roll.js");
+
 
 var channel = window.location.pathname.slice(1).toLowerCase(),
     user = window.location.search.slice(1),
@@ -58,13 +60,6 @@ class Dice extends Component {
     }
   }
 
-  printsymbols (number, symbol) {
-    var message = '';
-      for (var n = 0; number > n; n++){
-        message += `<img class=diceface src=/images/${symbol}.png /> `;
-      }
-      return message;
-  }
 
   dropMenu() {
     if (this.state.showOptions !== 'none'){
@@ -88,116 +83,8 @@ class Dice extends Component {
     this.state.messageRef.push().set(critText);
   }
 
-  roll(props) {
-    var diceFaces = {
-          yellow: ['', 's', 's', 'ss', 'ss', 'a', 'sa', 'sa', 'sa', 'aa', 'aa', '!'],
-          green: ['', 's', 's', 'ss', 'a', 'a', 'sa', 'aa'],
-          blue: ['', '', 's', 'sa', 'aa', 'a'],
-          red: ['', 'f', 'f', 'ff', 'ff', 't', 't', 'ft', 'ft', 'tt', 'tt', 'd'],
-          purple: ['', 'f', 'ff', 't', 't', 't', 'tt', 'ft'],
-          black: ['', '', 'f', 'f', 't', 't'],
-          white: ['n', 'n', 'n', 'n', 'n', 'n', 'nn', 'l', 'l', 'll', 'll', 'll']
-        },
-        symbolFaces = {
-          success: 's',
-          advantage: 'a',
-          triumph: '!',
-          fail: 'f',
-          threat: 't',
-          despair: 'd',
-          lightside: 'l',
-          darkside: 'n'
-        },
-        rollResults = {},
-        rolledDice = {},
-        message = '',
-        sides = '',
-        rolledSymbols = {},
-        polyhedralRoll = [];
-
-      for (var i = 0; i < Object.keys(this.state.diceRoll).length; i++) {
-        if (this.state.diceRoll[Object.keys(this.state.diceRoll)[i]] !== 0) {
-          rolledDice[Object.keys(this.state.diceRoll)[i]] = Object.values(this.state.diceRoll)[i];
-        }
-      }
-
-      if (Object.keys(rolledDice).length === 0) {
-        return;
-      }
-
-      message += `<span class=messagetext> ${user} rolled: </span>`;
-
-      var color = '';
-      for (var j = 0; j < Object.keys(diceFaces).length; j++) {
-        color = diceOrder[j];
-        var tempArry = [];
-        for (var k = 0; k < rolledDice[color]; k++) {
-            var diceSide = diceFaces[color][(Math.floor(Math.random() * diceFaces[color].length) + 1)-1]
-            tempArry.push(diceSide);
-            sides += diceSide
-            message += `<img class=diceface src=/images/dice/${color}-${diceSide}.png /> `;
-        }
-        rollResults[color] = tempArry;
-      }
-
-      for (var o = 0; o < Object.keys(symbolFaces).length; o++) {
-        color = symbols[o];
-        tempArry = [];
-        for (var p = 0; p < rolledDice[color]; p++) {
-            tempArry.push(symbolFaces[color]);
-            sides += symbolFaces[color];
-            message += `<img class=diceface src=/images/${color}.png /> `;
-        }
-        rollResults[color] = tempArry;
-      }
-
-      for(var n = 0; n < rolledDice['polyhedral']; n++) {
-        polyhedralRoll.push(Math.floor(Math.random() * this.refs.polyhedral.value + 1));
-        message += polyhedralRoll[n] + ' ';
-      }
-
-      message += '<br>';
-      for(var l=0; symbolOrder.length > l; l++){
-        var count = 0;
-        for(var m=0; sides.length > m; m++){
-          if(sides.charAt(m) === symbolOrder[l]){
-          ++count;
-          }
-        }
-        rolledSymbols[symbolOrder[l]] = count;
-      }
-      var number = 0;
-      if (rolledSymbols['s'] > rolledSymbols['f']) {
-        number = rolledSymbols['s'] - rolledSymbols['f'];
-        message += this.printsymbols(number, 'success');
-      } else {
-        number = rolledSymbols['f'] - rolledSymbols['s'];
-        message += this.printsymbols(number, 'fail');
-      }
-      if (rolledSymbols['a'] > rolledSymbols['t']) {
-        number = rolledSymbols['a'] - rolledSymbols['t'];
-        message += this.printsymbols(number, 'advantage');
-      } else {
-        number = rolledSymbols['t'] - rolledSymbols['a'];
-        message += this.printsymbols(number, 'threat');
-      }
-      if (rolledSymbols['!'] !== 0) {
-        number = rolledSymbols['!'];
-        message += this.printsymbols(number, 'triumph');
-      }
-      if (rolledSymbols['d'] !== 0) {
-        number = rolledSymbols['d'];
-        message += this.printsymbols(number, 'despair');
-      }
-      if (rolledSymbols['l'] !== 0) {
-        number = rolledSymbols['l'];
-        message += this.printsymbols(number, 'lightside');
-      }
-      if (rolledSymbols['n'] !== 0) {
-        number = rolledSymbols['n'];
-        message += this.printsymbols(number, 'darkside');
-      }
-      console.log(message);
+  roll() {
+      var message = rolldice.roll(this.state.diceRoll, this.refs.polyhedral.value, diceOrder, symbols, symbolOrder, user);
       this.state.messageRef.push().set(message);
 
       if (this.refs.resetCheck.checked === false){
