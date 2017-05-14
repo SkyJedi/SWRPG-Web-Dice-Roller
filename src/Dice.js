@@ -85,8 +85,9 @@ class Dice extends Component {
 
   roll() {
       var message = rolldice.roll(this.state.diceRoll, this.refs.polyhedral.value, diceOrder, symbols, symbolOrder, user);
-      this.state.messageRef.push().set(message);
-
+      if (message !== undefined) {
+        this.state.messageRef.push().set(message);
+      }
       if (this.refs.resetCheck.checked === false){
         this.reset()
       }
