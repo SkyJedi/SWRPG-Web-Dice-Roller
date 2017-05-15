@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import * as firebase from 'firebase';
 import './index.css';
-var crit = require("./Crit.js");
+var crit = require("./functions/Crit.js");
+var rolldice = require("./functions/Roll.js");
+
 
 var channel = window.location.pathname.slice(1).toLowerCase(),
     user = window.location.search.slice(1),
@@ -18,7 +20,8 @@ class Dice extends Component {
       message: {},
       messageRef: firebase.database().ref().child(`${channel}`).child('message'),
       showOptions: 'none',
-      optionsRef: firebase.database().ref().child(`${channel}`).child('options')
+      optionsRef: firebase.database().ref().child(`${channel}`).child('options'),
+      destinyRef: firebase.database().ref().child(`${channel}`).child('destiny')
     };
   }
 
@@ -58,19 +61,12 @@ class Dice extends Component {
     }
   }
 
-  printsymbols (number, symbol) {
-    var message = '';
-      for (var n = 0; number > n; n++){
-        message += `<img class=diceface src=/images/${symbol}.png /> `;
-      }
-      return message;
-  }
 
   dropMenu() {
     if (this.state.showOptions !== 'none'){
       this.state.optionsRef.set('none');
     } else {
-      this.state.optionsRef.set('block');
+      this.state.optionsRef.set('inline-block');
     }
   }
 
@@ -83,132 +79,51 @@ class Dice extends Component {
     } else {
       critText = crit.shipcrit(critRoll[0]);
     }
-
     critText = user + ' ' + critRoll[1] + `<p>` + critText + `</p>`
     this.state.messageRef.push().set(critText);
   }
 
-  roll(props) {
-    var diceFaces = {
-          yellow: ['', 's', 's', 'ss', 'ss', 'a', 'sa', 'sa', 'sa', 'aa', 'aa', '!'],
-          green: ['', 's', 's', 'ss', 'a', 'a', 'sa', 'aa'],
-          blue: ['', '', 's', 'sa', 'aa', 'a'],
-          red: ['', 'f', 'f', 'ff', 'ff', 't', 't', 'ft', 'ft', 'tt', 'tt', 'd'],
-          purple: ['', 'f', 'ff', 't', 't', 't', 'tt', 'ft'],
-          black: ['', '', 'f', 'f', 't', 't'],
-          white: ['n', 'n', 'n', 'n', 'n', 'n', 'nn', 'l', 'l', 'll', 'll', 'll']
-        },
-        symbolFaces = {
-          success: 's',
-          advantage: 'a',
-          triumph: '!',
-          fail: 'f',
-          threat: 't',
-          despair: 'd',
-          lightside: 'l',
-          darkside: 'n'
-        },
-        rollResults = {},
-        rolledDice = {},
-        message = '',
-        sides = '',
-        rolledSymbols = {},
-        polyhedralRoll = [];
-
-      for (var i = 0; i < Object.keys(this.state.diceRoll).length; i++) {
-        if (this.state.diceRoll[Object.keys(this.state.diceRoll)[i]] !== 0) {
-          rolledDice[Object.keys(this.state.diceRoll)[i]] = Object.values(this.state.diceRoll)[i];
-        }
+  roll() {
+    console.log(this.state.diceRoll);
+      var message = rolldice.roll(this.state.diceRoll, this.refs.polyhedral.value, diceOrder, symbols, symbolOrder, user)[0];
+      if (message !== undefined) {
+        this.state.messageRef.push().set(message);
       }
-
-      if (Object.keys(rolledDice).length === 0) {
-        return;
-      }
-
-      message += `<span class=messagetext> ${user} rolled: </span>`;
-
-      var color = '';
-      for (var j = 0; j < Object.keys(diceFaces).length; j++) {
-        color = diceOrder[j];
-        var tempArry = [];
-        for (var k = 0; k < rolledDice[color]; k++) {
-            var diceSide = diceFaces[color][(Math.floor(Math.random() * diceFaces[color].length) + 1)-1]
-            tempArry.push(diceSide);
-            sides += diceSide
-            message += `<img class=diceface src=/images/dice/${color}-${diceSide}.png /> `;
-        }
-        rollResults[color] = tempArry;
-      }
-
-      for (var o = 0; o < Object.keys(symbolFaces).length; o++) {
-        color = symbols[o];
-        tempArry = [];
-        for (var p = 0; p < rolledDice[color]; p++) {
-            tempArry.push(symbolFaces[color]);
-            sides += symbolFaces[color];
-            message += `<img class=diceface src=/images/${color}.png /> `;
-        }
-        rollResults[color] = tempArry;
-      }
-
-      for(var n = 0; n < rolledDice['polyhedral']; n++) {
-        polyhedralRoll.push(Math.floor(Math.random() * this.refs.polyhedral.value + 1));
-        message += polyhedralRoll[n] + ' ';
-      }
-
-      message += '<br>';
-      for(var l=0; symbolOrder.length > l; l++){
-        var count = 0;
-        for(var m=0; sides.length > m; m++){
-          if(sides.charAt(m) === symbolOrder[l]){
-          ++count;
-          }
-        }
-        rolledSymbols[symbolOrder[l]] = count;
-      }
-      var number = 0;
-      if (rolledSymbols['s'] > rolledSymbols['f']) {
-        number = rolledSymbols['s'] - rolledSymbols['f'];
-        message += this.printsymbols(number, 'success');
-      } else {
-        number = rolledSymbols['f'] - rolledSymbols['s'];
-        message += this.printsymbols(number, 'fail');
-      }
-      if (rolledSymbols['a'] > rolledSymbols['t']) {
-        number = rolledSymbols['a'] - rolledSymbols['t'];
-        message += this.printsymbols(number, 'advantage');
-      } else {
-        number = rolledSymbols['t'] - rolledSymbols['a'];
-        message += this.printsymbols(number, 'threat');
-      }
-      if (rolledSymbols['!'] !== 0) {
-        number = rolledSymbols['!'];
-        message += this.printsymbols(number, 'triumph');
-      }
-      if (rolledSymbols['d'] !== 0) {
-        number = rolledSymbols['d'];
-        message += this.printsymbols(number, 'despair');
-      }
-      if (rolledSymbols['l'] !== 0) {
-        number = rolledSymbols['l'];
-        message += this.printsymbols(number, 'lightside');
-      }
-      if (rolledSymbols['n'] !== 0) {
-        number = rolledSymbols['n'];
-        message += this.printsymbols(number, 'darkside');
-      }
-      console.log(message);
-      this.state.messageRef.push().set(message);
-
       if (this.refs.resetCheck.checked === false){
         this.reset()
       }
     }
 
+  destinyRoll(){
+    var destinyResult = rolldice.roll({white:1}, this.refs.polyhedral.value, diceOrder, symbols, symbolOrder, user);
+    var message = destinyResult[0] + `<br/> Adding to the Destiny Pool`;
+    destinyResult = destinyResult[1]['white'][0];
+    console.log(destinyResult);
+    switch(destinyResult) {
+      case 'l':
+        this.state.destinyRef.push().set('lightside');
+        break;
+      case 'll':
+        this.state.destinyRef.push().set('lightside');
+        this.state.destinyRef.push().set('lightside');
+        break;
+      case "n":
+        this.state.destinyRef.push().set('darkside');
+        break;
+      case 'nn':
+        this.state.destinyRef.push().set('darkside');
+        this.state.destinyRef.push().set('darkside');
+        break;
+      default:
+        break;
+    }
+    this.state.messageRef.push().set(message);
+  }
+
 
   render() {
     return (
-      <div style={{maxWidth:550}}>
+      <div style={{width:550}}>
       {diceOrder.map((diceColor) =>
         <div key={diceColor} className='dice-box' style={{marginLeft:6}}>
           <div style={{float: 'left', marginLeft: 0, padding: 0}}>
@@ -241,21 +156,21 @@ class Dice extends Component {
 
       <div />
 
-      <div className='App'>
+      <div style={{display: 'inline-block'}}>
         <input type='button' ref='roll' className='lrgButton' onClick={this.roll.bind(this)} value='Roll' />
         <input type='button' ref='reset' className='lrgButton' style={{background: '#9e9e9e'}} onClick={this.reset.bind(this)} value='Reset' />
         <input type='button' ref='specialRollsDropDown' onClick={this.dropMenu.bind(this)} className='lrgButton' style={{width: '100px'}} value='Special Rolls'/>
         <label><input type="checkbox" ref='resetCheck' /> Save previous dice pool</label>
       </div>
-      <div className='App' style={{display: this.state.showOptions}}>
+      <div style={{display: this.state.showOptions}}>
         <form onSubmit={this.critical.bind(this, 'critical')}>
           <button className='lrgButton' style={{width: '100px'}}>Critical</button>
+          <button className='lrgButton' style={{width: '100px'}}>Ship Critical</button>
           <input className='textinput' ref='modifier' name='modifier' placeholder='modifier' style={{width: '70px', paddingLeft: '5px'}}/>
         </form>
-        <form onSubmit={this.critical.bind(this, 'shipcritical')}>
-          <button className='lrgButton' style={{width: '100px'}}>Ship Critical</button>
-        </form>
+          <input type='button' style={{width: '100px'}} ref='destinyRoll' className='lrgButton' onClick={this.destinyRoll.bind(this)} value='Roll Destiny' />
       </div>
+      <div/>
     </div>
     );
   }

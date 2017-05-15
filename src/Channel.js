@@ -8,7 +8,6 @@ class Channel extends Component {
     var channel = this.refs.channel.value;
     var user = this.refs.user.value;
     this.props.setFormChan(channel, user);
-    console.log(this.props);
   }
 
   render() {
