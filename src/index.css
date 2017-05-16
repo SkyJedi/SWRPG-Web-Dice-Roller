@@ -12,6 +12,11 @@ h1 {
   display: block;
 }
 
+.messagebox {
+  overflow: auto;
+  max-height: 400px;
+}
+
 .login-box {
   padding-top: 2em;
   padding-left: 10px;

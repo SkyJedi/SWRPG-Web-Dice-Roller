@@ -29,7 +29,7 @@ class Message extends Component {
 
   render() {
     return (
-      <div className='App'>
+      <div className='messagebox'>
       <div>
         {Object.entries(this.state.message).reverse().map(([k,v])=>
           <div className='message' style={{lineHeight: '1.2'}} key={k}>
