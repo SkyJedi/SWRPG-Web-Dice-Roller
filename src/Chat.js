@@ -37,17 +37,17 @@ class Chat extends Component {
   render() {
     return (
       <div className='App' style={{float: 'right'}}>
-      <form ref='chatForm' onSubmit={this.sendchat.bind(this)}>
-      <input className='textinput' ref='chatInput' required/>
-      <button ref='send' className='lrgButton'>Send</button>
-      </form>
-      <div>
-        {Object.entries(this.state.chat).reverse().map(([k,v])=>
-          <div className='message' style={{maxWidth: '20em', minHeight: '0px', lineHeight: 1.2}} key={k}>
-          <div>{v}</div>
-          </div>
-        )}
-      </div>
+        <form ref='chatForm' onSubmit={this.sendchat.bind(this)}>
+        <input className='textinput' ref='chatInput' required/>
+        <button ref='send' className='lrgButton'>Send</button>
+        </form>
+        <div className='messagebox'>
+          {Object.entries(this.state.chat).reverse().map(([k,v])=>
+            <div className='message' style={{maxWidth: '20em', minHeight: '0px', lineHeight: 1.2}} key={k}>
+            <div>{v}</div>
+            </div>
+          )}
+        </div>
       </div>
     );
   }

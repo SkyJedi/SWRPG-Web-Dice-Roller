@@ -84,7 +84,6 @@ class Dice extends Component {
   }
 
   roll() {
-    console.log(this.state.diceRoll);
       var message = rolldice.roll(this.state.diceRoll, this.refs.polyhedral.value, diceOrder, symbols, symbolOrder, user)[0];
       if (message !== undefined) {
         this.state.messageRef.push().set(message);
@@ -98,7 +97,6 @@ class Dice extends Component {
     var destinyResult = rolldice.roll({white:1}, this.refs.polyhedral.value, diceOrder, symbols, symbolOrder, user);
     var message = destinyResult[0] + `<br/> Adding to the Destiny Pool`;
     destinyResult = destinyResult[1]['white'][0];
-    console.log(destinyResult);
     switch(destinyResult) {
       case 'l':
         this.state.destinyRef.push().set('lightside');
@@ -123,7 +121,7 @@ class Dice extends Component {
 
   render() {
     return (
-      <div style={{width:550}}>
+      <div style={{width:500}}>
       {diceOrder.map((diceColor) =>
         <div key={diceColor} className='dice-box' style={{marginLeft:6}}>
           <div style={{float: 'left', marginLeft: 0, padding: 0}}>
