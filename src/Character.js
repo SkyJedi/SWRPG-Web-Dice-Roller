@@ -49,15 +49,15 @@ class Character extends Component {
 
           <div style={{float: 'left', marginLeft: '90px', textAlign: 'left'}}>
             <div>
-              <input className='textinput' ref='currentWounds' defaultValue='16' style={{width: '50px', textAlign: 'center'}}/>
+              <input className='textinput' ref='currentWounds' placeholder='16' style={{width: '50px', textAlign: 'center'}}/>
               <b style={{marginLeft: '10px', fontSize: '20px', color: 'Black'}}>/ 15 Wounds</b>
             </div>
             <div>
-              <input className='textinput' ref='currentStrain' defaultValue='2' style={{width: '50px', textAlign: 'center'}}/>
+              <input className='textinput' ref='currentStrain' placeholder='2' style={{width: '50px', textAlign: 'center'}}/>
               <b style={{marginLeft: '10px', fontSize: '20px', color: 'Black'}}>/ 12 Strain</b>
             </div>
             <div>
-              <input className='textinput' ref='credits' defaultValue='1200' style={{width: '50px', textAlign: 'center'}}/>
+              <input className='textinput' ref='credits' placeholder='1200' style={{width: '50px', textAlign: 'center'}}/>
               <b style={{marginLeft: '10px', fontSize: '20px', color: 'Black'}}> Credits</b>
             </div>
           </div>
