@@ -150,12 +150,11 @@ input[type=text], select {
   vertical-align: middle;
   border-radius: 1px;
   font: normal 18px/16px Tahoma, Geneva, sans-serif;
-  color: rgba(255,255,255,0.9);
+  color: #ffffff;
   text-align: center;
-  -o-text-overflow: clip;
   text-overflow: clip;
   background: #1294eb;
-  text-shadow: -1px -1px 0 rgba(15,73,168,0.66) ;
+  text-decoration: none;
 }
 
 .lrgButton:hover {
@@ -167,7 +166,7 @@ input[type=text], select {
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
-  width: 500px;
+  width: 475px;
   min-height: 40px;
   margin: 5px;
   padding: 4px;
@@ -191,4 +190,11 @@ input[type=text], select {
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
+}
+
+.characterimage  {
+  display: inline-block;
+    max-width:  70px;
+    max-height: 70px;
+    padding: 2px;
 }

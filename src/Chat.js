@@ -36,12 +36,12 @@ class Chat extends Component {
 
   render() {
     return (
-      <div className='App' style={{float: 'right'}}>
+      <div className='App' style={{margin: '5px'}}>
         <form ref='chatForm' onSubmit={this.sendchat.bind(this)}>
         <input className='textinput' ref='chatInput' required/>
         <button ref='send' className='lrgButton'>Send</button>
         </form>
-        <div className='messagebox'>
+        <div className='messagebox' style={{maxHeight: '350px'}}>
           {Object.entries(this.state.chat).reverse().map(([k,v])=>
             <div className='message' style={{maxWidth: '20em', minHeight: '0px', lineHeight: 1.2}} key={k}>
             <div>{v}</div>

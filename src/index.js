@@ -5,6 +5,7 @@ import Channel from './Channel';
 import Message from './Message';
 import Dice from './Dice';
 import Chat from './Chat';
+import Character from './Character';
 import './index.css';
 import * as firebase from 'firebase';
 import config from './config';
@@ -38,9 +39,12 @@ function setChanPage () {
 function startUp () {
   var webApp =
   <div style={{minWidth: '900px'}}>
+    <div style={{float: 'right', display: 'block'}}>
     <button className='btnAdd' style={{float: 'right'}} onClick={signOut}>X</button>
-    <Destiny />
+    <Character style={{display: 'block'}}/>
     <Chat />
+    </div>
+    <Destiny />
     <Dice />
     <Message />
   </div>;

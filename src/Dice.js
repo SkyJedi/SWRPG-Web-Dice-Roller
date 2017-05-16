@@ -121,12 +121,12 @@ class Dice extends Component {
 
   render() {
     return (
-      <div style={{width:500}}>
+      <div style={{width: '525px'}}>
       {diceOrder.map((diceColor) =>
         <div key={diceColor} className='dice-box' style={{marginLeft:6}}>
           <div style={{float: 'left', marginLeft: 0, padding: 0}}>
-            <button className='btnAdd' onClick={this.addDie.bind(this, diceColor)}>⬆</button>
-            <button className='btnAdd' onClick={this.removeDie.bind(this, diceColor)}>⬇</button>
+            <button className='btnAdd' onClick={this.addDie.bind(this, diceColor)}>↑</button>
+            <button className='btnAdd' onClick={this.removeDie.bind(this, diceColor)}>↓</button>
           </div>
           <div className='dice-amount' style={{float: 'left', marginLeft: 10}}> {this.state.diceRoll[diceColor]}</div>
           <div>
@@ -142,15 +142,15 @@ class Dice extends Component {
       )}
       <div className='dice-box' style={{marginLeft:6}}>
         <div style={{float: 'left', marginLeft: 2, padding: 0}}>
-          <button className='btnAdd' onClick={this.addDie.bind(this, 'polyhedral')}>⬆</button>
-          <button className='btnAdd' onClick={this.removeDie.bind(this, 'polyhedral')}>⬇</button>
+          <button className='btnAdd' onClick={this.addDie.bind(this, 'polyhedral')}>↑</button>
+          <button className='btnAdd' onClick={this.removeDie.bind(this, 'polyhedral')}>↓</button>
         </div>
         <div className='dice-amount' style={{float: 'left', marginLeft: 10}}> {this.state.diceRoll.polyhedral} </div>
         <div>
           <input className='textinput' style={{float: 'left', marginLeft: 15, width: '3em', textAlign: 'center', margin: '15px 0px 15px 25px'}} ref='polyhedral' defaultValue='100' />
         </div>
       </div>
-      <input type='button' ref='extras' className='lrgButton' style={{verticalAlign:'bottom'}} onClick={this.expandExtras.bind(this)} value='Symbols' />
+      <input type='button' ref='extras' className='lrgButton' style={{verticalAlign:'bottom', margin: '5px'}} onClick={this.expandExtras.bind(this)} value='Symbols' />
 
       <div />
 
