@@ -1,11 +1,12 @@
 {
   "name": "swrpg-web-dice-roller",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "private": true,
   "dependencies": {
     "firebase": "^3.9.0",
     "react": "^15.5.4",
-    "react-dom": "^15.5.4"
+    "react-dom": "^15.5.4",
+    "react-popup": "^0.7.1"
   },
   "devDependencies": {
     "react-scripts": "0.9.5"

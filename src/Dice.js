@@ -81,6 +81,8 @@ class Dice extends Component {
     }
     critText = user + ' ' + critRoll[1] + `<p>` + critText + `</p>`
     this.state.messageRef.push().set(critText);
+    this.refs.modifier.value = '';
+
   }
 
   roll() {

@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Popup from 'react-popup';
 import Destiny from './Destiny';
 import Channel from './Channel';
 import Message from './Message';
@@ -40,9 +41,9 @@ function startUp () {
   var webApp =
   <div style={{minWidth: '900px'}}>
     <div style={{float: 'right', display: 'block'}}>
-    <button className='btnAdd' style={{float: 'right'}} onClick={signOut}>X</button>
-    <Character style={{display: 'block'}}/>
-    <Chat />
+      <button className='btnAdd' style={{float: 'right'}} onClick={signOut}>X</button>
+      <Character />
+      <Chat />
     </div>
     <Destiny />
     <Dice />
@@ -53,5 +54,10 @@ function startUp () {
   ReactDOM.render(
     webApp,
     document.getElementById('root')
+  );
+
+  ReactDOM.render(
+    <Popup />,
+    document.getElementById('popupContainer')
   );
 };
