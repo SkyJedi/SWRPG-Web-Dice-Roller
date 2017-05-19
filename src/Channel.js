@@ -5,8 +5,9 @@ class Channel extends Component {
 
   setChannel(stop) {
     stop.preventDefault();
-    var channel = this.refs.channel.value;
-    var user = this.refs.user.value;
+    var channel = this.refs.channel.value.replace(/\W/g, '').toLowerCase();
+;
+    var user = this.refs.user.value.replace(/\W/g, '');
     this.props.setFormChan(channel, user);
   }
 

@@ -51,6 +51,7 @@ class Dice extends Component {
     this.state.rollRef.set({yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0});
     diceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', 'white'];
     this.state.optionsRef.set('none');
+    this.refs.caption.value = '';
   }
   expandExtras() {
     if (diceOrder.length < 8) {
@@ -86,7 +87,7 @@ class Dice extends Component {
   }
 
   roll() {
-      var message = rolldice.roll(this.state.diceRoll, this.refs.polyhedral.value, diceOrder, symbols, symbolOrder, user)[0];
+      var message = rolldice.roll(this.state.diceRoll, this.refs.polyhedral.value, this.refs.caption.value, diceOrder, symbols, symbolOrder, user)[0];
       if (message !== undefined) {
         this.state.messageRef.push().set(message);
       }
@@ -158,9 +159,10 @@ class Dice extends Component {
 
       <div style={{display: 'inline-block'}}>
         <input type='button' ref='roll' className='lrgButton' onClick={this.roll.bind(this)} value='Roll' />
+        <input className='textinput' ref='caption' name='caption' placeholder='caption' style={{width: '70px', paddingLeft: '5px'}}/>
         <input type='button' ref='reset' className='lrgButton' style={{background: '#9e9e9e'}} onClick={this.reset.bind(this)} value='Reset' />
         <input type='button' ref='specialRollsDropDown' onClick={this.dropMenu.bind(this)} className='lrgButton' style={{width: '100px'}} value='Special Rolls'/>
-        <label><input type="checkbox" ref='resetCheck' /> Save previous dice pool</label>
+        <label><input type="checkbox" ref='resetCheck' />Save dice pool</label>
       </div>
       <div style={{display: this.state.showOptions}}>
         <form onSubmit={this.critical.bind(this, 'critical')}>

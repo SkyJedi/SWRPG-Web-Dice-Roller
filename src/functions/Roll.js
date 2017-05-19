@@ -1,5 +1,5 @@
 
-function roll(diceRoll, polyhedralValue, diceOrder, symbols, symbolOrder, user) {
+function roll(diceRoll, polyhedralValue, caption, diceOrder, symbols, symbolOrder, user) {
   var diceFaces = {
         yellow: ['', 's', 's', 'ss', 'ss', 'a', 'sa', 'sa', 'sa', 'aa', 'aa', '!'],
         green: ['', 's', 's', 'ss', 'a', 'a', 'sa', 'aa'],
@@ -67,7 +67,6 @@ function roll(diceRoll, polyhedralValue, diceOrder, symbols, symbolOrder, user) 
       message += polyhedralRoll[n] + ' ';
     }
 
-    message += '<br>';
     for(var l=0; symbolOrder.length > l; l++){
       var count = 0;
       for(var m=0; sides.length > m; m++){
@@ -78,35 +77,51 @@ function roll(diceRoll, polyhedralValue, diceOrder, symbols, symbolOrder, user) 
       rolledSymbols[symbolOrder[l]] = count;
     }
     var number = 0;
+    var symbolMessage = ''
+    var tooltip = '';
     if (rolledSymbols['s'] > rolledSymbols['f']) {
       number = rolledSymbols['s'] - rolledSymbols['f'];
-      message += printsymbols(number, 'success');
+      if (number !== 0) {tooltip += number + '-Success_';}
+      symbolMessage += printsymbols(number, 'success');
     } else {
       number = rolledSymbols['f'] - rolledSymbols['s'];
-      message += printsymbols(number, 'fail');
+      if (number !== 0) {tooltip += number + '-Failure_';}
+      symbolMessage += printsymbols(number, 'fail');
     }
     if (rolledSymbols['a'] > rolledSymbols['t']) {
       number = rolledSymbols['a'] - rolledSymbols['t'];
-      message += printsymbols(number, 'advantage');
+      if (number !== 0) {tooltip += number + '-Advantage_';}
+      symbolMessage += printsymbols(number, 'advantage');
     } else {
       number = rolledSymbols['t'] - rolledSymbols['a'];
-      message += printsymbols(number, 'threat');
+      if (number !== 0) {tooltip += number + '-Threat_';}
+      symbolMessage += printsymbols(number, 'threat');
     }
     if (rolledSymbols['!'] !== 0) {
       number = rolledSymbols['!'];
-      message += printsymbols(number, 'triumph');
+      tooltip += number + '-Triumph_';
+      symbolMessage += printsymbols(number, 'triumph');
     }
     if (rolledSymbols['d'] !== 0) {
       number = rolledSymbols['d'];
-      message += printsymbols(number, 'despair');
+      tooltip += number + '-Despair_';
+      symbolMessage += printsymbols(number, 'despair');
     }
     if (rolledSymbols['l'] !== 0) {
       number = rolledSymbols['l'];
-      message += printsymbols(number, 'lightside');
+      tooltip += number + '-Lightside_';
+      symbolMessage += printsymbols(number, 'lightside');
     }
     if (rolledSymbols['n'] !== 0) {
       number = rolledSymbols['n'];
-      message += printsymbols(number, 'darkside');
+      tooltip += number + '-Darkside_';
+      symbolMessage += printsymbols(number, 'darkside');
+    }
+    tooltip = tooltip.slice(0, -1);
+    message += `<br><span title=${tooltip}>` + symbolMessage + `</span>`;
+
+    if (caption !== '') {
+      message += `<span> ${caption} </span>`;
     }
     return [message, rollResults];
   }
