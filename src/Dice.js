@@ -16,7 +16,6 @@ class Dice extends Component {
     super(props);
     this.state = {
       diceRoll: {},
-      rollRef: firebase.database().ref().child(`${channel}`).child('roll'),
       message: {},
       messageRef: firebase.database().ref().child(`${channel}`).child('message'),
       showOptions: 'none',
@@ -27,11 +26,6 @@ class Dice extends Component {
 
   componentDidMount() {
     this.reset();
-    this.state.rollRef.on('value', snap => {
-      this.setState({
-        diceRoll: snap.val()
-        });
-      });
     this.state.optionsRef.on('value', snap => {
       this.setState({
         showOptions: snap.val()
@@ -40,15 +34,22 @@ class Dice extends Component {
   }
 
   addDie(diceColor) {
-    this.state.rollRef.child(diceColor).set(this.state.diceRoll[diceColor]+1);
+    let diceRoll = Object.assign({}, this.state.diceRoll);
+    diceRoll[diceColor] += 1;
+    this.setState({diceRoll});
+    console.log(this.state.diceRoll);
+
   }
   removeDie(diceColor) {
     if (this.state.diceRoll[diceColor] > 0) {
-      this.state.rollRef.child(diceColor).set(this.state.diceRoll[diceColor]-1);
+      let diceRoll = Object.assign({}, this.state.diceRoll);
+      diceRoll[diceColor] -= 1;
+      this.setState({diceRoll});
+      console.log(this.state.diceRoll);
     }
   }
   reset() {
-    this.state.rollRef.set({yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0});
+    this.setState({diceRoll: {yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0}});
     diceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', 'white'];
     this.state.optionsRef.set('none');
     this.refs.caption.value = '';
@@ -56,7 +57,7 @@ class Dice extends Component {
   expandExtras() {
     if (diceOrder.length < 8) {
       diceOrder.push('success', 'advantage', 'triumph', 'fail', 'threat', 'despair', 'lightside', 'darkside');
-      this.state.rollRef.set({yellow:this.state.diceRoll['yellow'], green:this.state.diceRoll['green'], blue:this.state.diceRoll['blue'], red:this.state.diceRoll['red'], purple:this.state.diceRoll['purple'], black:this.state.diceRoll['black'], white:this.state.diceRoll['white'], polyhedral:this.state.diceRoll['polyhedral'], success:0, advantage:0, triumph:0, fail:0, threat:0, despair:0, lightside:0, darkside:0});
+      this.setState({diceRoll:{yellow:this.state.diceRoll['yellow'], green:this.state.diceRoll['green'], blue:this.state.diceRoll['blue'], red:this.state.diceRoll['red'], purple:this.state.diceRoll['purple'], black:this.state.diceRoll['black'], white:this.state.diceRoll['white'], polyhedral:this.state.diceRoll['polyhedral'], success:0, advantage:0, triumph:0, fail:0, threat:0, despair:0, lightside:0, darkside:0}});
     } else {
       this.reset();
     }

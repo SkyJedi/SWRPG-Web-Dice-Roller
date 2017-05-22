@@ -4,9 +4,10 @@
   "private": true,
   "dependencies": {
     "firebase": "^3.9.0",
+    "prop-types": "^15.5.10",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
-    "react-popup": "^0.7.1"
+    "react-popup": "^0.8.0"
   },
   "devDependencies": {
     "react-scripts": "0.9.5"
