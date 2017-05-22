@@ -97,7 +97,9 @@ class Dice extends Component {
     }
 
   destinyRoll(){
-    var destinyResult = rolldice.roll({white:1}, this.refs.polyhedral.value, diceOrder, symbols, symbolOrder, user);
+    var destinyResult = rolldice.roll({white:1}, this.refs.polyhedral.value, '', diceOrder, symbols, symbolOrder, user);
+    console.log(destinyResult);
+
     var message = destinyResult[0] + `<br/> Adding to the Destiny Pool`;
     destinyResult = destinyResult[1]['white'][0];
     switch(destinyResult) {
