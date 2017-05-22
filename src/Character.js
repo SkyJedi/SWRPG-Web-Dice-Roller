@@ -111,18 +111,23 @@ class Character extends Component {
         } else {
           modifier = (modifier).replace(/\D/g, '');
         }
-        if (stat === 'currentWounds' && modifier >= this.state.currentCharacter['maxWounds']) {
+        if (stat === 'currentWounds' && +modifier >= +this.state.currentCharacter['maxWounds']) {
           setIncap['wounds'] = true;
         }
-        if (stat === 'currentWounds' && modifier < this.state.currentCharacter['maxWounds']) {
+        if (stat === 'currentWounds' && +modifier < +this.state.currentCharacter['maxWounds']) {
           setIncap['wounds'] = false;
         }
-        if (stat === 'currentStrain' && modifier >= this.state.currentCharacter['maxStrain']) {
+        if (stat === 'currentStrain' && +modifier >= +this.state.currentCharacter['maxStrain']) {
           setIncap['strain'] = true;
         }
-        if (stat === 'currentStrain' && modifier < this.state.currentCharacter['maxStrain']) {
+        if (stat === 'currentStrain' && +modifier < +this.state.currentCharacter['maxStrain']) {
           setIncap['strain'] = false;
         }
+        console.log(modifier >= this.state.currentCharacter['maxWounds']);
+        console.log(modifier);
+        console.log(stat);
+        console.log(setIncap);
+
         this.state.currentCharacterRef.child(stat).set(modifier);
         this.state.characterRef.child(key).child(stat).set(modifier);
       }
