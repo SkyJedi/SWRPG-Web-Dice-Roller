@@ -50,14 +50,14 @@ class Character extends Component {
   }
 
   Remove() {
-    this.getcurrenyKey();
+    this.getcurrentKey();
     if (Object.keys(this.state.character).length > 1) {
       this.state.characterRef.child(key).remove();
-      this.state.currentCharacterRef.remove();
+      this.setState({currentCharacter: ''});
       this.previous();
     } else {
       this.state.characterRef.child(key).remove();
-      this.state.currentCharacterRef.set({name: 'No Characters', currentWounds: 0, maxWounds: 0, currentStrain: 0, maxStrain: 0, credits: 0, imageURL: '/images/crest.png', incapacitated: '#ecf0f1'});
+      this.setState({currentCharacter: {name: 'No Characters', currentWounds: 0, maxWounds: 0, currentStrain: 0, maxStrain: 0, credits: 0, imageURL: '/images/crest.png', incapacitated: '#ecf0f1'}});
     }
   }
 
@@ -72,8 +72,8 @@ class Character extends Component {
     } else {
       position--;
     }
-    key = Object.keys(this.state.character)[position];
-    this.state.currentCharacterRef.set(this.state.character[key]);
+    let currentCharacter = this.state.character[Object.keys(this.state.character)[position]];
+    this.setState({currentCharacter});
   }
 
   next() {
@@ -82,13 +82,13 @@ class Character extends Component {
     } else {
       position++;
     }
-    key = Object.keys(this.state.character)[position];
-    this.state.currentCharacterRef.set(this.state.character[key]);
+    let currentCharacter = this.state.character[Object.keys(this.state.character)[position]];
+    this.setState({currentCharacter});
   }
 
   modifyStats(e) {
     e.preventDefault();
-    this.getcurrenyKey();
+    this.getcurrentKey();
     var modifyStat = {
       currentWounds: this.refs.currentWounds.value,
       currentStrain: this.refs.currentStrain.value,
@@ -145,7 +145,7 @@ class Character extends Component {
       this.state.characterRef.child(key).child('incapacitated').set('#ecf0f1');
     }
   }
-  getcurrenyKey() {
+  getcurrentKey() {
     for (var i = 0; i < Object.keys(this.state.character).length; i++) {
       if (JSON.stringify(this.state.character[Object.keys(this.state.character)[i]]) === JSON.stringify(this.state.currentCharacter)) {
         key = Object.keys(this.state.character)[i];
