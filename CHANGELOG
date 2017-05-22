@@ -1,3 +1,7 @@
+1.1.0
+  -user based dicepool,
+  -removed reset of symbols and special rolls on roll
+
 1.0.10
   -caption and tooltip
 

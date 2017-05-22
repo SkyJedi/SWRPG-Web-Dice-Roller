@@ -19,39 +19,30 @@ class Dice extends Component {
       message: {},
       messageRef: firebase.database().ref().child(`${channel}`).child('message'),
       showOptions: 'none',
-      optionsRef: firebase.database().ref().child(`${channel}`).child('options'),
       destinyRef: firebase.database().ref().child(`${channel}`).child('destiny')
     };
   }
 
   componentDidMount() {
     this.reset();
-    this.state.optionsRef.on('value', snap => {
-      this.setState({
-        showOptions: snap.val()
-        });
-      });
   }
 
   addDie(diceColor) {
     let diceRoll = Object.assign({}, this.state.diceRoll);
     diceRoll[diceColor] += 1;
     this.setState({diceRoll});
-    console.log(this.state.diceRoll);
-
   }
   removeDie(diceColor) {
     if (this.state.diceRoll[diceColor] > 0) {
       let diceRoll = Object.assign({}, this.state.diceRoll);
       diceRoll[diceColor] -= 1;
       this.setState({diceRoll});
-      console.log(this.state.diceRoll);
     }
   }
   reset() {
-    this.setState({diceRoll: {yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0}});
+    this.setState({diceRoll: {yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0, success:0, advantage:0, triumph:0, fail:0, threat:0, despair:0, lightside:0, darkside:0}});
     diceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', 'white'];
-    this.state.optionsRef.set('none');
+    this.setState({showOptions: 'none'});
     this.refs.caption.value = '';
   }
   expandExtras() {
@@ -59,16 +50,17 @@ class Dice extends Component {
       diceOrder.push('success', 'advantage', 'triumph', 'fail', 'threat', 'despair', 'lightside', 'darkside');
       this.setState({diceRoll:{yellow:this.state.diceRoll['yellow'], green:this.state.diceRoll['green'], blue:this.state.diceRoll['blue'], red:this.state.diceRoll['red'], purple:this.state.diceRoll['purple'], black:this.state.diceRoll['black'], white:this.state.diceRoll['white'], polyhedral:this.state.diceRoll['polyhedral'], success:0, advantage:0, triumph:0, fail:0, threat:0, despair:0, lightside:0, darkside:0}});
     } else {
-      this.reset();
+      this.setState({diceRoll:{yellow:this.state.diceRoll['yellow'], green:this.state.diceRoll['green'], blue:this.state.diceRoll['blue'], red:this.state.diceRoll['red'], purple:this.state.diceRoll['purple'], black:this.state.diceRoll['black'], white:this.state.diceRoll['white'], polyhedral:this.state.diceRoll['polyhedral'], success:0, advantage:0, triumph:0, fail:0, threat:0, despair:0, lightside:0, darkside:0}});
+      diceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', 'white'];
     }
   }
 
 
   dropMenu() {
     if (this.state.showOptions !== 'none'){
-      this.state.optionsRef.set('none');
+      this.setState({showOptions: 'none'});
     } else {
-      this.state.optionsRef.set('inline-block');
+      this.setState({showOptions: 'inline-block'});
     }
   }
 
@@ -93,7 +85,7 @@ class Dice extends Component {
         this.state.messageRef.push().set(message);
       }
       if (this.refs.resetCheck.checked === false){
-        this.reset()
+        this.setState({diceRoll: {yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0, success:0, advantage:0, triumph:0, fail:0, threat:0, despair:0, lightside:0, darkside:0}});
       }
     }
 
