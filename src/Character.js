@@ -7,10 +7,6 @@ import './popup.css';
 
 var channel = window.location.pathname.slice(1).toLowerCase();
 var position, key;
-var setIncap = {
-    wounds: false,
-    strain: false
-  };
 
 class Character extends Component {
   constructor(props) {
@@ -21,7 +17,7 @@ class Character extends Component {
       character: {},
       characterRef: firebase.database().ref().child(`${channel}`).child('character'),
       currentCharacter: {},
-      currentCharacterRef: firebase.database().ref().child(`${channel}`).child('currentCharacter'),
+      incapacitated: 'none',
     };
   }
 
@@ -31,17 +27,7 @@ class Character extends Component {
         character: snap.val()
         });
       });
-    this.state.currentCharacterRef.on('value', snap => {
-      if (snap.val() != null) {
-      this.setState({
-        currentCharacter: snap.val()
-        });
-      } else {
-        this.setState({
-          currentCharacter: {name: 'No Characters', currentWounds: 0, maxWounds: 0, currentStrain: 0, maxStrain: 0, credits: 0, imageURL: '/images/crest.png', incapacitated: '#ecf0f1'}
-          });
-      }
-    });
+
     position = 0;
   }
 
@@ -53,11 +39,10 @@ class Character extends Component {
     this.getcurrentKey();
     if (Object.keys(this.state.character).length > 1) {
       this.state.characterRef.child(key).remove();
-      this.setState({currentCharacter: ''});
       this.previous();
     } else {
       this.state.characterRef.child(key).remove();
-      this.setState({currentCharacter: {name: 'No Characters', currentWounds: 0, maxWounds: 0, currentStrain: 0, maxStrain: 0, credits: 0, imageURL: '/images/crest.png', incapacitated: '#ecf0f1'}});
+      this.setState({currentCharacter: {name: 'No Characters', currentWounds: 0, maxWounds: 0, currentStrain: 0, maxStrain: 0, credits: 0, imageURL: '/images/crest.png'}});
     }
   }
 
@@ -74,6 +59,7 @@ class Character extends Component {
     }
     let currentCharacter = this.state.character[Object.keys(this.state.character)[position]];
     this.setState({currentCharacter});
+    this.checkIncap(currentCharacter);
   }
 
   next() {
@@ -84,6 +70,16 @@ class Character extends Component {
     }
     let currentCharacter = this.state.character[Object.keys(this.state.character)[position]];
     this.setState({currentCharacter});
+    this.checkIncap(currentCharacter);
+  }
+
+  checkIncap(currentCharacter) {
+    console.log(currentCharacter);
+    if (currentCharacter['currentWounds'] >= currentCharacter['maxWounds']  || currentCharacter['currentStrain'] >= currentCharacter['maxStrain']) {
+      this.setState({incapacitated: 'block'});
+    } else {
+      this.setState({incapacitated: 'none'});
+    }
   }
 
   modifyStats(e) {
@@ -94,6 +90,7 @@ class Character extends Component {
       currentStrain: this.refs.currentStrain.value,
       credits: this.refs.credits.value
     };
+    let currentCharacter = Object.assign({}, this.state.currentCharacter);
     for (var j = 0; j < Object.keys(modifyStat).length; j++) {
       var stat = Object.keys(modifyStat)[j];
       var modifier = modifyStat[stat];
@@ -111,40 +108,20 @@ class Character extends Component {
         } else {
           modifier = +(modifier).replace(/\D/g, '');
         }
-        if (stat === 'currentWounds' && modifier >= this.state.currentCharacter['maxWounds']) {
-          setIncap['wounds'] = true;
-        }
-        if (stat === 'currentWounds' && modifier < this.state.currentCharacter['maxWounds']) {
-          setIncap['wounds'] = false;
-        }
-        if (stat === 'currentStrain' && modifier >= this.state.currentCharacter['maxStrain']) {
-          setIncap['strain'] = true;
-        }
-        if (stat === 'currentStrain' && modifier < this.state.currentCharacter['maxStrain']) {
-          setIncap['strain'] = false;
-        }
-        this.state.currentCharacterRef.child(stat).set(modifier);
-        this.state.characterRef.child(key).child(stat).set(modifier);
-      }
-    }
-    this.checkIncap();
+        currentCharacter[stat] = modifier;
     this.refs.currentWounds.blur();
     this.refs.currentStrain.blur();
     this.refs.credits.blur();
     this.refs.currentWounds.value = '';
     this.refs.currentStrain.value = '';
     this.refs.credits.value = '';
-  }
-
-  checkIncap() {
-    if (setIncap['wounds'] === true || setIncap['strain'] === true) {
-      this.state.currentCharacterRef.child('incapacitated').set('red');
-      this.state.characterRef.child(key).child('incapacitated').set('red');
-    } else {
-      this.state.currentCharacterRef.child('incapacitated').set('#ecf0f1');
-      this.state.characterRef.child(key).child('incapacitated').set('#ecf0f1');
+    this.setState({currentCharacter});
+    this.state.characterRef.child(key).set(currentCharacter);
+    this.checkIncap(currentCharacter);
     }
   }
+}
+
   getcurrentKey() {
     for (var i = 0; i < Object.keys(this.state.character).length; i++) {
       if (JSON.stringify(this.state.character[Object.keys(this.state.character)[i]]) === JSON.stringify(this.state.currentCharacter)) {
@@ -171,7 +148,7 @@ class Character extends Component {
         <div style={{lineHeight: '1.6'}}>
           <b style={{fontSize: '25px', color: 'black', textAlign: 'center', padding: '5px'}}>{this.state.currentCharacter['name']}</b>
           <br />
-          <b style={{fontSize: '25px', color: this.state.currentCharacter['incapacitated'], display: 'block'}}>Incapacitated</b>
+          <b style={{fontSize: '25px', color: 'red', display: this.state.incapacitated}}>Incapacitated</b>
         </div>
 
           <div style={{float: 'right', marginLeft: '10px', textAlign: 'left'}}>

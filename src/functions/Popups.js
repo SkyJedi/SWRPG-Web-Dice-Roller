@@ -28,13 +28,11 @@ var characterPop = Popup.register({
                               maxStrain: document.getElementById('maxStrain').value,
                               credits: document.getElementById('credits').value,
                               imageURL: document.getElementById('imageURL').value,
-                              incapacitated: '#ecf0f1',
                             };
                 if (character['imageURL'] === '') {
                   character['imageURL'] = '/images/crest.png';
                 }
                 firebase.database().ref().child(`${channel}`).child('character').push().set(character);
-                firebase.database().ref().child(`${channel}`).child('currentCharacter').set(character)
                 Popup.alert(character['name'] + ' has been successfully added!');
                 Popup.close();
             }
