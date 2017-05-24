@@ -25,7 +25,7 @@ class Channel extends Component {
       </form>
         <div style={{paddingTop: '2em'}}>
           <span>Created by SkyJedi</span> <div />
-          <h6>An assistant (dice roller, destiny tracking, chat) for Fantasy Flight Games, Star Wars: Edge of the Empire, Age of Rebellion, and Force and Destiny</h6>
+          <h6>An assistant (dice roller, destiny tracking, chat, character tracker) for Fantasy Flight Games, Star Wars: Edge of the Empire, Age of Rebellion, and Force and Destiny</h6>
         </div>
       </div>
     );

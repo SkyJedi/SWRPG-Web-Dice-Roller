@@ -15,7 +15,7 @@ class Character extends Component {
       messageRef: firebase.database().ref().child(`${channel}`).child('message'),
       character: {},
       characterRef: firebase.database().ref().child(`${channel}`).child('character'),
-      currentCharacter: {},
+      currentCharacter: '',
       incapacitated: 'none',
     };
   }
@@ -25,7 +25,7 @@ class Character extends Component {
       this.setState({
         character: snap.val()
         });
-      if ((Object.keys(this.state.currentCharacter).length === 0) && (Object.keys(this.state.character).length > 0)) {
+      if ((this.state.currentCharacter === '') && (this.state.character !== null)) {
         this.previous();
       }
     });
