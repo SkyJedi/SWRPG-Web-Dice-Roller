@@ -1,3 +1,6 @@
+1.1.1
+  -user specific current character and popup confirmation on deleting a character
+  
 1.1.0
   -user based dicepool,
   -removed reset of symbols and special rolls on roll

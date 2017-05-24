@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Popup from 'react-popup';
-import Popups from './functions/Popups.js';
 import * as firebase from 'firebase';
 import './index.css';
 import './popup.css';
@@ -34,7 +33,43 @@ class Character extends Component {
   }
 
   setNew() {
-    Popup.queue(Popups.characterPop);
+    Popup.create({
+        title: 'New Character',
+        content:
+        <div style={{textAlign: 'center'}}>
+          <input className='textinput' style={{textAlign: 'center'}} id='charName' placeholder='Character Name' />
+          <input className='textinput' style={{textAlign: 'center'}} id='maxWounds' placeholder='Max Wounds' />
+          <input className='textinput' style={{textAlign: 'center'}} id='maxStrain' placeholder='Max Strain' />
+          <input className='textinput' style={{textAlign: 'center'}} id='credits' placeholder='Credits' />
+          <input className='textinput' style={{textAlign: 'center'}} id='imageURL' placeholder='Image URL' />
+        </div>,
+        buttons: {
+            left: ['cancel'],
+            right: [{
+                text: 'Save',
+                className: 'success',
+                action: () => {
+                    let currentCharacter = {
+                                  name: document.getElementById('charName').value,
+                                  currentWounds: 0,
+                                  maxWounds: document.getElementById('maxWounds').value,
+                                  currentStrain: 0,
+                                  maxStrain: document.getElementById('maxStrain').value,
+                                  credits: document.getElementById('credits').value,
+                                  imageURL: document.getElementById('imageURL').value,
+                                };
+                    if (currentCharacter['imageURL'] === '') {
+                      currentCharacter['imageURL'] = '/images/crest.png';
+                    }
+                    this.state.characterRef.push().set(currentCharacter);
+                    this.setState({currentCharacter});
+                    Popup.alert(currentCharacter['name'] + ' has been successfully added!');
+                    Popup.close();
+                }
+            }]
+
+        }
+    });
   }
 
   Remove() {
@@ -48,10 +83,24 @@ class Character extends Component {
     }
   }
 
-  popupChange(stat) {
-    Popup.queue(Popups.popupURLChange);
-
+  popupDeleteCharacter() {
+    Popup.create({
+    title: 'Delete Character',
+    content: 'Are you sure, this will delete ' + this.state.currentCharacter['name'],
+    className: 'alert',
+    buttons: {
+        left: ['cancel'],
+        right: [{
+            text: 'DELETE',
+            className: 'danger',
+            action: () => {
+              this.Remove();
+              Popup.close();
+            }
+        }]
+    }});
   }
+
 
   previous() {
     if (position - 1 < 0) {
@@ -132,17 +181,14 @@ class Character extends Component {
     }
   }
 
-
   render() {
     return (
 
-
       <div className='dice-box' style={{margin: '5px', marginTop: '40px', Width: '350px', minHeight: '225px', display: 'block', textAlign: 'center'}}>
         <img className='characterimage' ref='imageURL' style={{float: 'right', marginRight: '5px'}} src={this.state.currentCharacter['imageURL']} alt=''/>
-
         <div style={{float: 'left'}}>
           <button className='btnAdd' style={{width: '50px'}} onClick={this.setNew.bind(this)}>+</button>
-          <button className='btnAdd' style={{width: '50px'}} onClick={this.Remove.bind(this)}>-</button>
+          <button className='btnAdd' style={{width: '50px'}} onClick={this.popupDeleteCharacter.bind(this)}>-</button>
           <button className='btnAdd' style={{width: '50px'}} onClick={this.previous.bind(this)}>←</button>
           <button className='btnAdd' style={{width: '50px'}} onClick={this.next.bind(this)}>→</button>
         </div>
