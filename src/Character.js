@@ -26,8 +26,10 @@ class Character extends Component {
       this.setState({
         character: snap.val()
         });
-      });
-
+      if ((Object.keys(this.state.currentCharacter).length === 0) && (Object.keys(this.state.character).length > 0)) {
+        this.previous();
+      }
+    });
     position = 0;
   }
 
@@ -74,7 +76,6 @@ class Character extends Component {
   }
 
   checkIncap(currentCharacter) {
-    console.log(currentCharacter);
     if (currentCharacter['currentWounds'] >= currentCharacter['maxWounds']  || currentCharacter['currentStrain'] >= currentCharacter['maxStrain']) {
       this.setState({incapacitated: 'block'});
     } else {
