@@ -57,16 +57,16 @@ class Destiny extends Component {
       <div className='App' style={{width: '550px'}}>
         <div className="destiny-box">
           <div style={{float: 'left', marginLeft: 6}}>
-            <button className='btnAdd' onClick={this.destinyAdd.bind(this)}>↑</button>
-            <button className='btnAdd' onClick={this.destinyRemove.bind(this)}>↓</button>
+            <button className='btnAdd' onClick={this.destinyAdd.bind(this)}>+</button>
+            <button className='btnAdd' onClick={this.destinyRemove.bind(this)}>-</button>
           </div>
           <div style={{marginLeft: '45px'}}>
             {Object.entries(this.state.destinyPoint).map(([k,v])=>
               <span
-              className='tokens'
               key={k}
               onClick={this.flip.bind(this, v, k)}>
               <img
+                className='tokens'
                 src={`/images/${v}.png`}
                 alt={v} />
               </span>

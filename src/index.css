@@ -74,7 +74,7 @@ h1 {
 .tokens  {
     width:  60px;
     height: 60px;
-    padding: 0px;
+    padding: 2px;
 }
 
 .diceface  {
@@ -145,7 +145,7 @@ input[type=text], select {
   width: 70px;
   height: 30px;
   cursor: pointer;
-  margin: 2px;
+  margin: 3px;
   padding: 4px;
   vertical-align: middle;
   border-radius: 1px;

@@ -187,10 +187,10 @@ class Character extends Component {
       <div className='dice-box' style={{margin: '5px', marginTop: '40px', Width: '350px', minHeight: '225px', display: 'block', textAlign: 'center'}}>
         <img className='characterimage' ref='imageURL' style={{float: 'right', marginRight: '5px'}} src={this.state.currentCharacter['imageURL']} alt=''/>
         <div style={{float: 'left'}}>
-          <button className='btnAdd' style={{width: '50px'}} onClick={this.setNew.bind(this)}>+</button>
-          <button className='btnAdd' style={{width: '50px'}} onClick={this.popupDeleteCharacter.bind(this)}>-</button>
-          <button className='btnAdd' style={{width: '50px'}} onClick={this.previous.bind(this)}>←</button>
-          <button className='btnAdd' style={{width: '50px'}} onClick={this.next.bind(this)}>→</button>
+          <button className='btnAdd' onClick={this.setNew.bind(this)}>+</button>
+          <button className='btnAdd' onClick={this.popupDeleteCharacter.bind(this)}>-</button>
+          <button className='btnAdd' onClick={this.previous.bind(this)}>←</button>
+          <button className='btnAdd' onClick={this.next.bind(this)}>→</button>
         </div>
         <div style={{lineHeight: '1.6'}}>
           <b style={{fontSize: '25px', color: 'black', textAlign: 'center', padding: '5px'}}>{this.state.currentCharacter['name']}</b>

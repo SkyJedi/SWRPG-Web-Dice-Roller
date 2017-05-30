@@ -8,6 +8,7 @@ import Dice from './Dice';
 import Chat from './Chat';
 import Character from './Character';
 import TopBar from './TopBar';
+import Initiative from './Initiative.js'
 import './index.css';
 import * as firebase from 'firebase';
 import config from './config';
@@ -43,6 +44,7 @@ function startUp () {
       <Chat />
     </div>
     <Destiny />
+    <Initiative />
     <Dice />
     <Message />
   </div>;

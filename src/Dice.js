@@ -117,7 +117,7 @@ class Dice extends Component {
 
   render() {
     return (
-      <div style={{width: '525px'}}>
+      <div style={{topMargin: '5px', width: '525px'}}>
       {diceOrder.map((diceColor) =>
         <div key={diceColor} className='dice-box' style={{marginLeft:6}}>
           <div style={{float: 'left', marginLeft: 0, padding: 0}}>
