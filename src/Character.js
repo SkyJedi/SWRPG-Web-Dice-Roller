@@ -198,7 +198,7 @@ class Character extends Component {
           <b style={{fontSize: '25px', color: 'red', display: this.state.incapacitated}}>Incapacitated</b>
         </div>
 
-          <div style={{float: 'right', marginLeft: '10px', textAlign: 'left'}}>
+          <div style={{marginLeft: '70px', textAlign: 'left'}}>
             <div>
               <form onSubmit={this.modifyStats.bind(this)}><input className='textinput' ref='currentWounds' placeholder={this.state.currentCharacter['currentWounds']} style={{width: '50px', textAlign: 'center'}}/>
               <b style={{marginLeft: '10px', fontSize: '20px', color: 'Black'}}>/ {this.state.currentCharacter['maxWounds']} Wounds</b>

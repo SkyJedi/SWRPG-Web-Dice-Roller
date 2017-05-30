@@ -1,10 +1,10 @@
 
 function roll(diceRoll, polyhedralValue, caption, diceOrder, symbols, symbolOrder, user) {
   var diceFaces = {
-        yellow: ['', 's', 's', 'ss', 'ss', 'a', 'sa', 'sa', 'sa', 'aa', 'aa', '!'],
+        yellow: ['', 's', 's', 'ss', 'ss', 'a', 'sa', 'sa', 'sa', 'aa', 'aa', '!s'],
         green: ['', 's', 's', 'ss', 'a', 'a', 'sa', 'aa'],
         blue: ['', '', 's', 'sa', 'aa', 'a'],
-        red: ['', 'f', 'f', 'ff', 'ff', 't', 't', 'ft', 'ft', 'tt', 'tt', 'd'],
+        red: ['', 'f', 'f', 'ff', 'ff', 't', 't', 'ft', 'ft', 'tt', 'tt', 'df'],
         purple: ['', 'f', 'ff', 't', 't', 't', 'tt', 'ft'],
         black: ['', '', 'f', 'f', 't', 't'],
         white: ['n', 'n', 'n', 'n', 'n', 'n', 'nn', 'l', 'l', 'll', 'll', 'll']
@@ -12,10 +12,10 @@ function roll(diceRoll, polyhedralValue, caption, diceOrder, symbols, symbolOrde
       symbolFaces = {
         success: 's',
         advantage: 'a',
-        triumph: '!',
+        triumph: '!s',
         fail: 'f',
         threat: 't',
-        despair: 'd',
+        despair: 'df',
         lightside: 'l',
         darkside: 'n'
       },
