@@ -196,7 +196,7 @@ total() {
             )}
           </div>
         </div>
-        <button type="button" style={{marginBottom: '0.5em'}}onClick={this.slideOut.bind(this)} className='lrgButton'>Show Initiative</button>
+        <button type="button" style={{marginBottom: '0.5em'}}onClick={this.slideOut.bind(this)} className='lrgButton'>Toggle Initiative</button>
         <span>Round: {this.state.position.round}<nsbr/> Turn: {this.state.position.turn}</span>
       </div>
     );
