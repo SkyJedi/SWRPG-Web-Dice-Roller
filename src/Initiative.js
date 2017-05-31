@@ -12,14 +12,9 @@ class Initiative extends Component {
       message: {},
       messageRef: firebase.database().ref().child(`${channel}`).child('message'),
       InitiativeRef: firebase.database().ref().child(`${channel}`).child('Initiative'),
-      Initiative: {
-        order: {},
-        total: 0,
-        turn: 1,
-        round: 1,
-        rolls: [],
-        newslot: [],
-    },
+      Initiative: {},
+      position: {},
+      positionRef: firebase.database().ref().child(`${channel}`).child('Initiative').child('position'),
     };
   }
 
@@ -43,8 +38,21 @@ class Initiative extends Component {
         });
       } else {
         this.setState({
-          Initiative: {
-            order: 0,
+          Initiative: 0
+        });
+      }
+    });
+
+    this.state.positionRef.on('value', snap => {
+      if (snap.val() != null) {
+      this.setState({
+        position: snap.val()
+        });
+      } else {
+        this.setState({
+          position: {
+            Round: 1,
+            Turn: 1
           }
         });
       }
@@ -60,18 +68,18 @@ slideOut() {
 }
 
 InitiativeAdd() {
-  this.state.InitiativeRef.child('order').push().set('PC');
+  this.state.InitiativeRef.push().set('PC');
 }
 InitiativeRemove() {
-  if (this.state.Initiative.order !== 0) {
-    this.state.InitiativeRef.child('order').child(Object.keys(this.state.Initiative.order)[Object.keys(this.state.Initiative.order).length-1]).remove();
+  if (this.state.Initiative !== 0) {
+    this.state.InitiativeRef.child(Object.keys(this.state.Initiative)[Object.keys(this.state.Initiative).length-1]).remove();
   }
 }
 flip (v, k) {
   if (v === 'PC') {
-    this.state.InitiativeRef.child('order').child(k).set('NPC');
+    this.state.InitiativeRef.child(k).set('NPC');
   } else {
-    this.state.InitiativeRef.child('order').child(k).set('PC');
+    this.state.InitiativeRef.child(k).set('PC');
   }
 }
 
@@ -89,7 +97,7 @@ flip (v, k) {
 
           </div>
           <div style={{marginLeft: '45px'}}>
-            {Object.entries(this.state.Initiative.order).map(([k,v])=>
+            {Object.entries(this.state.Initiative).map(([k,v])=>
               <span
               key={k}
               onClick={this.flip.bind(this, v, k)}>
@@ -102,7 +110,7 @@ flip (v, k) {
           </div>
         </div>
         <button type="button" style={{marginBottom: '0.5em'}}onClick={this.slideOut.bind(this)} className='lrgButton'>Show Initiative</button>
-        <span>Round: {this.state.Initiative.round}<nsbr/> Turn: {this.state.Initiative.turn}</span>
+        <span>Round: {this.state.position.Round}<nsbr/> Turn: {this.state.position.Turn}</span>
       </div>
     );
   }
