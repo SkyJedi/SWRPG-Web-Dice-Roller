@@ -198,3 +198,15 @@ input[type=text], select {
     max-height: 70px;
     padding: 2px;
 }
+
+.left {
+    float: left;
+    max-width: 550px;
+    margin: 0;
+}
+
+.right {
+    margin-left: 550px;
+    width: 360px;
+    overflow: hidden;
+}

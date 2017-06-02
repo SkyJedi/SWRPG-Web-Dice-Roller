@@ -183,8 +183,7 @@ class Character extends Component {
 
   render() {
     return (
-
-      <div className='dice-box' style={{margin: '5px', marginTop: '40px', Width: '350px', minHeight: '225px', display: 'block', textAlign: 'center'}}>
+      <div className='dice-box' style={{margin: '5px', marginTop: '40px', minHeight: '225px', display: 'block', textAlign: 'center'}}>
         <img className='characterimage' ref='imageURL' style={{float: 'right', marginRight: '5px'}} src={this.state.currentCharacter['imageURL']} alt=''/>
         <div style={{float: 'left'}}>
           <button className='btnAdd' onClick={this.setNew.bind(this)}>+</button>
@@ -216,9 +215,7 @@ class Character extends Component {
               </form>
             </div>
           </div>
-
       </div>
-
     )
   }
 }

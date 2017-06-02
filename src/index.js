@@ -37,16 +37,18 @@ function setChanPage () {
 
 function startUp () {
   var webApp =
-  <div style={{minWidth: '900px'}}>
-    <div style={{float: 'right', display: 'block'}}>
+  <div style={{minWidth:'950px'}}>
+    <div className='left'>
+      <Destiny />
+      <Initiative />
+      <Dice />
+      <Message />
+    </div>
+    <div className='right'>
       <TopBar />
       <Character />
       <Chat />
     </div>
-    <Destiny />
-    <Initiative />
-    <Dice />
-    <Message />
   </div>;
 
 

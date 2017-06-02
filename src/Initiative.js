@@ -172,7 +172,7 @@ total() {
             <button onClick={this.InitiativeRemove.bind(this)} className='btnAdd' style={{display: 'inline-block'}}>-</button>
             <button onClick={this.InitiativePrevious.bind(this)}className='btnAdd' style={{display: 'inline-block'}}>←</button>
           </div>
-          <div style={{marginLeft: '45px'}}>
+          <div style={{marginLeft: '85px'}}>
             {Object.entries(this.state.Initiative).map(([k,v])=>
               <span
               key={k}
