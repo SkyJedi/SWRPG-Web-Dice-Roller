@@ -155,7 +155,7 @@ class Dice extends Component {
         <input className='textinput' ref='caption' name='caption' placeholder='caption' style={{width: '70px', paddingLeft: '5px'}}/>
         <input type='button' ref='reset' className='lrgButton' style={{background: '#9e9e9e'}} onClick={this.reset.bind(this)} value='Reset' />
         <input type='button' ref='specialRollsDropDown' onClick={this.dropMenu.bind(this)} className='lrgButton' style={{width: '100px'}} value='Special Rolls'/>
-        <label><input type="checkbox" ref='resetCheck' />Save dice pool</label>
+        <label className='switch'><input type='checkbox' ref='resetCheck'/><div className='slider round'></div></label>&nbsp;<b>Save Pool</b>
       </div>
       <div style={{display: this.state.showOptions}}>
         <form onSubmit={this.critical.bind(this, 'critical')}>
