@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Popup from 'react-popup';
 import * as firebase from 'firebase';
 import './index.css';
 
@@ -141,20 +142,75 @@ InitiativeNext() {
   this.state.InitiativePastRef.set(InitiativePast);
 }
 
-flip (v, k) {
-  if (v === 'PC') {
-    this.state.InitiativeRef.child(k).set('NPC');
+flip (v, k, time) {
+  if (time === 'current') {
+    if (v === 'PC') {
+      this.state.InitiativeRef.child(k).set('NPC');
+    } else {
+      this.state.InitiativeRef.child(k).set('PC');
+    }
   } else {
-    this.state.InitiativeRef.child(k).set('PC');
+      if (v === 'PC') {
+        this.state.InitiativePastRef.child(k).set('NPC');
+      } else {
+        this.state.InitiativePastRef.child(k).set('PC');
+      }
   }
 }
 
-flipPast (v, k) {
-  if (v === 'PC') {
-    this.state.InitiativePastRef.child(k).set('NPC');
+Remove (v, k, time) {
+  if (time === 'current') {
+      this.state.InitiativeRef.child(k).remove();
   } else {
-    this.state.InitiativePastRef.child(k).set('PC');
+      this.state.InitiativePastRef.child(k).remove();
   }
+}
+
+Reset () {
+  firebase.database().ref().child(`${channel}`).child('Initiative').remove();
+}
+
+popupModifyInitiativeSlot(v,k,time) {
+  Popup.create({
+  title: 'Modify Initiative Slot',
+  content: 'What would like to do to this Initiative Slot?',
+  className: 'alert',
+  buttons: {
+      left: [{
+          text: 'DELETE',
+          className: 'danger',
+          action: () => {
+            this.Remove(v,k,time);
+            Popup.close();
+          }
+      }],
+
+      right: [{
+          text: 'Flip',
+          action: () => {
+            this.flip(v,k,time);
+            Popup.close();
+          }
+      }]
+  }});
+}
+
+popupReset() {
+  Popup.create({
+  title: 'Reset Initiative',
+  content: 'Would you like to reset Initiative?',
+  className: 'alert',
+  buttons: {
+      left: ['cancel'],
+      right: [{
+          text: 'RESET',
+          className: 'danger',
+          action: () => {
+            this.Reset();
+            Popup.close();
+          }
+      }],
+  }});
 }
 
 total() {
@@ -176,7 +232,7 @@ total() {
             {Object.entries(this.state.Initiative).map(([k,v])=>
               <span
               key={k}
-              onClick={this.flip.bind(this, v, k)}>
+              onClick={this.popupModifyInitiativeSlot.bind(this, v, k, 'current')}>
               <img
                 src={`/images/${v}.png`}
                 alt={v}
@@ -187,7 +243,7 @@ total() {
             {Object.entries(this.state.InitiativePast).map(([k,v])=>
               <span
               key={k}
-              onClick={this.flipPast.bind(this, v, k)}>
+              onClick={this.popupModifyInitiativeSlot.bind(this, v, k, 'past')}>
               <img
                 src={`/images/${v}.png`}
                 alt={v}
@@ -195,10 +251,13 @@ total() {
               </span>
             )}
           </div>
+          <br/>
+          <button type="button" className='lrgButton' style={{marginBottom: '0.5em', fontSize: '14px', background: '#9e9e9e'}} onClick={this.popupReset.bind(this)} >Reset Initiative</button>
+          <b>Round: {this.state.position.round}<nsbr/> Turn: {this.state.position.turn}</b>
+
         </div>
-        <button type="button" style={{marginBottom: '0.5em'}}onClick={this.slideOut.bind(this)} className='lrgButton'>Toggle Initiative</button>
-        <b>Round: {this.state.position.round}<nsbr/> Turn: {this.state.position.turn}</b>
-      </div>
+        <button type="button" style={{marginBottom: '0.5em', fontSize: '14px'}}onClick={this.slideOut.bind(this)} className='lrgButton'>Toggle Initiative</button>
+    </div>
     );
   }
 }

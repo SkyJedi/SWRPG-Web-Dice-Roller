@@ -123,7 +123,7 @@ function roll(diceRoll, polyhedralValue, caption, diceOrder, symbols, symbolOrde
     if (caption !== '') {
       message += `<span> ${caption} </span>`;
     }
-    return [message, rollResults];
+    return [message, rollResults, rolledSymbols];
   }
 
   function printsymbols (number, symbol) {

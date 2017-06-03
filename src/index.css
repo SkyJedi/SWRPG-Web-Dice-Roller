@@ -216,7 +216,7 @@ input[type=text], select {
   position: relative;
   vertical-align: middle;
   display: inline-block;
-  width: 48px;
+  width: 55px;
   height: 28px;
 }
 
@@ -257,9 +257,9 @@ input:focus + .slider {
 }
 
 input:checked + .slider:before {
-  -webkit-transform: translateX(20px);
-  -ms-transform: translateX(20px);
-  transform: translateX(20px);
+  -webkit-transform: translateX(27px);
+  -ms-transform: translateX(27px);
+  transform: translateX(27px);
 }
 
 /* Rounded sliders */

@@ -32,6 +32,7 @@ class Dice extends Component {
     diceRoll[diceColor] += 1;
     this.setState({diceRoll});
   }
+
   removeDie(diceColor) {
     if (this.state.diceRoll[diceColor] > 0) {
       let diceRoll = Object.assign({}, this.state.diceRoll);
@@ -39,12 +40,14 @@ class Dice extends Component {
       this.setState({diceRoll});
     }
   }
+
   reset() {
     this.setState({diceRoll: {yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0, success:0, advantage:0, triumph:0, fail:0, threat:0, despair:0, lightside:0, darkside:0}});
     diceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', 'white'];
     this.setState({showOptions: 'none'});
     this.refs.caption.value = '';
   }
+
   expandExtras() {
     if (diceOrder.length < 8) {
       diceOrder.push('success', 'advantage', 'triumph', 'fail', 'threat', 'despair', 'lightside', 'darkside');
@@ -54,7 +57,6 @@ class Dice extends Component {
       diceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', 'white'];
     }
   }
-
 
   dropMenu() {
     if (this.state.showOptions !== 'none'){
@@ -114,6 +116,19 @@ class Dice extends Component {
     this.state.messageRef.push().set(message);
   }
 
+  initiativeRoll() {
+      var initiativeResult = rolldice.roll(this.state.diceRoll, this.refs.polyhedral.value, this.refs.caption.value, diceOrder, symbols, symbolOrder, user);
+      var message = initiativeResult[0];
+      var initiativeRoll = initiativeResult[2];
+      console.log(initiativeRoll);
+      if (message !== undefined) {
+        this.state.messageRef.push().set(message);
+      }
+      if (this.refs.resetCheck.checked === false){
+        this.setState({diceRoll: {yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0, success:0, advantage:0, triumph:0, fail:0, threat:0, despair:0, lightside:0, darkside:0}});
+      }
+    }
+
 
   render() {
     return (
@@ -164,6 +179,16 @@ class Dice extends Component {
           <input className='textinput' ref='modifier' name='modifier' placeholder='modifier' style={{width: '70px', paddingLeft: '5px'}}/>
         </form>
           <input type='button' style={{width: '100px'}} ref='destinyRoll' className='lrgButton' onClick={this.destinyRoll.bind(this)} value='Roll Destiny' />
+          <br/>
+          <input type='button' style={{width: '100px'}} ref='initiativeRoll' className='lrgButton' onClick={this.initiativeRoll.bind(this)} value='Roll Initiative' />
+          <span>PC</span>&nbsp;
+          <label className='switch'>
+          <input type='checkbox' ref='pcCheck'/>
+          <div className='slider round'>
+          </div>
+          </label>&nbsp;
+          <span>NPC</span>
+
       </div>
       <div/>
     </div>
