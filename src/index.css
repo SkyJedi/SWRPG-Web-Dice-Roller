@@ -2,6 +2,7 @@ body {
   margin: 0;
   padding: 0;
   font: normal Tahoma, Geneva, sans-serif;
+  background-color: #F7F7F7;
 }
 
 h1 {
@@ -25,9 +26,13 @@ h1 {
 }
 
 .destiny-box {
-  min-height: 80px;
-  max-width: 550px;
+  min-height: 70px;
+  max-width: 525px;
   margin-top: 0.5em;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #969595;
+  box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.3);
 }
 
 .textinput {
@@ -104,14 +109,14 @@ input[type=text], select {
   height: 70px;
   padding: 0px;
   overflow: hidden;
-  border: none;
   font: normal 23px/1 Tahoma, Geneva, sans-serif;
-  color: rgba(255,255,255,1);
   text-align: center;
   text-overflow: ellipsis;
   letter-spacing: 1px;
-  background: #ecf0f1;
-  box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.3) ;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #969595;
+  box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.3);
 }
 
 .dice-amount {
@@ -171,15 +176,14 @@ input[type=text], select {
   margin: 5px;
   padding: 4px;
   overflow: hidden;
-  border: none;
-  font: normal 18px/16px Tahoma, Geneva, sans-serif;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #969595;
+  box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.3);  font: normal 18px/16px Tahoma, Geneva, sans-serif;
   color: rgba(0,0,0,1);
   text-indent: 2px;
   -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
-  background: #ecf0f1;
-  -webkit-box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.3) ;
-  box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.3) ;
   text-shadow: 1px 1px 1px rgba(0,0,0,0.2) ;
 }
 
@@ -216,7 +220,7 @@ input[type=text], select {
   position: relative;
   vertical-align: middle;
   display: inline-block;
-  width: 55px;
+  width: 45px;
   height: 28px;
 }
 
@@ -257,9 +261,9 @@ input:focus + .slider {
 }
 
 input:checked + .slider:before {
-  -webkit-transform: translateX(27px);
-  -ms-transform: translateX(27px);
-  transform: translateX(27px);
+  -webkit-transform: translateX(17px);
+  -ms-transform: translateX(17px);
+  transform: translateX(17px);
 }
 
 /* Rounded sliders */

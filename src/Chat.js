@@ -43,7 +43,7 @@ class Chat extends Component {
         </form>
         <div className='messagebox' style={{maxHeight: '350px', maxWidth: '350px'}}>
           {Object.entries(this.state.chat).reverse().map(([k,v])=>
-            <div className='message' style={{maxWidth: '20em', minHeight: '0px', lineHeight: 1.2}} key={k}>
+            <div className='message' style={{maxWidth: '18em', minHeight: '0px', lineHeight: 1.2}} key={k}>
             <div>{v}</div>
             </div>
           )}

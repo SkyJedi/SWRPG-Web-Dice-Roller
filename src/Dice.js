@@ -182,7 +182,7 @@ class Dice extends Component {
         <input className='textinput' ref='caption' name='caption' placeholder='caption' style={{width: '70px', paddingLeft: '5px'}}/>
         <input type='button' ref='reset' className='lrgButton' style={{background: '#9e9e9e'}} onClick={this.reset.bind(this)} value='Reset' />
         <input type='button' ref='specialRollsDropDown' onClick={this.dropMenu.bind(this)} className='lrgButton' style={{width: '100px'}} value='Special Rolls'/>
-        <label className='switch'><input type='checkbox' ref='resetCheck'/><div className='slider round'></div></label>&nbsp;<b>Save Pool</b>
+        <label className='switch'><input type='checkbox' ref='resetCheck'/><div className='slider round'></div></label>&nbsp;<span>Save Pool</span>
       </div>
       <div style={{display: this.state.showOptions}}>
         <form onSubmit={this.critical.bind(this, 'critical')}>
@@ -193,7 +193,7 @@ class Dice extends Component {
           <input type='button' style={{width: '100px'}} ref='destinyRoll' className='lrgButton' onClick={this.destinyRoll.bind(this)} value='Roll Destiny' />
           <br/>
           <input type='button' style={{width: '100px'}} ref='initiativeRoll' className='lrgButton' onClick={this.initiativeRoll.bind(this)} value='Roll Initiative' />
-          <span>PC</span>&nbsp;
+          &nbsp;<span>PC</span>&nbsp;
           <label className='switch'><input type='checkbox' ref='pcCheck'/><div className='slider round'></div></label>&nbsp;
           <span>NPC</span>
       </div>

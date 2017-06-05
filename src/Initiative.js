@@ -15,7 +15,7 @@ class Initiative extends Component {
       InitiativeRef: firebase.database().ref().child(`${channel}`).child('Initiative').child('order'),
       Initiative: [],
       InitiativePastRef: firebase.database().ref().child(`${channel}`).child('Initiative').child('past'),
-      InitiativePast: {},
+      InitiativePast: [],
       position: {},
       positionRef: firebase.database().ref().child(`${channel}`).child('Initiative').child('position'),
     };
@@ -31,8 +31,8 @@ class Initiative extends Component {
       });
       final.reverse();
       if (final != null) {
-      this.setState({
-        Initiative: final
+        this.setState({
+          Initiative: final
         });
       } else {
         this.setState({
@@ -50,8 +50,8 @@ class Initiative extends Component {
       });
       final.reverse();
       if (final != null) {
-      this.setState({
-        InitiativePast: final
+        this.setState({
+          InitiativePast: final
         });
       } else {
         this.setState({
@@ -235,43 +235,33 @@ popupReset() {
   render() {
     return (
       <div>
-        <div className='destiny-box' style={{display: this.state.slideout}}>
-          <div style={{float: 'left', marginLeft: 6}}>
+        <div className='destiny-box' style={{display: this.state.slideout, minHeight: '150px'}}>
+          <div style={{maxWidth: '90px', float: 'left', marginLeft: '6px'}}>
             <button onClick={this.InitiativeAdd.bind(this)} className='btnAdd' style={{display: 'inline-block'}}>+</button>
             <button onClick={this.InitiativeNext.bind(this)}className='btnAdd' style={{display: 'inline-block'}}>→</button>
             <br/>
             <button onClick={this.InitiativeRemove.bind(this)} className='btnAdd' style={{display: 'inline-block'}}>-</button>
             <button onClick={this.InitiativePrevious.bind(this)}className='btnAdd' style={{display: 'inline-block'}}>←</button>
+            <br/>
+            <button type="button" className='lrgButton' style={{marginBottom: '0.25em', fontSize: '14px', background: '#9e9e9e', margin: '0', width: '58px'}} onClick={this.popupReset.bind(this)} >Reset Initiative</button>
+            <br/>
+            <b>Round: {this.state.position.round}<br/>Turn: {this.state.position.turn}</b>
           </div>
-          <div style={{marginLeft: '85px'}}>
+          <div style={{marginLeft: '90px'}}>
             {this.state.Initiative.map((slot)=>
-              <span
-              key={slot.key}
-              onClick={this.popupModifyInitiativeSlot.bind(this, slot, 'current')}>
-              <img
-                src={`/images/${slot.type}.png`}
-                alt={slot.type}
-                className='tokens' />
+              <span key={slot.key} onClick={this.popupModifyInitiativeSlot.bind(this, slot, 'current')}>
+              <img src={`/images/${slot.type}.png`} alt={slot.type} className='tokens' style={{height: '50px', width:'50px'}}/>
               </span>
             )}
-            <img src={`/images/repeat.png`} alt='' className='tokens' />
-            {Object.entries(this.state.InitiativePast).map(([k,v])=>
-              <span
-              key={k}
-              onClick={this.popupModifyInitiativeSlot.bind(this, v, k, 'past')}>
-              <img
-                src={`/images/${v['type']}.png`}
-                alt={v}
-                className='tokens' />
+            <img src={`/images/repeat.png`} alt='' className='tokens' style={{height: '50px', width:'50px'}}/>
+            {this.state.InitiativePast.map((slot)=>
+              <span key={slot.key} onClick={this.popupModifyInitiativeSlot.bind(this, slot, 'past')}>
+              <img src={`/images/${slot.type}.png`} alt={slot.type} className='tokens' style={{height: '50px', width:'50px'}}/>
               </span>
             )}
           </div>
-          <br/>
-          <button type="button" className='lrgButton' style={{marginBottom: '0.5em', fontSize: '14px', background: '#9e9e9e'}} onClick={this.popupReset.bind(this)} >Reset Initiative</button>
-          <b>Round: {this.state.position.round}<nsbr/> Turn: {this.state.position.turn}</b>
-
         </div>
-        <button type="button" style={{marginBottom: '0.5em', fontSize: '14px', height: '15px', width: '55px'}}onClick={this.slideOut.bind(this)} className='lrgButton'>Initiative</button>
+        <button type="button" style={{margin: '0.5em', fontSize: '14px', height: '15px', width: '55px'}}onClick={this.slideOut.bind(this)} className='lrgButton'>Initiative</button>
     </div>
     );
   }
