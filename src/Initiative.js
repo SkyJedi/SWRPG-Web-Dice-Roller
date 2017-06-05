@@ -13,7 +13,7 @@ class Initiative extends Component {
       message: {},
       messageRef: firebase.database().ref().child(`${channel}`).child('message'),
       InitiativeRef: firebase.database().ref().child(`${channel}`).child('Initiative').child('order'),
-      Initiative: {},
+      Initiative: [],
       InitiativePastRef: firebase.database().ref().child(`${channel}`).child('Initiative').child('past'),
       InitiativePast: {},
       position: {},
@@ -22,22 +22,17 @@ class Initiative extends Component {
   }
 
   componentDidMount() {
-    this.state.messageRef.on('value', snap => {
-      if (snap.val() != null) {
+    this.state.InitiativeRef.orderByChild('roll').on('value', snap => {
+      let final = [];
+      snap.forEach(function(child) {
+        let temp = child.val();
+        temp['key'] = child.key;
+        final.push(temp);
+      });
+      final.reverse();
+      if (final != null) {
       this.setState({
-        message: snap.val()
-        });
-      } else {
-        this.setState({
-          message: 0
-          });
-      }
-    });
-
-    this.state.InitiativeRef.on('value', snap => {
-      if (snap.val() != null) {
-      this.setState({
-        Initiative: snap.val()
+        Initiative: final
         });
       } else {
         this.setState({
@@ -46,10 +41,17 @@ class Initiative extends Component {
       }
     });
 
-    this.state.InitiativePastRef.on('value', snap => {
-      if (snap.val() != null) {
+    this.state.InitiativePastRef.orderByChild('roll').on('value', snap => {
+      let final = [];
+      snap.forEach(function(child) {
+        let temp = child.val();
+        temp['key'] = child.key;
+        final.push(temp);
+      });
+      final.reverse();
+      if (final != null) {
       this.setState({
-        InitiativePast: snap.val()
+        InitiativePast: final
         });
       } else {
         this.setState({
@@ -83,86 +85,104 @@ slideOut() {
 }
 
 InitiativeAdd() {
-  this.state.InitiativeRef.push().set('PC');
+  let i;
+  if (this.state.Initiative.length > 0) {
+    i = (+(this.state.Initiative[this.state.Initiative.length-1].roll)-10).toString();
+  } else {
+    i = 0;
+  }
+  this.state.InitiativeRef.push().set({type: 'PC', roll: i});
 }
 
 InitiativeRemove() {
   if (this.state.Initiative !== 0) {
-    this.state.InitiativeRef.child(Object.keys(this.state.Initiative)[Object.keys(this.state.Initiative).length-1]).remove();
+    this.state.InitiativeRef.child((this.state.Initiative[this.state.Initiative.length-1]).key).remove();
   }
 }
 
 InitiativePrevious() {
   let position = Object.assign({}, this.state.position);
-  let Initiative = Object.assign({}, this.state.Initiative);
-  let InitiativePast = Object.assign({}, this.state.InitiativePast);
+  let Initiative = this.state.Initiative;
+  let InitiativePast = this.state.InitiativePast;
   if (position.turn === 1 && position.round === 1) {
     return;
   }
-  if (this.total() === 0) {
-    position.turn = 1;
-    position.round = 1;
-  } else if (position.turn - 1 < 1) {
-    position.turn = this.total();
+  if (position.turn - 1 < 1) {
+    position.turn = this.state.Initiative.length + this.state.InitiativePast.length;
     position.round--;
     InitiativePast = Initiative;
-    Initiative = {};
-    Initiative[Object.keys(InitiativePast)[Object.keys(InitiativePast).length-1]] = Object.values(InitiativePast)[Object.values(InitiativePast).length-1];
-    delete InitiativePast[Object.keys(InitiativePast)[Object.keys(InitiativePast).length-1]];
+    Initiative = [InitiativePast.pop()];
   } else {
     position.turn--;
-    Initiative[Object.keys(InitiativePast)[Object.keys(InitiativePast).length-1]] = Object.values(InitiativePast)[Object.values(InitiativePast).length-1];
-    delete InitiativePast[Object.keys(InitiativePast)[Object.keys(InitiativePast).length-1]];
+    Initiative.unshift(InitiativePast.pop());
   }
   this.state.positionRef.set(position);
-  this.state.InitiativeRef.set(Initiative);
-  this.state.InitiativePastRef.set(InitiativePast);
+  this.state.InitiativeRef.set(this.objectify(Initiative));
+  this.state.InitiativePastRef.set(this.objectify(InitiativePast));
 }
 
 InitiativeNext() {
-  if (this.total() === 0) {
+  if (this.state.Initiative.length + this.state.InitiativePast.length === 0) {
     return;
   }
   let position = Object.assign({}, this.state.position);
-  let Initiative = Object.assign({}, this.state.Initiative);
-  let InitiativePast = Object.assign({}, this.state.InitiativePast);
-  if (position.turn >= this.total()) {
+  let Initiative = this.state.Initiative;
+  let InitiativePast = this.state.InitiativePast;
+  if (position.turn >= this.state.Initiative.length + this.state.InitiativePast.length) {
     position.turn = 1;
     position.round++;
-    InitiativePast[Object.keys(Initiative)[0]] = Object.values(Initiative)[0];
+    InitiativePast.push(Initiative.shift());
     Initiative = InitiativePast;
     InitiativePast = 0;
   } else {
     position.turn++;
-    InitiativePast[Object.keys(Initiative)[0]] = Object.values(Initiative)[0];
-    delete Initiative[Object.keys(Initiative)[0]];
+    InitiativePast.push(Initiative.shift());
   }
   this.state.positionRef.set(position);
-  this.state.InitiativeRef.set(Initiative);
-  this.state.InitiativePastRef.set(InitiativePast);
+  this.state.InitiativeRef.set(this.objectify(Initiative));
+  this.state.InitiativePastRef.set(this.objectify(InitiativePast));
 }
 
-flip (v, k, time) {
+objectify(array) {
+  if (array === 0) {return 0;}
+  let object = {};
+  array.forEach(function(slot) {
+    let key = slot.key;
+    delete slot.key;
+    object[key] = slot;
+  });
+  return object;
+}
+
+flip (slot, time) {
   if (time === 'current') {
-    if (v === 'PC') {
-      this.state.InitiativeRef.child(k).set('NPC');
+    if (slot.type === 'PC') {
+      this.state.InitiativeRef.child(slot.key).update({'type': 'NPC'});
+      this.state.InitiativeRef.child(slot.key).update({'roll': (+slot.roll-1).toString()});
+
     } else {
-      this.state.InitiativeRef.child(k).set('PC');
+      this.state.InitiativeRef.child(slot.key).update({'type': 'PC'});
+      this.state.InitiativeRef.child(slot.key).update({'roll': (+slot.roll+1).toString()});
+
     }
   } else {
-      if (v === 'PC') {
-        this.state.InitiativePastRef.child(k).set('NPC');
+      if (slot.type === 'PC') {
+        this.state.InitiativePastRef.child(slot.key).update({'type': 'NPC'});
+        this.state.InitiativeRef.child(slot.key).update({'roll': (+slot.roll-1).toString()});
+
       } else {
-        this.state.InitiativePastRef.child(k).set('PC');
+        this.state.InitiativePastRef.child(slot.key).update({'type': 'PC'});
+        this.state.InitiativeRef.child(slot.key).update({'roll': (+slot.roll+1).toString()});
+
       }
   }
 }
 
-Remove (v, k, time) {
+Remove (slot, time) {
   if (time === 'current') {
-      this.state.InitiativeRef.child(k).remove();
+      this.state.InitiativeRef.child(slot.key).remove();
   } else {
-      this.state.InitiativePastRef.child(k).remove();
+      this.state.InitiativePastRef.child(slot.key).remove();
   }
 }
 
@@ -170,7 +190,7 @@ Reset () {
   firebase.database().ref().child(`${channel}`).child('Initiative').remove();
 }
 
-popupModifyInitiativeSlot(v,k,time) {
+popupModifyInitiativeSlot(slot, time) {
   Popup.create({
   title: 'Modify Initiative Slot',
   content: 'What would like to do to this Initiative Slot?',
@@ -180,7 +200,7 @@ popupModifyInitiativeSlot(v,k,time) {
           text: 'DELETE',
           className: 'danger',
           action: () => {
-            this.Remove(v,k,time);
+            this.Remove(slot,time);
             Popup.close();
           }
       }],
@@ -188,7 +208,7 @@ popupModifyInitiativeSlot(v,k,time) {
       right: [{
           text: 'Flip',
           action: () => {
-            this.flip(v,k,time);
+            this.flip(slot,time);
             Popup.close();
           }
       }]
@@ -212,11 +232,6 @@ popupReset() {
       }],
   }});
 }
-
-total() {
-  return (Object.keys(this.state.Initiative).length + Object.keys(this.state.InitiativePast).length);
-}
-
   render() {
     return (
       <div>
@@ -229,13 +244,13 @@ total() {
             <button onClick={this.InitiativePrevious.bind(this)}className='btnAdd' style={{display: 'inline-block'}}>←</button>
           </div>
           <div style={{marginLeft: '85px'}}>
-            {Object.entries(this.state.Initiative).map(([k,v])=>
+            {this.state.Initiative.map((slot)=>
               <span
-              key={k}
-              onClick={this.popupModifyInitiativeSlot.bind(this, v, k, 'current')}>
+              key={slot.key}
+              onClick={this.popupModifyInitiativeSlot.bind(this, slot, 'current')}>
               <img
-                src={`/images/${v}.png`}
-                alt={v}
+                src={`/images/${slot.type}.png`}
+                alt={slot.type}
                 className='tokens' />
               </span>
             )}
@@ -245,7 +260,7 @@ total() {
               key={k}
               onClick={this.popupModifyInitiativeSlot.bind(this, v, k, 'past')}>
               <img
-                src={`/images/${v}.png`}
+                src={`/images/${v['type']}.png`}
                 alt={v}
                 className='tokens' />
               </span>
@@ -256,7 +271,7 @@ total() {
           <b>Round: {this.state.position.round}<nsbr/> Turn: {this.state.position.turn}</b>
 
         </div>
-        <button type="button" style={{marginBottom: '0.5em', fontSize: '14px'}}onClick={this.slideOut.bind(this)} className='lrgButton'>Toggle Initiative</button>
+        <button type="button" style={{marginBottom: '0.5em', fontSize: '14px', height: '15px', width: '55px'}}onClick={this.slideOut.bind(this)} className='lrgButton'>Initiative</button>
     </div>
     );
   }

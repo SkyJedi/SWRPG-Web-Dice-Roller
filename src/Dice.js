@@ -19,7 +19,8 @@ class Dice extends Component {
       message: {},
       messageRef: firebase.database().ref().child(`${channel}`).child('message'),
       showOptions: 'none',
-      destinyRef: firebase.database().ref().child(`${channel}`).child('destiny')
+      destinyRef: firebase.database().ref().child(`${channel}`).child('destiny'),
+      InitiativeRef: firebase.database().ref().child(`${channel}`).child('Initiative').child('order'),
     };
   }
 
@@ -117,17 +118,28 @@ class Dice extends Component {
   }
 
   initiativeRoll() {
-      var initiativeResult = rolldice.roll(this.state.diceRoll, this.refs.polyhedral.value, this.refs.caption.value, diceOrder, symbols, symbolOrder, user);
-      var message = initiativeResult[0];
-      var initiativeRoll = initiativeResult[2];
-      console.log(initiativeRoll);
-      if (message !== undefined) {
-        this.state.messageRef.push().set(message);
-      }
-      if (this.refs.resetCheck.checked === false){
-        this.setState({diceRoll: {yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0, success:0, advantage:0, triumph:0, fail:0, threat:0, despair:0, lightside:0, darkside:0}});
-      }
+    var initiativeResult = rolldice.roll(this.state.diceRoll, this.refs.polyhedral.value, this.refs.caption.value, diceOrder, symbols, symbolOrder, user);
+    if (initiativeResult === 0){return;}
+    var message = initiativeResult[0];
+    var initiativeRoll = initiativeResult[2];
+    var newInit = {};
+    newInit.roll = (initiativeRoll.s - initiativeRoll.f).toString() + (initiativeRoll.a - initiativeRoll.t).toString() + initiativeRoll['!'].toString();
+    if (this.refs.pcCheck.checked === false) {
+      newInit.type = 'PC'
+      newInit.roll += '1'
+    } else {
+      newInit.type = 'NPC'
+      newInit.roll += '0'
+
     }
+    this.state.InitiativeRef.push().set(newInit);
+    if (message !== undefined) {
+      this.state.messageRef.push().set(message);
+    }
+    if (this.refs.resetCheck.checked === false){
+      this.setState({diceRoll: {yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0, success:0, advantage:0, triumph:0, fail:0, threat:0, despair:0, lightside:0, darkside:0}});
+    }
+  }
 
 
   render() {
@@ -182,13 +194,8 @@ class Dice extends Component {
           <br/>
           <input type='button' style={{width: '100px'}} ref='initiativeRoll' className='lrgButton' onClick={this.initiativeRoll.bind(this)} value='Roll Initiative' />
           <span>PC</span>&nbsp;
-          <label className='switch'>
-          <input type='checkbox' ref='pcCheck'/>
-          <div className='slider round'>
-          </div>
-          </label>&nbsp;
+          <label className='switch'><input type='checkbox' ref='pcCheck'/><div className='slider round'></div></label>&nbsp;
           <span>NPC</span>
-
       </div>
       <div/>
     </div>
