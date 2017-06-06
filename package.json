@@ -1,6 +1,6 @@
 {
   "name": "swrpg-web-dice-roller",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "private": true,
   "dependencies": {
     "firebase": "^3.9.0",

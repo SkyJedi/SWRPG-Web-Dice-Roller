@@ -59,7 +59,7 @@ h1 {
 .btnAdd {
   -webkit-border-radius: 8;
   -moz-border-radius: 8;
-  border-radius: 2px;
+  border-radius: 1px;
   color: #ffffff;
   font-size: 20px;
   display: block;
