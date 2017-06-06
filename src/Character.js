@@ -63,7 +63,58 @@ class Character extends Component {
                     }
                     this.state.characterRef.push().set(currentCharacter);
                     this.setState({currentCharacter});
-                    Popup.alert(currentCharacter['name'] + ' has been successfully added!');
+                    this.state.messageRef.push().set(currentCharacter['name'] + ' has been successfully added!');
+                    Popup.close();
+                }
+            }]
+
+        }
+    });
+  }
+
+  editCharacter() {
+    Popup.create({
+        title: 'Edit Character',
+        content:
+        <div>
+        <div style={{fontSize: '20px', float: 'left', lineHeight: '2.2', textAlign: 'right'}}>
+          <span style={{padding: '10px 0'}}>Character Name</span><br/>
+          <span style={{padding: '10px 0'}}>Max Wounds</span><br/>
+          <span style={{padding: '10px 0'}}>Max Strain</span><br/>
+          <span style={{padding: '10px 0'}}>Credits</span><br/>
+          <span style={{padding: '10px 0'}}>imageURL</span><br/>
+        </div>
+        <div style={{marginLeft: '135px'}}>
+          <input className='textinput' style={{textAlign: 'center', width: '10em'}} id='charName' defaultValue={this.state.currentCharacter['name']} /><br/>
+          <input className='textinput' style={{textAlign: 'center', width: '10em'}} id='maxWounds' defaultValue={this.state.currentCharacter['maxWounds']} /><br/>
+          <input className='textinput' style={{textAlign: 'center', width: '10em'}} id='maxStrain' defaultValue={this.state.currentCharacter['maxStrain']} /><br/>
+          <input className='textinput' style={{textAlign: 'center', width: '10em'}} id='credits' defaultValue={this.state.currentCharacter['credits']} /><br/>
+          <input className='textinput' style={{textAlign: 'center', width: '10em'}} id='imageURL' defaultValue={this.state.currentCharacter['imageURL']} /><br/>
+        </div>
+        </div>,
+        buttons: {
+            left: ['cancel'],
+            right: [{
+                text: 'Save',
+                className: 'success',
+                action: () => {
+                    this.getcurrentKey();
+                    let currentCharacter = {
+                                  name: document.getElementById('charName').value,
+                                  currentWounds: this.state.currentCharacter['currentWounds'],
+                                  maxWounds: document.getElementById('maxWounds').value,
+                                  currentStrain: this.state.currentCharacter['currentStrain'],
+                                  maxStrain: document.getElementById('maxStrain').value,
+                                  credits: document.getElementById('credits').value,
+                                  imageURL: document.getElementById('imageURL').value,
+                                };
+                    if (currentCharacter['imageURL'] === '') {
+                      currentCharacter['imageURL'] = '/images/crest.png';
+                    }
+                    this.setState({currentCharacter});
+                    this.state.characterRef.child(key).set(currentCharacter);
+                    this.checkIncap(currentCharacter);
+                    this.state.messageRef.push().set(currentCharacter['name'] + ' has been successfully edited!');
                     Popup.close();
                 }
             }]
@@ -76,9 +127,11 @@ class Character extends Component {
     this.getcurrentKey();
     if (Object.keys(this.state.character).length > 1) {
       this.state.characterRef.child(key).remove();
+      this.state.messageRef.push().set(this.state.currentCharacter['name'] + ' has been removed.');
       this.previous();
     } else {
       this.state.characterRef.child(key).remove();
+      this.state.messageRef.push().set(this.state.currentCharacter['name'] + ' has been removed.');
       this.setState({currentCharacter: {name: 'No Characters', currentWounds: 0, maxWounds: 0, currentStrain: 0, maxStrain: 0, credits: 0, imageURL: '/images/crest.png'}});
     }
   }
@@ -127,6 +180,7 @@ class Character extends Component {
   checkIncap(currentCharacter) {
     if (currentCharacter['currentWounds'] >= currentCharacter['maxWounds']  || currentCharacter['currentStrain'] >= currentCharacter['maxStrain']) {
       this.setState({incapacitated: 'block'});
+
     } else {
       this.setState({incapacitated: 'none'});
     }
@@ -145,18 +199,26 @@ class Character extends Component {
       var stat = Object.keys(modifyStat)[j];
       var modifier = modifyStat[stat];
       if (modifier !== '') {
-        var message ='';
+        var message = currentCharacter['name'];
         if (modifier.includes('+')) {
-          message += 'adding stat';
+          if (stat === 'credits') {message += ' earns '}
+          else {message += ' takes '}
           modifier = (modifier).replace(/\D/g, '');
+          message += (modifier + ' ' + stat.replace('current', '') + ' for a total of ');
           modifier = +this.state.currentCharacter[stat] + +modifier;
+          message += (modifier + ' ' + stat.replace('current', ''));
       	//subtraction modifier
         } else if (modifier.includes('-')) {
+          if (stat === 'credits') {message += ' spends '}
+          else {message += ' recovers '}
           modifier = (modifier).replace(/\D/g, '');
-          message += 'subtract stat';
+          message += (modifier + ' ' + stat.replace('current', '') + ' for a total of ');
           modifier = +this.state.currentCharacter[stat] - +modifier;
+          message += (modifier + ' ' + stat.replace('current', ''));
+
         } else {
           modifier = +(modifier).replace(/\D/g, '');
+          message += (' ' + stat.slice(7) + ' set to ' + modifier);
         }
         currentCharacter[stat] = modifier;
     this.refs.currentWounds.blur();
@@ -168,6 +230,8 @@ class Character extends Component {
     this.setState({currentCharacter});
     this.state.characterRef.child(key).set(currentCharacter);
     this.checkIncap(currentCharacter);
+    this.state.messageRef.push().set(message);
+
     }
   }
 }
@@ -184,7 +248,7 @@ class Character extends Component {
   render() {
     return (
       <div className='dice-box' style={{margin: '5px', marginTop: '40px', minHeight: '225px', display: 'block', textAlign: 'center'}}>
-        <img className='characterimage' ref='imageURL' style={{float: 'right', marginRight: '5px'}} src={this.state.currentCharacter['imageURL']} alt=''/>
+        <img className='characterimage' ref='imageURL' onClick={this.editCharacter.bind(this)} style={{float: 'right', marginRight: '5px'}} src={this.state.currentCharacter['imageURL']} alt=''/>
         <div style={{float: 'left'}}>
           <button className='btnAdd' onClick={this.setNew.bind(this)}>+</button>
           <button className='btnAdd' onClick={this.popupDeleteCharacter.bind(this)}>-</button>
@@ -196,20 +260,19 @@ class Character extends Component {
           <br />
           <b style={{fontSize: '25px', color: 'red', display: this.state.incapacitated}}>Incapacitated</b>
         </div>
-
           <div style={{marginLeft: '70px', textAlign: 'left'}}>
             <div>
-              <form onSubmit={this.modifyStats.bind(this)}><input className='textinput' ref='currentWounds' placeholder={this.state.currentCharacter['currentWounds']} style={{width: '50px', textAlign: 'center'}}/>
-              <b style={{marginLeft: '10px', fontSize: '20px', color: 'Black'}}>/ {this.state.currentCharacter['maxWounds']} Wounds</b>
+              <form onSubmit={this.modifyStats.bind(this)}><input className='textinput' ref='currentWounds' placeholder={this.state.currentCharacter['currentWounds']} style={{width: '40px', textAlign: 'center'}}/>
+              <b style={{fontSize: '20px', color: 'Black'}}>/{this.state.currentCharacter['maxWounds']} Wounds</b>
             </form>
             </div>
             <div>
-              <form onSubmit={this.modifyStats.bind(this)}><input className='textinput' ref='currentStrain' placeholder={this.state.currentCharacter['currentStrain']} style={{width: '50px', textAlign: 'center'}}/>
-              <b style={{marginLeft: '10px', fontSize: '20px', color: 'Black'}}>/ {this.state.currentCharacter['maxStrain']} Strain</b>
+              <form onSubmit={this.modifyStats.bind(this)}><input className='textinput' ref='currentStrain' placeholder={this.state.currentCharacter['currentStrain']} style={{width: '40px', textAlign: 'center'}}/>
+              <b style={{fontSize: '20px', color: 'Black'}}>/{this.state.currentCharacter['maxStrain']} Strain</b>
               </form>
             </div>
             <div>
-              <form onSubmit={this.modifyStats.bind(this)}><input className='textinput' ref='credits' placeholder={this.state.currentCharacter['credits']} style={{width: '50px', textAlign: 'center'}}/>
+              <form onSubmit={this.modifyStats.bind(this)}><input className='textinput' ref='credits' placeholder={this.state.currentCharacter['credits']} style={{width: '40px', textAlign: 'center'}}/>
               <b style={{marginLeft: '10px', fontSize: '20px', color: 'Black'}}> Credits</b>
               <button className='btnAdd' style={{width: '75px', marginLeft:'40px', display: 'inline-block'}}>Update</button>
               </form>
