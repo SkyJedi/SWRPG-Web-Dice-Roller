@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import * as firebase from 'firebase';
 import './index.css';
-
+import Popup from 'react-popup';
+import './popup.css';
 var channel = window.location.pathname.slice(1).toLowerCase(),
     user = window.location.search.slice(1);
 
@@ -34,6 +35,24 @@ class Chat extends Component {
     this.refs.chatInput.value = '';
   }
 
+  popupDeleteMessage(key) {
+    Popup.create({
+    title: 'Delete Message',
+    content: 'Are you sure, this will delete this message',
+    className: 'alert',
+    buttons: {
+        left: ['cancel'],
+        right: [{
+            text: 'DELETE',
+            className: 'danger',
+            action: () => {
+              this.state.chatRef.child(key).remove();
+              Popup.close();
+            }
+        }]
+    }});
+  }
+
   render() {
     return (
       <div className='App' style={{margin: '5px'}}>
@@ -44,6 +63,7 @@ class Chat extends Component {
         <div className='messagebox' style={{maxHeight: '350px', maxWidth: '350px'}}>
           {Object.entries(this.state.chat).reverse().map(([k,v])=>
             <div className='message' style={{maxWidth: '18em', minHeight: '0px', lineHeight: 1.2}} key={k}>
+            <button onClick={this.popupDeleteMessage.bind(this, k)} style={{float: 'right', height: '20px', width: '20px', background: 'none', color: '#969595', fontSize: '12px', border: 'none'}}>X</button>
             <div>{v}</div>
             </div>
           )}
