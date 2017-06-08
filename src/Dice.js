@@ -185,9 +185,9 @@ class Dice extends Component {
         <label className='switch'><input type='checkbox' ref='resetCheck'/><div className='slider round'></div></label>&nbsp;<span>Save Pool</span>
       </div>
       <div style={{display: this.state.showOptions}}>
-        <form onSubmit={this.critical.bind(this, 'critical')}>
-          <button className='lrgButton' style={{width: '100px'}}>Critical</button>
-          <button className='lrgButton' style={{width: '100px'}}>Ship Critical</button>
+        <form>
+          <button onClick={this.critical.bind(this, 'critical')} className='lrgButton' style={{width: '100px'}}>Critical</button>
+          <button onClick={this.critical.bind(this, 'shipcrit')}className='lrgButton' style={{width: '100px'}}>Ship Critical</button>
           <input className='textinput' ref='modifier' name='modifier' placeholder='modifier' style={{width: '70px', paddingLeft: '5px'}}/>
         </form>
           <input type='button' style={{width: '100px'}} ref='destinyRoll' className='lrgButton' onClick={this.destinyRoll.bind(this)} value='Roll Destiny' />
