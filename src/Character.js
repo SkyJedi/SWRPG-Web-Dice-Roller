@@ -178,7 +178,7 @@ class Character extends Component {
   }
 
   checkIncap(currentCharacter) {
-    if (currentCharacter['currentWounds'] >= currentCharacter['maxWounds']  || currentCharacter['currentStrain'] >= currentCharacter['maxStrain']) {
+    if (currentCharacter['currentWounds'] > currentCharacter['maxWounds']  || currentCharacter['currentStrain'] > currentCharacter['maxStrain']) {
       this.setState({incapacitated: 'block'});
 
     } else {
