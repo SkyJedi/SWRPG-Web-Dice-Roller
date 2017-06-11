@@ -5,7 +5,7 @@ import './index.css';
 import './popup.css';
 
 var channel = window.location.pathname.slice(1).toLowerCase();
-var position, key;
+var position;
 
 class Character extends Component {
   constructor(props) {
@@ -22,9 +22,10 @@ class Character extends Component {
 
   componentDidMount() {
     this.state.characterRef.on('value', snap => {
-      this.setState({
-        character: snap.val()
-        });
+      this.setState({character: snap.val()});
+      if (this.state.currentCharacter !== '') {
+        this.setState({currentCharacter: snap.val()[this.getcurrentKey()]});
+      }
       if ((this.state.currentCharacter === '') && (this.state.character !== null)) {
         this.previous();
       }
@@ -57,12 +58,12 @@ class Character extends Component {
                                   maxStrain: document.getElementById('maxStrain').value,
                                   credits: document.getElementById('credits').value,
                                   imageURL: document.getElementById('imageURL').value,
+                                  key: this.genKey(),
                                 };
                     if (currentCharacter['imageURL'] === '') {
                       currentCharacter['imageURL'] = '/images/crest.png';
                     }
                     this.state.characterRef.push().set(currentCharacter);
-                    this.setState({currentCharacter});
                     this.state.messageRef.push().set(currentCharacter['name'] + ' has been successfully added!');
                     Popup.close();
                 }
@@ -98,7 +99,6 @@ class Character extends Component {
                 text: 'Save',
                 className: 'success',
                 action: () => {
-                    this.getcurrentKey();
                     let currentCharacter = {
                                   name: document.getElementById('charName').value,
                                   currentWounds: this.state.currentCharacter['currentWounds'],
@@ -107,12 +107,16 @@ class Character extends Component {
                                   maxStrain: document.getElementById('maxStrain').value,
                                   credits: document.getElementById('credits').value,
                                   imageURL: document.getElementById('imageURL').value,
+                                  key: this.state.currentCharacter['key'],
                                 };
                     if (currentCharacter['imageURL'] === '') {
                       currentCharacter['imageURL'] = '/images/crest.png';
                     }
-                    this.setState({currentCharacter});
-                    this.state.characterRef.child(key).set(currentCharacter);
+
+                    if (currentCharacter['key'] === undefined) {
+                      currentCharacter['key'] = this.genKey()
+                    }
+                    this.state.characterRef.child(this.getcurrentKey()).set(currentCharacter);
                     this.checkIncap(currentCharacter);
                     this.state.messageRef.push().set(currentCharacter['name'] + ' has been successfully edited!');
                     Popup.close();
@@ -124,13 +128,12 @@ class Character extends Component {
   }
 
   Remove() {
-    this.getcurrentKey();
     if (Object.keys(this.state.character).length > 1) {
-      this.state.characterRef.child(key).remove();
+      this.state.characterRef.child(this.getcurrentKey()).remove();
       this.state.messageRef.push().set(this.state.currentCharacter['name'] + ' has been removed.');
       this.previous();
     } else {
-      this.state.characterRef.child(key).remove();
+      this.state.characterRef.child(this.getcurrentKey()).remove();
       this.state.messageRef.push().set(this.state.currentCharacter['name'] + ' has been removed.');
       this.setState({currentCharacter: {name: 'No Characters', currentWounds: 0, maxWounds: 0, currentStrain: 0, maxStrain: 0, credits: 0, imageURL: '/images/crest.png'}});
     }
@@ -188,7 +191,6 @@ class Character extends Component {
 
   modifyStats(e) {
     e.preventDefault();
-    this.getcurrentKey();
     var modifyStat = {
       currentWounds: this.refs.currentWounds.value,
       currentStrain: this.refs.currentStrain.value,
@@ -227,8 +229,7 @@ class Character extends Component {
     this.refs.currentWounds.value = '';
     this.refs.currentStrain.value = '';
     this.refs.credits.value = '';
-    this.setState({currentCharacter});
-    this.state.characterRef.child(key).set(currentCharacter);
+    this.state.characterRef.child(this.getcurrentKey()).set(currentCharacter);
     this.checkIncap(currentCharacter);
     this.state.messageRef.push().set(message);
 
@@ -237,12 +238,21 @@ class Character extends Component {
 }
 
   getcurrentKey() {
-    for (var i = 0; i < Object.keys(this.state.character).length; i++) {
-      if (JSON.stringify(this.state.character[Object.keys(this.state.character)[i]]) === JSON.stringify(this.state.currentCharacter)) {
-        key = Object.keys(this.state.character)[i];
-        break;
+    let currentCharacter = Object.assign({}, this.state.currentCharacter);
+    let character = Object.assign({}, this.state.character);
+    for (var i = 0; i < Object.keys(character).length; i++) {
+      if (character[Object.keys(character)[i]]['key'] === currentCharacter.key) {
+        return Object.keys(character)[i];
       }
     }
+  }
+
+  genKey() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for( var i=0; i < 15; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    return text;
   }
 
   render() {
