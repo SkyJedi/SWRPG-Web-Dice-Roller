@@ -7,6 +7,7 @@ import './popup.css';
 var channel = window.location.pathname.slice(1).toLowerCase();
 var position;
 
+
 class Character extends Component {
   constructor(props) {
     super(props);
@@ -49,9 +50,9 @@ class Character extends Component {
         content:
         <div style={{textAlign: 'center'}}>
           <input className='textinput' style={{textAlign: 'center'}} id='charName' placeholder='Character Name' />
-          <input className='textinput' style={{textAlign: 'center'}} id='maxWounds' placeholder='Max Wounds' />
-          <input className='textinput' style={{textAlign: 'center'}} id='maxStrain' placeholder='Max Strain' />
-          <input className='textinput' style={{textAlign: 'center'}} id='credits' placeholder='Credits' />
+          <input className='textinput' type='number' style={{textAlign: 'center'}} id='maxWounds' placeholder='Max Wounds' />
+          <input className='textinput' type='number' style={{textAlign: 'center'}} id='maxStrain' placeholder='Max Strain' />
+          <input className='textinput' type='number' style={{textAlign: 'center'}} id='credits' placeholder='Credits' />
           <input className='textinput' style={{textAlign: 'center'}} id='imageURL' placeholder='Image URL' />
         </div>,
         buttons: {
@@ -97,9 +98,9 @@ class Character extends Component {
         </div>
         <div style={{marginLeft: '135px'}}>
           <input className='textinput' style={{textAlign: 'center', width: '10em'}} id='charName' defaultValue={this.state.currentCharacter['name']} /><br/>
-          <input className='textinput' style={{textAlign: 'center', width: '10em'}} id='maxWounds' defaultValue={this.state.currentCharacter['maxWounds']} /><br/>
-          <input className='textinput' style={{textAlign: 'center', width: '10em'}} id='maxStrain' defaultValue={this.state.currentCharacter['maxStrain']} /><br/>
-          <input className='textinput' style={{textAlign: 'center', width: '10em'}} id='credits' defaultValue={this.state.currentCharacter['credits']} /><br/>
+          <input className='textinput' type='number' style={{textAlign: 'center', width: '10em'}} id='maxWounds' defaultValue={this.state.currentCharacter['maxWounds']} /><br/>
+          <input className='textinput' type='number' style={{textAlign: 'center', width: '10em'}} id='maxStrain' defaultValue={this.state.currentCharacter['maxStrain']} /><br/>
+          <input className='textinput' type='number' style={{textAlign: 'center', width: '10em'}} id='credits' defaultValue={this.state.currentCharacter['credits']} /><br/>
           <input className='textinput' style={{textAlign: 'center', width: '10em'}} id='imageURL' defaultValue={this.state.currentCharacter['imageURL']} /><br/>
         </div>
         </div>,
@@ -163,6 +164,11 @@ class Character extends Component {
     }});
   }
 
+  selectCharacter(key) {
+    let currentCharacter = this.state.character[key];
+    this.setState({currentCharacter});
+    this.checkIncap(currentCharacter);
+  }
 
   previous() {
     if (position - 1 < 0) {
@@ -263,37 +269,48 @@ class Character extends Component {
 
   render() {
     return (
-      <div className='dice-box' style={{margin: '5px', marginTop: '40px', minHeight: '225px', display: 'block', textAlign: 'center'}}>
+      <div className='dice-box' style={{margin: '5px', marginTop: '40px', height: 'auto', display: 'block', textAlign: 'center'}}>
         <img className='characterimage' ref='imageURL' onClick={this.editCharacter.bind(this)} style={{float: 'right', marginRight: '5px'}} src={this.state.currentCharacter['imageURL']} alt=''/>
         <div style={{float: 'left'}}>
           <button className='btnAdd' onClick={this.setNew.bind(this)}>+</button>
           <button className='btnAdd' onClick={this.popupDeleteCharacter.bind(this)}>-</button>
           <button className='btnAdd' onClick={this.previous.bind(this)}>←</button>
           <button className='btnAdd' onClick={this.next.bind(this)}>→</button>
+          <button onClick={this.modifyStats.bind(this)} className='btnAdd' style={{fontSize: '12px'}}>Set</button>
         </div>
-        <div style={{lineHeight: '1.6'}}>
-          <b style={{fontSize: '25px', color: 'black', textAlign: 'center', padding: '5px'}}>{this.state.currentCharacter['name']}</b>
-          <br />
-          <b style={{fontSize: '25px', color: 'red', display: this.state.incapacitated}}>Incapacitated</b>
+        <table style={{margin: '10px 0 10px 80px'}}>
+          <thead>
+            <tr><td colSpan='2' style={{textAlign: 'center'}}><b style={{fontSize: '20px', color: 'black', textAlign: 'center', padding: '5px'}}>{this.state.currentCharacter['name']}</b></td></tr>
+          </thead>
+          <tbody>
+          <tr><td colSpan='2' style={{textAlign: 'center'}}><b style={{fontSize: '20px', color: 'red', display: this.state.incapacitated}}>Incapacitated</b></td></tr>
+          <tr>
+            <td><form onSubmit={this.modifyStats.bind(this)}><input className='textinput' type='number' ref='currentWounds' placeholder={this.state.currentCharacter['currentWounds']} style={{width: '50px', textAlign: 'center', height: 'auto', fontSize: '15px'}}/></form></td>
+            <td style={{textAlign: 'left'}}><b style={{fontSize: '16px', color: 'Black'}}>/{this.state.currentCharacter['maxWounds']} Wounds</b></td>
+          </tr>
+          <tr>
+            <td><form onSubmit={this.modifyStats.bind(this)}><input className='textinput' type='number' ref='currentStrain' placeholder={this.state.currentCharacter['currentStrain']} style={{width: '50px', textAlign: 'center', height: 'auto', fontSize: '15px'}}/></form></td>
+            <td style={{textAlign: 'left'}}><b style={{fontSize: '16px', color: 'Black'}}>/{this.state.currentCharacter['maxStrain']} Strain</b></td>
+          </tr>
+          <tr>
+            <td><form onSubmit={this.modifyStats.bind(this)}><input className='textinput' type='number' ref='credits' placeholder={this.state.currentCharacter['credits']} style={{width: '50px', textAlign: 'center', height: 'auto', fontSize: '15px'}}/></form></td>
+            <td style={{textAlign: 'left'}}><b style={{fontSize: '16px', color: 'Black'}}> Credits</b></td>
+          </tr>
+          </tbody>
+        </table>
+        <div >
+        <table style={{fontSize:'15px', width: '100%', borderCollapse: 'collapse', padding: '2px 0 2px 0', borderRadius: '1px'}}>
+        <tbody>
+        {Object.keys(this.state.character).map((k) =>
+          <tr onClick={this.selectCharacter.bind(this, k)} style={{textAlign: 'left', border: 'solid #969595 1px'}} key={k}><td><b>{this.state.character[k].name}:</b></td><td><b>W:&nbsp;</b>{this.state.character[k].currentWounds}/{this.state.character[k].maxWounds}</td><td><b>S:&nbsp;</b>{this.state.character[k].currentStrain}/{this.state.character[k].maxStrain}</td></tr>
+        )}
+        </tbody>
+        </table>
         </div>
-          <div style={{marginLeft: '70px', textAlign: 'left'}}>
-            <div>
-              <form onSubmit={this.modifyStats.bind(this)}><input className='textinput' ref='currentWounds' placeholder={this.state.currentCharacter['currentWounds']} style={{width: '40px', textAlign: 'center'}}/>
-              <b style={{fontSize: '20px', color: 'Black'}}>/{this.state.currentCharacter['maxWounds']} Wounds</b>
-            </form>
-            </div>
-            <div>
-              <form onSubmit={this.modifyStats.bind(this)}><input className='textinput' ref='currentStrain' placeholder={this.state.currentCharacter['currentStrain']} style={{width: '40px', textAlign: 'center'}}/>
-              <b style={{fontSize: '20px', color: 'Black'}}>/{this.state.currentCharacter['maxStrain']} Strain</b>
-              </form>
-            </div>
-            <div>
-              <form onSubmit={this.modifyStats.bind(this)}><input className='textinput' ref='credits' placeholder={this.state.currentCharacter['credits']} style={{width: '40px', textAlign: 'center'}}/>
-              <b style={{marginLeft: '10px', fontSize: '20px', color: 'Black'}}> Credits</b>
-              <button className='btnAdd' style={{width: '75px', marginLeft:'40px', display: 'inline-block'}}>Update</button>
-              </form>
-            </div>
-          </div>
+
+
+
+
       </div>
     )
   }

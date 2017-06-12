@@ -9,6 +9,15 @@ h1 {
   font-size: 4em;
 }
 
+td {
+  text-align: center;
+  padding: 2px 0 2px 0;
+}
+
+tr:hover {
+  background-color: lightgrey;
+}
+
 .App {
   display: block;
 }
