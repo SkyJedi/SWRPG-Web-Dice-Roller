@@ -22,7 +22,7 @@ class Character extends Component {
 
   componentDidMount() {
     this.state.characterRef.on('value', snap => {
-      this.setState({character: snap.val()});
+      this.setState({character: snap.val()}, function() {this.fixKeys()});
       if (this.state.currentCharacter !== '') {
         this.setState({currentCharacter: snap.val()[this.getcurrentKey()]});
       }
@@ -31,6 +31,16 @@ class Character extends Component {
       }
     });
     position = 0;
+  }
+
+  fixKeys() {
+    let character = Object.assign({}, this.state.character);
+    for (var i = 0; Object.keys(character).length > i; i++){
+      if (character[Object.keys(character)[i]].key === undefined) {
+        character[Object.keys(character)[i]].key = this.genKey();
+      }
+    }
+    this.state.characterRef.set(character);
   }
 
   setNew() {
@@ -111,10 +121,6 @@ class Character extends Component {
                                 };
                     if (currentCharacter['imageURL'] === '') {
                       currentCharacter['imageURL'] = '/images/crest.png';
-                    }
-
-                    if (currentCharacter['key'] === undefined) {
-                      currentCharacter['key'] = this.genKey()
                     }
                     this.state.characterRef.child(this.getcurrentKey()).set(currentCharacter);
                     this.checkIncap(currentCharacter);
