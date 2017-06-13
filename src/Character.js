@@ -22,15 +22,42 @@ class Character extends Component {
 
   componentDidMount() {
     this.state.characterRef.on('value', snap => {
-      if (snap.val() === null) {
+      if (snap.val() !== null) {
+        this.setState({character: snap.val()}, function() {this.fixKeys()});
+      } else {
         this.setState({character: {}});
-        return;
       }
-      this.setState({character: snap.val()});
       if ((this.state.currentCharacter === '') && (this.state.character !== null)) {
-        this.previous();
+        this.setState({currentCharacter: Object.keys(snap.val())[0]});
       }
     });
+  }
+
+  fixKeys() {
+    if (Object.keys(this.state.character).length === 0) {
+      return;
+    }
+
+    let character = Object.assign({}, this.state.character);
+    let change = 0;
+    for (var i = 0; Object.keys(character).length > i; i++){
+      if (character[Object.keys(character)[i]].key === undefined) {
+        character[Object.keys(character)[i]].key = this.genKey();
+        change = 1;
+      }
+      if (character[Object.keys(character)[i]].init === undefined) {
+        character[Object.keys(character)[i]].init = '';
+        change = 1;
+      }
+      if (character[Object.keys(character)[i]].dice === undefined) {
+        character[Object.keys(character)[i]].dice = {blue: 0, black: 0};
+        change = 1;
+      }
+    }
+    if (change === 1) {
+      console.log('keys fixed')
+      this.state.characterRef.set(character);
+    }
   }
 
   setNew() {
@@ -59,6 +86,8 @@ class Character extends Component {
                                   credits: document.getElementById('credits').value,
                                   imageURL: document.getElementById('imageURL').value,
                                   key: this.genKey(),
+                                  init: '',
+                                  dice:  {blue: 0, black: 0},
                                 };
                     if (currentCharacter['imageURL'] === '') {
                       currentCharacter['imageURL'] = '/images/crest.png';
@@ -109,6 +138,8 @@ class Character extends Component {
                                   credits: document.getElementById('credits').value,
                                   imageURL: document.getElementById('imageURL').value,
                                   key: this.state.currentCharacter['key'],
+                                  init: this.state.currentCharacter['init'],
+                                  dice: this.state.currentCharacter['dice'],
                                 };
                     if (currentCharacter['imageURL'] === '') {
                       currentCharacter['imageURL'] = '/images/crest.png';
