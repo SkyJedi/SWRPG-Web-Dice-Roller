@@ -76,6 +76,18 @@
         color: #fff;
     }
 
+    .mm-popup__btn--setback {
+        background-color: #000000;
+        border-color: #27ae60;
+        color: #ffffff;
+    }
+
+    .mm-popup__btn--bonus {
+        background-color: #73cbd9;
+        border-color: #27ae60;
+        color: #000000;
+    }
+
     .mm-popup__btn--danger {
         background-color: #c5545c;
         border-color: #c5545c;

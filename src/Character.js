@@ -54,7 +54,7 @@ class Character extends Component {
         change = 1;
       }
       if (character[Object.keys(character)[i]].dice === undefined) {
-        character[Object.keys(character)[i]].dice = {blue: 0, black: 0};
+        character[Object.keys(character)[i]].dice = {blue: '', black: ''};
         change = 1;
       }
     }
@@ -91,7 +91,7 @@ class Character extends Component {
                                   imageURL: document.getElementById('imageURL').value,
                                   key: this.genKey(),
                                   init: '',
-                                  dice:  {blue: 0, black: 0},
+                                  dice:  {blue: '', black: ''},
                                 };
                     if (currentCharacter['imageURL'] === '') {
                       currentCharacter['imageURL'] = '/images/crest.png';
@@ -191,27 +191,6 @@ class Character extends Component {
     }});
   }
 
-  selectCharacter(key) {
-    let currentCharacter = this.state.character[key];
-    this.setState({currentCharacter});
-    this.checkIncap(currentCharacter);
-  }
-
-  initClick(key) {
-    let currentCharacter = this.state.character[key];
-    switch (currentCharacter.init) {
-      case 'X':
-        currentCharacter.init = ''
-        break;
-      case '':
-        currentCharacter.init = 'X'
-        break;
-      default:
-        currentCharacter.init = ''
-    }
-    this.state.characterRef.child(key).set(currentCharacter);
-  }
-
   previous() {
     if (this.state.currentCharacter.name === 'No Characters') return;
     let position = this.getPosition();
@@ -237,15 +216,6 @@ class Character extends Component {
     let currentCharacter = this.state.character[Object.keys(this.state.character)[position]];
     this.setState({currentCharacter});
     this.checkIncap(currentCharacter);
-  }
-
-  checkIncap(currentCharacter) {
-    if (currentCharacter['currentWounds'] > currentCharacter['maxWounds']  || currentCharacter['currentStrain'] > currentCharacter['maxStrain']) {
-      this.setState({incapacitated: 'block'});
-
-    } else {
-      this.setState({incapacitated: 'none'});
-    }
   }
 
   modifyStats(e) {
@@ -295,6 +265,66 @@ class Character extends Component {
     }
   }
 }
+
+  addBonusDice(k) {
+    let character = Object.assign({}, this.state.character);
+    Popup.create({
+    title: 'Add Bonus Dice',
+    content: 'Which die would you like to give ' + character[k].name + '?',
+    className: 'alert',
+    buttons: {
+        left: [{
+          text: 'Bonus Die',
+          className: 'bonus',
+          action: () => {
+            character[k].dice.blue += "<img src='/images/blue.png' alt='blue.png' style='height: 15px' width: 15px;'/>"
+            this.state.characterRef.set(character);
+            Popup.close();
+          }
+        }],
+        right: [{
+            text: 'Setback Die',
+            className: 'setback',
+            action: () => {
+              character[k].dice.black += "<img src='/images/black.png' alt='black.png' style='height: 15px; width: 15px;'/>"
+              this.state.characterRef.set(character);
+              Popup.close();
+            }
+        }]
+    }});
+
+  }
+
+  selectCharacter(key) {
+    let currentCharacter = this.state.character[key];
+    this.setState({currentCharacter});
+    this.checkIncap(currentCharacter);
+  }
+
+  checkIncap(currentCharacter) {
+    if (currentCharacter['currentWounds'] > currentCharacter['maxWounds']  || currentCharacter['currentStrain'] > currentCharacter['maxStrain']) {
+      this.setState({incapacitated: 'block'});
+
+    } else {
+      this.setState({incapacitated: 'none'});
+    }
+  }
+
+  initClick(key) {
+    let character = this.state.character[key];
+    switch (character.init) {
+      case 'X':
+        character.init = '';
+        break;
+      case '':
+        character.init = 'X'
+        character.dice = {blue: '', black: ''};
+        break;
+      default:
+        character.init = ''
+    }
+    this.state.characterRef.child(key).set(character);
+  }
 
   getcurrentKey() {
     let currentCharacter = Object.assign({}, this.state.currentCharacter);
@@ -358,10 +388,10 @@ class Character extends Component {
         </table>
         <div >
         <table style={{fontSize:'15px', width: '100%', borderCollapse: 'collapse', padding: '2px 0 2px 0', borderRadius: '1px'}}>
-        <thead><tr><td><b>Init</b></td><td><b>Name</b></td><td><b>Wound</b></td><td><b>Strain</b></td></tr></thead>
+        <thead><tr><td><b>Init</b></td><td><b>Name</b></td><td><b>Wound</b></td><td><b>Strain</b></td><td><b>Dice</b></td></tr></thead>
         <tbody>
         {Object.keys(this.state.character).map((k) =>
-          <tr style={{textAlign: 'left', border: 'solid #969595 1px'}} key={k}><td onClick={this.initClick.bind(this, k)}>{this.state.character[k].init}</td><td onClick={this.selectCharacter.bind(this, k)}><b>{this.state.character[k].name}</b></td><td onClick={this.selectCharacter.bind(this, k)}>&nbsp;{this.state.character[k].currentWounds}/{this.state.character[k].maxWounds}</td><td onClick={this.selectCharacter.bind(this, k)}>&nbsp;{this.state.character[k].currentStrain}/{this.state.character[k].maxStrain}</td></tr>
+          <tr style={{textAlign: 'left', border: 'solid #969595 1px'}} key={k}><td onClick={this.initClick.bind(this, k)}>{this.state.character[k].init}</td><td onClick={this.selectCharacter.bind(this, k)}><b>{this.state.character[k].name}</b></td><td onClick={this.selectCharacter.bind(this, k)}>&nbsp;{this.state.character[k].currentWounds}/{this.state.character[k].maxWounds}</td><td onClick={this.selectCharacter.bind(this, k)}>&nbsp;{this.state.character[k].currentStrain}/{this.state.character[k].maxStrain}</td><td onClick={this.addBonusDice.bind(this, k)}><div style={{display: 'inline-block'}} dangerouslySetInnerHTML={{ __html: this.state.character[k].dice.blue }} /><div style={{display: 'inline-block'}} dangerouslySetInnerHTML={{ __html: this.state.character[k].dice.black }} /></td></tr>
         )}
         </tbody>
         </table>
