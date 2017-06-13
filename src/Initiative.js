@@ -204,9 +204,9 @@ Reset () {
 clearMarks() {
   if (Object.keys(this.state.character).length !== 0) {
     let character = Object.assign({}, this.state.character);
-    {Object.keys(this.character).map((key)=>
+    Object.keys(character).forEach((key)=>
       character[key].init = '',
-    )};
+    );
   this.state.characterRef.set(character);
   }
 }
