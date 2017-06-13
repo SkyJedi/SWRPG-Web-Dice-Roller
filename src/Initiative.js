@@ -18,6 +18,8 @@ class Initiative extends Component {
       InitiativePast: [],
       position: {},
       positionRef: firebase.database().ref().child(`${channel}`).child('Initiative').child('position'),
+      character: {},
+      characterRef: firebase.database().ref().child(`${channel}`).child('character'),
     };
   }
 
@@ -72,6 +74,14 @@ class Initiative extends Component {
             turn: 1
           }
         });
+      }
+    });
+
+    this.state.characterRef.on('value', snap => {
+      if (snap.val() !== null) {
+        this.setState({character: snap.val()});
+      } else {
+        this.setState({character: {}});
       }
     });
   }
@@ -134,6 +144,7 @@ InitiativeNext() {
     InitiativePast.push(Initiative.shift());
     Initiative = InitiativePast;
     InitiativePast = 0;
+    this.clearMarks();
   } else {
     position.turn++;
     InitiativePast.push(Initiative.shift());
@@ -188,6 +199,16 @@ Remove (slot, time) {
 
 Reset () {
   firebase.database().ref().child(`${channel}`).child('Initiative').remove();
+}
+
+clearMarks() {
+  if (Object.keys(this.state.character).length !== 0) {
+    let character = Object.assign({}, this.state.character);
+    {Object.keys(this.character).map((key)=>
+      character[key].init = '',
+    )};
+  this.state.characterRef.set(character);
+  }
 }
 
 popupModifyInitiativeSlot(slot, time) {

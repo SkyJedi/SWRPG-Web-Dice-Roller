@@ -23,12 +23,16 @@ class Character extends Component {
   componentDidMount() {
     this.state.characterRef.on('value', snap => {
       if (snap.val() !== null) {
-        this.setState({character: snap.val()}, function() {this.fixKeys()});
+        this.setState({character: snap.val()}, function() {
+          this.fixKeys();
+          if (this.state.currentCharacter.name === 'No Characters') {
+            this.setState({currentCharacter: snap.val()[Object.keys(snap.val())[0]]});
+          } else {
+            this.setState({currentCharacter: snap.val()[this.getcurrentKey()]});
+          }
+        });
       } else {
         this.setState({character: {}});
-      }
-      if ((this.state.currentCharacter === '') && (this.state.character !== null)) {
-        this.setState({currentCharacter: Object.keys(snap.val())[0]});
       }
     });
   }
@@ -146,6 +150,7 @@ class Character extends Component {
                     }
                     this.state.characterRef.child(this.getcurrentKey()).set(currentCharacter);
                     this.checkIncap(currentCharacter);
+                    this.setState({currentCharacter: currentCharacter});
                     this.state.messageRef.push().set(currentCharacter['name'] + ' has been successfully edited!');
                     Popup.close();
                 }
