@@ -343,15 +343,15 @@ class Character extends Component {
           <tbody>
           <tr><td colSpan='2' style={{textAlign: 'center'}}><b style={{fontSize: '20px', color: 'red', display: this.state.incapacitated}}>Incapacitated</b></td></tr>
           <tr>
-            <td><form onSubmit={this.modifyStats.bind(this)}><input className='textinput' type='number' ref='currentWounds' placeholder={this.state.currentCharacter['currentWounds']} style={{width: '50px', textAlign: 'center', height: 'auto', fontSize: '15px'}}/></form></td>
+            <td><form onSubmit={this.modifyStats.bind(this)}><input className='textinput' ref='currentWounds' placeholder={this.state.currentCharacter['currentWounds']} style={{width: '50px', textAlign: 'center', height: 'auto', fontSize: '15px'}}/></form></td>
             <td style={{textAlign: 'left'}}><b style={{fontSize: '16px', color: 'Black'}}>/{this.state.currentCharacter['maxWounds']} Wounds</b></td>
           </tr>
           <tr>
-            <td><form onSubmit={this.modifyStats.bind(this)}><input className='textinput' type='number' ref='currentStrain' placeholder={this.state.currentCharacter['currentStrain']} style={{width: '50px', textAlign: 'center', height: 'auto', fontSize: '15px'}}/></form></td>
+            <td><form onSubmit={this.modifyStats.bind(this)}><input className='textinput' ref='currentStrain' placeholder={this.state.currentCharacter['currentStrain']} style={{width: '50px', textAlign: 'center', height: 'auto', fontSize: '15px'}}/></form></td>
             <td style={{textAlign: 'left'}}><b style={{fontSize: '16px', color: 'Black'}}>/{this.state.currentCharacter['maxStrain']} Strain</b></td>
           </tr>
           <tr>
-            <td><form onSubmit={this.modifyStats.bind(this)}><input className='textinput' type='number' ref='credits' placeholder={this.state.currentCharacter['credits']} style={{width: '50px', textAlign: 'center', height: 'auto', fontSize: '15px'}}/></form></td>
+            <td><form onSubmit={this.modifyStats.bind(this)}><input className='textinput' ref='credits' placeholder={this.state.currentCharacter['credits']} style={{width: '50px', textAlign: 'center', height: 'auto', fontSize: '15px'}}/></form></td>
             <td style={{textAlign: 'left'}}><b style={{fontSize: '16px', color: 'Black'}}> Credits</b></td>
           </tr>
           </tbody>
