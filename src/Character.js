@@ -5,7 +5,6 @@ import './index.css';
 import './popup.css';
 
 var channel = window.location.pathname.slice(1).toLowerCase();
-var position;
 
 
 class Character extends Component {
@@ -16,32 +15,22 @@ class Character extends Component {
       messageRef: firebase.database().ref().child(`${channel}`).child('message'),
       character: {},
       characterRef: firebase.database().ref().child(`${channel}`).child('character'),
-      currentCharacter: '',
+      currentCharacter: {name: 'No Characters', currentWounds: 0, maxWounds: 0, currentStrain: 0, maxStrain: 0, credits: 0, imageURL: '/images/crest.png'},
       incapacitated: 'none',
     };
   }
 
   componentDidMount() {
     this.state.characterRef.on('value', snap => {
-      this.setState({character: snap.val()}, function() {this.fixKeys()});
-      if (this.state.currentCharacter !== '') {
-        this.setState({currentCharacter: snap.val()[this.getcurrentKey()]});
+      if (snap.val() === null) {
+        this.setState({character: {}});
+        return;
       }
+      this.setState({character: snap.val()});
       if ((this.state.currentCharacter === '') && (this.state.character !== null)) {
         this.previous();
       }
     });
-    position = 0;
-  }
-
-  fixKeys() {
-    let character = Object.assign({}, this.state.character);
-    for (var i = 0; Object.keys(character).length > i; i++){
-      if (character[Object.keys(character)[i]].key === undefined) {
-        character[Object.keys(character)[i]].key = this.genKey();
-      }
-    }
-    this.state.characterRef.set(character);
   }
 
   setNew() {
@@ -75,6 +64,7 @@ class Character extends Component {
                       currentCharacter['imageURL'] = '/images/crest.png';
                     }
                     this.state.characterRef.push().set(currentCharacter);
+                    this.setState({currentCharacter: currentCharacter});
                     this.state.messageRef.push().set(currentCharacter['name'] + ' has been successfully added!');
                     Popup.close();
                 }
@@ -135,13 +125,14 @@ class Character extends Component {
   }
 
   Remove() {
+    if (this.state.currentCharacter.name === 'No Characters') return;
     if (Object.keys(this.state.character).length > 1) {
       this.state.characterRef.child(this.getcurrentKey()).remove();
       this.state.messageRef.push().set(this.state.currentCharacter['name'] + ' has been removed.');
       this.previous();
     } else {
-      this.state.characterRef.child(this.getcurrentKey()).remove();
       this.state.messageRef.push().set(this.state.currentCharacter['name'] + ' has been removed.');
+      this.state.characterRef.remove();
       this.setState({currentCharacter: {name: 'No Characters', currentWounds: 0, maxWounds: 0, currentStrain: 0, maxStrain: 0, credits: 0, imageURL: '/images/crest.png'}});
     }
   }
@@ -170,18 +161,38 @@ class Character extends Component {
     this.checkIncap(currentCharacter);
   }
 
+  initClick(key) {
+    let currentCharacter = this.state.character[key];
+    switch (currentCharacter.init) {
+      case 'X':
+        currentCharacter.init = ''
+        break;
+      case '':
+        currentCharacter.init = 'X'
+        break;
+      default:
+        currentCharacter.init = ''
+    }
+    this.state.characterRef.child(key).set(currentCharacter);
+  }
+
   previous() {
+    if (this.state.currentCharacter.name === 'No Characters') return;
+    let position = this.getPosition();
+    let character = Object.assign({}, this.state.character);
     if (position - 1 < 0) {
-      position = Object.keys(this.state.character).length-1;
+      position = Object.keys(character).length-1;
     } else {
       position--;
     }
-    let currentCharacter = this.state.character[Object.keys(this.state.character)[position]];
+    let currentCharacter = character[Object.keys(character)[position]];
     this.setState({currentCharacter});
     this.checkIncap(currentCharacter);
   }
 
   next() {
+    if (this.state.currentCharacter.name === 'No Characters') return;
+    let position = this.getPosition()
     if (position + 1 === Object.keys(this.state.character).length) {
       position = 0;
     } else {
@@ -259,6 +270,17 @@ class Character extends Component {
     }
   }
 
+  getPosition() {
+    let currentCharacter = Object.assign({}, this.state.currentCharacter);
+    let character = Object.assign({}, this.state.character);
+    if (Object.keys(currentCharacter).length === 0) return 0;
+    for (var i = 0; i < Object.keys(character).length; i++) {
+      if (character[Object.keys(character)[i]]['key'] === currentCharacter.key) {
+        return i;
+      }
+    }
+  }
+
   genKey() {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -300,9 +322,10 @@ class Character extends Component {
         </table>
         <div >
         <table style={{fontSize:'15px', width: '100%', borderCollapse: 'collapse', padding: '2px 0 2px 0', borderRadius: '1px'}}>
+        <thead><tr><td><b>Init</b></td><td><b>Name</b></td><td><b>Wound</b></td><td><b>Strain</b></td></tr></thead>
         <tbody>
         {Object.keys(this.state.character).map((k) =>
-          <tr onClick={this.selectCharacter.bind(this, k)} style={{textAlign: 'left', border: 'solid #969595 1px'}} key={k}><td><b>{this.state.character[k].name}:</b></td><td><b>W:&nbsp;</b>{this.state.character[k].currentWounds}/{this.state.character[k].maxWounds}</td><td><b>S:&nbsp;</b>{this.state.character[k].currentStrain}/{this.state.character[k].maxStrain}</td></tr>
+          <tr style={{textAlign: 'left', border: 'solid #969595 1px'}} key={k}><td onClick={this.initClick.bind(this, k)}>{this.state.character[k].init}</td><td onClick={this.selectCharacter.bind(this, k)}><b>{this.state.character[k].name}</b></td><td onClick={this.selectCharacter.bind(this, k)}>&nbsp;{this.state.character[k].currentWounds}/{this.state.character[k].maxWounds}</td><td onClick={this.selectCharacter.bind(this, k)}>&nbsp;{this.state.character[k].currentStrain}/{this.state.character[k].maxStrain}</td></tr>
         )}
         </tbody>
         </table>
