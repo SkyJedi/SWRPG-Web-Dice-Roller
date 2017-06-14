@@ -39,6 +39,7 @@ class Character extends Component {
   setNew() {
     Popup.create({
         title: 'New Character',
+        className: 'character',
         content:
         <div style={{textAlign: 'center'}}>
           <input className='textinput' style={{textAlign: 'center'}} id='charName' placeholder='Character Name' />
@@ -82,6 +83,7 @@ class Character extends Component {
   editCharacter() {
     Popup.create({
         title: 'Edit Character',
+        className: 'character',
         content:
         <div>
         <div style={{fontSize: '20px', float: 'left', lineHeight: '2.2', textAlign: 'right'}}>
@@ -92,11 +94,11 @@ class Character extends Component {
           <span style={{padding: '10px 0'}}>imageURL</span><br/>
         </div>
         <div style={{marginLeft: '135px'}}>
-          <input className='textinput' style={{textAlign: 'center', width: '10em'}} id='charName' defaultValue={this.state.currentCharacter['name']} /><br/>
-          <input className='textinput' type='number' style={{textAlign: 'center', width: '10em'}} id='maxWounds' defaultValue={this.state.currentCharacter['maxWounds']} /><br/>
-          <input className='textinput' type='number' style={{textAlign: 'center', width: '10em'}} id='maxStrain' defaultValue={this.state.currentCharacter['maxStrain']} /><br/>
-          <input className='textinput' type='number' style={{textAlign: 'center', width: '10em'}} id='credits' defaultValue={this.state.currentCharacter['credits']} /><br/>
-          <input className='textinput' style={{textAlign: 'center', width: '10em'}} id='imageURL' defaultValue={this.state.currentCharacter['imageURL']} /><br/>
+          <input className='textinput' style={{textAlign: 'center', width: '7em'}} id='charName' defaultValue={this.state.currentCharacter['name']} /><br/>
+          <input className='textinput' type='number' style={{textAlign: 'center', width: '7em'}} id='maxWounds' defaultValue={this.state.currentCharacter['maxWounds']} /><br/>
+          <input className='textinput' type='number' style={{textAlign: 'center', width: '7em'}} id='maxStrain' defaultValue={this.state.currentCharacter['maxStrain']} /><br/>
+          <input className='textinput' type='number' style={{textAlign: 'center', width: '7em'}} id='credits' defaultValue={this.state.currentCharacter['credits']} /><br/>
+          <input className='textinput' style={{textAlign: 'center', width: '7em'}} id='imageURL' defaultValue={this.state.currentCharacter['imageURL']} /><br/>
         </div>
         </div>,
         buttons: {
@@ -148,8 +150,8 @@ class Character extends Component {
   popupDeleteCharacter() {
     Popup.create({
     title: 'Delete Character',
+    className: 'character',
     content: 'Are you sure, this will delete ' + this.state.currentCharacter['name'],
-    className: 'alert',
     buttons: {
         left: ['cancel'],
         right: [{
@@ -243,36 +245,36 @@ class Character extends Component {
     let character = Object.assign({}, this.state.character);
     Popup.create({
     title: 'Add Bonus Dice',
+    className: 'character',
     content: 'Which die would you like to give ' + character[k].name + '?',
-    className: 'alert',
     buttons: {
         left: [{
-          text: 'Bonus Die',
+          text: 'Bonus',
           className: 'bonus',
           action: () => {
             character[k].dice.blue += "<img src='/images/blue.png' alt='blue.png' style='height: 15px' width: 15px;'/>"
             this.state.characterRef.set(character);
             Popup.close();
           }
-        },  {
-              text: 'Upgrade Die',
+        }, {
+          text: 'Setback',
+          className: 'setback',
+          action: () => {
+            character[k].dice.black += "<img src='/images/black.png' alt='black.png' style='height: 15px; width: 15px;'/>"
+            this.state.characterRef.set(character);
+            Popup.close();
+          }
+        }  ],
+        right: [{
+              text: 'Upgrade',
               className: 'upgrade',
               action: () => {
                 character[k].dice.upgrade += "<img src='/images/upgrade.png' alt='upgrade.png' style='height: 15px' width: 15px;'/>"
                 this.state.characterRef.set(character);
                 Popup.close();
               }
-          }],
-        right: [{
-            text: 'Setback Die',
-            className: 'setback',
-            action: () => {
-              character[k].dice.black += "<img src='/images/black.png' alt='black.png' style='height: 15px; width: 15px;'/>"
-              this.state.characterRef.set(character);
-              Popup.close();
-            }
-        }, {
-            text: 'Downgrade Die',
+          }, {
+            text: 'Downgrade',
             className: 'downgrade',
             action: () => {
               character[k].dice.downgrade += "<img src='/images/downgrade.png' alt='downgrade.png' style='height: 15px' width: 15px;'/>"

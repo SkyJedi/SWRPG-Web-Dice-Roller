@@ -34,7 +34,7 @@ class Message extends Component {
     Popup.create({
     title: 'Delete Message',
     content: 'Are you sure, this will delete this message',
-    className: 'alert',
+    className: 'messages',
     buttons: {
         left: ['cancel'],
         right: [{

@@ -241,39 +241,39 @@ popupModifyInitiativeSlot(slot, time) {
   Popup.create({
   title: 'Modify Initiative Slot',
   content: 'What would like to do to this Initiative Slot?',
-  className: 'alert',
+  className: 'initiative',
   buttons: {
       left: [{
-          text: 'DELETE',
-          className: 'danger',
-          action: () => {
-            this.Remove(slot,time);
-            Popup.close();
-          }
-      },{
-          text: 'Bonus Die',
+          text: 'Bonus',
           className: 'bonus',
           action: () => {
             this.addBonusDice(slot, time, 'blue');
             Popup.close();
           }
         }, {
-          text: 'Setback Die',
+          text: 'Setback',
           className: 'setback',
           action: () => {
             this.addBonusDice(slot, time, 'black');
             Popup.close();
           }
+        }, {
+            text: 'DELETE',
+            className: 'danger',
+            action: () => {
+              this.Remove(slot,time);
+              Popup.close();
+            }
         }],
       right: [{
-            text: 'Upgrade Die',
+            text: 'Upgrade',
             className: 'upgrade',
             action: () => {
               this.addBonusDice(slot, time, 'upgrade');
               Popup.close();
             }
         }, {
-            text: 'Downgrade Die',
+            text: 'Downgrade',
             className: 'downgrade',
             action: () => {
               this.addBonusDice(slot, time, 'downgrade');

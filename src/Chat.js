@@ -39,7 +39,7 @@ class Chat extends Component {
     Popup.create({
     title: 'Delete Message',
     content: 'Are you sure, this will delete this message',
-    className: 'alert',
+    className: 'chat',
     buttons: {
         left: ['cancel'],
         right: [{
