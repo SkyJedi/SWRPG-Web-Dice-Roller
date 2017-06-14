@@ -27,53 +27,52 @@ class Initiative extends Component {
     this.state.InitiativeRef.orderByChild('roll').on('value', snap => {
       let final = [];
       snap.forEach(function(child) {
+        let tempBonus = [];
         let temp = child.val();
         temp['key'] = child.key;
+        for(var i=0; i<Object.keys(temp.bonusDie).length; i++) {
+          var colorDie = Object.keys(temp.bonusDie)[i];
+          for(var j=0; j<temp.bonusDie[colorDie]; j++) {
+            tempBonus.push(`${colorDie}`);
+          }}
+        temp.bonusDie = tempBonus;
         final.push(temp);
       });
       final.reverse();
       if (final != null) {
-        this.setState({
-          Initiative: final
-        });
+        this.setState({Initiative: final});
       } else {
-        this.setState({
-          Initiative: 0
-        });
+        this.setState({Initiative: 0});
       }
     });
 
     this.state.InitiativePastRef.orderByChild('roll').on('value', snap => {
       let final = [];
       snap.forEach(function(child) {
+        let tempBonus = [];
         let temp = child.val();
         temp['key'] = child.key;
+        for(var i=0; i<Object.keys(temp.bonusDie).length; i++) {
+          var colorDie = Object.keys(temp.bonusDie)[i];
+          for(var j=0; j<temp.bonusDie[colorDie]; j++) {
+            tempBonus.push(`${colorDie}`);
+          }}
+        temp.bonusDie = tempBonus;
         final.push(temp);
       });
       final.reverse();
       if (final != null) {
-        this.setState({
-          InitiativePast: final
-        });
+        this.setState({InitiativePast: final});
       } else {
-        this.setState({
-          InitiativePast: 0
-        });
+        this.setState({InitiativePast: 0});
       }
     });
 
     this.state.positionRef.on('value', snap => {
       if (snap.val() != null) {
-      this.setState({
-        position: snap.val()
-        });
+        this.setState({position: snap.val()});
       } else {
-        this.setState({
-          position: {
-            round: 1,
-            turn: 1
-          }
-        });
+        this.setState({position: {round: 1,turn: 1}});
       }
     });
 
@@ -84,6 +83,7 @@ class Initiative extends Component {
         this.setState({character: {}});
       }
     });
+
   }
 
 slideOut() {
@@ -95,17 +95,19 @@ slideOut() {
 }
 
 InitiativeAdd() {
-  let i;
-  if (this.state.Initiative.length > 0) {
-    i = (+(this.state.Initiative[this.state.Initiative.length-1].roll)-10).toString();
+  let i=0;
+  let Initiative = Object.assign({}, this.state.Initiative);
+
+  if (Object.keys(Initiative).length > 0) {
+    i = ((+Initiative[0].roll)-10).toString()
   } else {
     i = 0;
   }
-  this.state.InitiativeRef.push().set({type: 'PC', roll: i});
+  this.state.InitiativeRef.push().set({type: 'PC', roll: i, bonusDie: {blue: 0, black: 0}});
 }
 
 InitiativeRemove() {
-  if (this.state.Initiative !== 0) {
+  if (this.state.Initiative.length !== 0) {
     this.state.InitiativeRef.child((this.state.Initiative[this.state.Initiative.length-1]).key).remove();
   }
 }
@@ -138,6 +140,7 @@ InitiativeNext() {
   let position = Object.assign({}, this.state.position);
   let Initiative = this.state.Initiative;
   let InitiativePast = this.state.InitiativePast;
+  Initiative[0].bonusDie = [];
   if (position.turn >= this.state.Initiative.length + this.state.InitiativePast.length) {
     position.turn = 1;
     position.round++;
@@ -160,6 +163,12 @@ objectify(array) {
   array.forEach(function(slot) {
     let key = slot.key;
     delete slot.key;
+    let tempbonusDie = {blue: 0, black:0}
+    for(var i=0; i<slot.bonusDie.length; i++) {
+      if (slot.bonusDie[i] === 'blue') tempbonusDie.blue++;
+      if (slot.bonusDie[i] === 'black') tempbonusDie.black++;
+    }
+    slot.bonusDie = tempbonusDie;
     object[key] = slot;
   });
   return object;
@@ -197,6 +206,36 @@ Remove (slot, time) {
   }
 }
 
+addBonusDice(slot, time, color) {
+  let tempbonusDie = {}
+  tempbonusDie.blue = 0;
+  tempbonusDie.black = 0;
+  for(var i=0; i<slot.bonusDie.length; i++) {
+    if (slot.bonusDie[i] === 'blue') tempbonusDie.blue++;
+    if (slot.bonusDie[i] === 'black') tempbonusDie.black++;
+  }
+  if (time === 'current') {
+    if (color === 'blue')  {
+      tempbonusDie.blue++;
+      this.state.InitiativeRef.child(slot.key).update({'bonusDie': {blue: tempbonusDie.blue, black: tempbonusDie.black}});
+    }
+    if (color === 'black')  {
+      tempbonusDie.black++;
+      this.state.InitiativeRef.child(slot.key).update({'bonusDie': {blue: tempbonusDie.blue, black: tempbonusDie.black}});
+    }
+  }
+  if (time === 'past') {
+    if (color === 'blue')  {
+      tempbonusDie.blue++;
+      this.state.InitiativePastRef.child(slot.key).update({'bonusDie': {blue: tempbonusDie.blue, black: tempbonusDie.black}});
+    }
+    if (color === 'black')  {
+      tempbonusDie.black++;
+      this.state.InitiativePastRef.child(slot.key).update({'bonusDie': {blue: tempbonusDie.blue, black: tempbonusDie.black}});
+    }
+  }
+}
+
 Reset () {
   firebase.database().ref().child(`${channel}`).child('Initiative').remove();
 }
@@ -225,8 +264,21 @@ popupModifyInitiativeSlot(slot, time) {
             Popup.close();
           }
       }],
-
       right: [{
+          text: 'Bonus Die',
+          className: 'bonus',
+          action: () => {
+            this.addBonusDice(slot, time, 'blue');
+            Popup.close();
+          }
+        }, {
+          text: 'Setback Die',
+          className: 'setback',
+          action: () => {
+            this.addBonusDice(slot, time, 'black');
+            Popup.close();
+          }
+        }, {
           text: 'Flip',
           action: () => {
             this.flip(slot,time);
@@ -253,6 +305,15 @@ popupReset() {
       }],
   }});
 }
+
+genKey() {
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  for( var i=0; i < 15; i++ )
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+  return text;
+}
+
   render() {
     return (
       <div>
@@ -265,20 +326,29 @@ popupReset() {
             <button onClick={this.InitiativePrevious.bind(this)}className='btnAdd' style={{display: 'inline-block'}}>←</button>
             <br/>
             <button type="button" className='lrgButton' style={{marginBottom: '0.25em', fontSize: '14px', background: '#9e9e9e', margin: '0', width: '58px'}} onClick={this.popupReset.bind(this)} >Reset Initiative</button>
-            <br/>
             <b>Round: {this.state.position.round}<br/>Turn: {this.state.position.turn}</b>
           </div>
           <div style={{marginLeft: '90px'}}>
             {this.state.Initiative.map((slot)=>
-              <span key={slot.key} onClick={this.popupModifyInitiativeSlot.bind(this, slot, 'current')}>
-              <img src={`/images/${slot.type}.png`} alt={slot.type} className='tokens' style={{height: '50px', width:'50px'}}/>
-              </span>
+              <div style={{display: 'inline-block', height: '50px', width:'50px'}} key={slot.key}>
+                <div style={{position: 'absolute'}}>
+                {slot.bonusDie.map((type)=>
+                  <img src={`/images/${type}.png`} alt={type} key={this.genKey()} className='tinydie' />
+                )}
+                </div>
+              <img src={`/images/${slot.type}.png`} alt={slot.type} className='tokens' style={{height: '45px', width:'45px'}} onClick={this.popupModifyInitiativeSlot.bind(this, slot, 'current')} />
+              </div>
             )}
-            <img src={`/images/repeat.png`} alt='' className='tokens' style={{height: '50px', width:'50px'}}/>
+            <img src={`/images/repeat.png`} alt='' className='tokens' style={{height: '45px', width:'45px'}}/>
             {this.state.InitiativePast.map((slot)=>
-              <span key={slot.key} onClick={this.popupModifyInitiativeSlot.bind(this, slot, 'past')}>
-              <img src={`/images/${slot.type}.png`} alt={slot.type} className='tokens' style={{height: '50px', width:'50px'}}/>
-              </span>
+              <div style={{display: 'inline-block', height: '50px', width:'50px'}} key={slot.key}>
+              <div style={{position: 'absolute'}}>
+              {slot.bonusDie.map((type)=>
+                <img src={`/images/${type}.png`} alt={type} key={this.genKey()} className='tinydie' />
+              )}
+              </div>
+              <img src={`/images/${slot.type}.png`} alt={slot.type} className='tokens' style={{height: '45px', width:'45px'}} onClick={this.popupModifyInitiativeSlot.bind(this, slot, 'past')} />
+              </div>
             )}
           </div>
         </div>

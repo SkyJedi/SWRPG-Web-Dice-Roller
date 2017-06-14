@@ -1,3 +1,7 @@
+1.2.10
+  -removed the keyData function, cuz it didn't do anything
+  -added bonusdie to init tracker
+  
 1.2.9
   -fixed character a lot
   -added init check box on character list
@@ -6,7 +10,7 @@
   -added die tracker in character list
     -click dice cell on character list to add dice for next check
     -dice will reset on when character's Init is checked
-    
+
 1.2.8
   -added Character list
 

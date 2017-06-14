@@ -91,6 +91,12 @@ tr:hover {
     padding: 2px;
 }
 
+.tinydie {
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+}
+
 .diceface  {
     width:  35px;
     height: 35px;

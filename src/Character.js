@@ -24,7 +24,6 @@ class Character extends Component {
     this.state.characterRef.on('value', snap => {
       if (snap.val() !== null) {
         this.setState({character: snap.val()}, function() {
-          this.fixKeys();
           if (this.state.currentCharacter.name === 'No Characters') {
             this.setState({currentCharacter: snap.val()[Object.keys(snap.val())[0]]});
           } else {
@@ -35,33 +34,6 @@ class Character extends Component {
         this.setState({character: {}});
       }
     });
-  }
-
-  fixKeys() {
-    if (Object.keys(this.state.character).length === 0) {
-      return;
-    }
-
-    let character = Object.assign({}, this.state.character);
-    let change = 0;
-    for (var i = 0; Object.keys(character).length > i; i++){
-      if (character[Object.keys(character)[i]].key === undefined) {
-        character[Object.keys(character)[i]].key = this.genKey();
-        change = 1;
-      }
-      if (character[Object.keys(character)[i]].init === undefined) {
-        character[Object.keys(character)[i]].init = '';
-        change = 1;
-      }
-      if (character[Object.keys(character)[i]].dice === undefined) {
-        character[Object.keys(character)[i]].dice = {blue: '', black: ''};
-        change = 1;
-      }
-    }
-    if (change === 1) {
-      console.log('keys fixed')
-      this.state.characterRef.set(character);
-    }
   }
 
   setNew() {
@@ -362,8 +334,8 @@ class Character extends Component {
         <div style={{float: 'left'}}>
           <button className='btnAdd' onClick={this.setNew.bind(this)}>+</button>
           <button className='btnAdd' onClick={this.popupDeleteCharacter.bind(this)}>-</button>
-          <button className='btnAdd' onClick={this.previous.bind(this)}>←</button>
           <button className='btnAdd' onClick={this.next.bind(this)}>→</button>
+          <button className='btnAdd' onClick={this.previous.bind(this)}>←</button>
           <button onClick={this.modifyStats.bind(this)} className='btnAdd' style={{fontSize: '12px'}}>Set</button>
         </div>
         <table style={{margin: '10px 0 10px 80px'}}>
