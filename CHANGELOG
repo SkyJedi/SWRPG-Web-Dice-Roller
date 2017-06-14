@@ -1,7 +1,10 @@
+  -blue dice first for init
+  -added stop to keep modify stats in character from going negative
+
 1.2.10
   -removed the keyData function, cuz it didn't do anything
   -added bonusdie to init tracker
-  
+
 1.2.9
   -fixed character a lot
   -added init check box on character list

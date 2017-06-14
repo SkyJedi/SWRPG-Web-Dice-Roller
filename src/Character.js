@@ -63,7 +63,7 @@ class Character extends Component {
                                   imageURL: document.getElementById('imageURL').value,
                                   key: this.genKey(),
                                   init: '',
-                                  dice:  {blue: '', black: ''},
+                                  dice:  {blue: '', black: '', upgrade: '', downgrade: ''},
                                 };
                     if (currentCharacter['imageURL'] === '') {
                       currentCharacter['imageURL'] = '/images/crest.png';
@@ -223,6 +223,7 @@ class Character extends Component {
           modifier = +(modifier).replace(/\D/g, '');
           message += (' ' + stat.slice(7) + ' set to ' + modifier);
         }
+        if (modifier < 0) modifier = 0;
         currentCharacter[stat] = modifier;
     this.refs.currentWounds.blur();
     this.refs.currentStrain.blur();
@@ -253,7 +254,15 @@ class Character extends Component {
             this.state.characterRef.set(character);
             Popup.close();
           }
-        }],
+        },  {
+              text: 'Upgrade Die',
+              className: 'upgrade',
+              action: () => {
+                character[k].dice.upgrade += "<img src='/images/upgrade.png' alt='upgrade.png' style='height: 15px' width: 15px;'/>"
+                this.state.characterRef.set(character);
+                Popup.close();
+              }
+          }],
         right: [{
             text: 'Setback Die',
             className: 'setback',
@@ -262,7 +271,15 @@ class Character extends Component {
               this.state.characterRef.set(character);
               Popup.close();
             }
-        }]
+        }, {
+            text: 'Downgrade Die',
+            className: 'downgrade',
+            action: () => {
+              character[k].dice.downgrade += "<img src='/images/downgrade.png' alt='downgrade.png' style='height: 15px' width: 15px;'/>"
+              this.state.characterRef.set(character);
+              Popup.close();
+            }
+        },]
     }});
 
   }
@@ -363,7 +380,7 @@ class Character extends Component {
         <thead><tr><td><b>Init</b></td><td><b>Name</b></td><td><b>Wound</b></td><td><b>Strain</b></td><td><b>Dice</b></td></tr></thead>
         <tbody>
         {Object.keys(this.state.character).map((k) =>
-          <tr style={{textAlign: 'left', border: 'solid #969595 1px'}} key={k}><td onClick={this.initClick.bind(this, k)}>{this.state.character[k].init}</td><td onClick={this.selectCharacter.bind(this, k)}><b>{this.state.character[k].name}</b></td><td onClick={this.selectCharacter.bind(this, k)}>&nbsp;{this.state.character[k].currentWounds}/{this.state.character[k].maxWounds}</td><td onClick={this.selectCharacter.bind(this, k)}>&nbsp;{this.state.character[k].currentStrain}/{this.state.character[k].maxStrain}</td><td onClick={this.addBonusDice.bind(this, k)}><div style={{display: 'inline-block'}} dangerouslySetInnerHTML={{ __html: this.state.character[k].dice.blue }} /><div style={{display: 'inline-block'}} dangerouslySetInnerHTML={{ __html: this.state.character[k].dice.black }} /></td></tr>
+          <tr style={{textAlign: 'left', border: 'solid #969595 1px'}} key={k}><td onClick={this.initClick.bind(this, k)}>{this.state.character[k].init}</td><td onClick={this.selectCharacter.bind(this, k)}><b>{this.state.character[k].name}</b></td><td onClick={this.selectCharacter.bind(this, k)}>&nbsp;{this.state.character[k].currentWounds}/{this.state.character[k].maxWounds}</td><td onClick={this.selectCharacter.bind(this, k)}>&nbsp;{this.state.character[k].currentStrain}/{this.state.character[k].maxStrain}</td><td onClick={this.addBonusDice.bind(this, k)}><div style={{display: 'inline-block'}} dangerouslySetInnerHTML={{ __html: this.state.character[k].dice.blue }} /><div style={{display: 'inline-block'}} dangerouslySetInnerHTML={{ __html: this.state.character[k].dice.black }} /><div style={{display: 'inline-block'}} dangerouslySetInnerHTML={{ __html: this.state.character[k].dice.upgrade }} /><div style={{display: 'inline-block'}} dangerouslySetInnerHTML={{ __html: this.state.character[k].dice.downgrade }} /></td></tr>
         )}
         </tbody>
         </table>

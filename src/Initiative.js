@@ -163,10 +163,9 @@ objectify(array) {
   array.forEach(function(slot) {
     let key = slot.key;
     delete slot.key;
-    let tempbonusDie = {blue: 0, black:0}
+    let tempbonusDie = {blue: 0, black:0, upgrade:0, downgrade:0}
     for(var i=0; i<slot.bonusDie.length; i++) {
-      if (slot.bonusDie[i] === 'blue') tempbonusDie.blue++;
-      if (slot.bonusDie[i] === 'black') tempbonusDie.black++;
+      tempbonusDie[slot.bonusDie[i]]++;
     }
     slot.bonusDie = tempbonusDie;
     object[key] = slot;
@@ -207,32 +206,20 @@ Remove (slot, time) {
 }
 
 addBonusDice(slot, time, color) {
-  let tempbonusDie = {}
-  tempbonusDie.blue = 0;
-  tempbonusDie.black = 0;
+  let tempbonusDie = {blue:0, black:0, upgrade:0, downgrade:0}
+
   for(var i=0; i<slot.bonusDie.length; i++) {
-    if (slot.bonusDie[i] === 'blue') tempbonusDie.blue++;
-    if (slot.bonusDie[i] === 'black') tempbonusDie.black++;
+    tempbonusDie[slot.bonusDie[i]]++;
   }
   if (time === 'current') {
-    if (color === 'blue')  {
-      tempbonusDie.blue++;
-      this.state.InitiativeRef.child(slot.key).update({'bonusDie': {blue: tempbonusDie.blue, black: tempbonusDie.black}});
-    }
-    if (color === 'black')  {
-      tempbonusDie.black++;
-      this.state.InitiativeRef.child(slot.key).update({'bonusDie': {blue: tempbonusDie.blue, black: tempbonusDie.black}});
-    }
+    tempbonusDie[color]++;
+    this.state.InitiativeRef.child(slot.key).update({'bonusDie': tempbonusDie});
+
   }
   if (time === 'past') {
-    if (color === 'blue')  {
-      tempbonusDie.blue++;
-      this.state.InitiativePastRef.child(slot.key).update({'bonusDie': {blue: tempbonusDie.blue, black: tempbonusDie.black}});
-    }
-    if (color === 'black')  {
-      tempbonusDie.black++;
-      this.state.InitiativePastRef.child(slot.key).update({'bonusDie': {blue: tempbonusDie.blue, black: tempbonusDie.black}});
-    }
+    tempbonusDie[color]++;
+    this.state.InitiativePastRef.child(slot.key).update({'bonusDie': tempbonusDie});
+
   }
 }
 
@@ -263,8 +250,7 @@ popupModifyInitiativeSlot(slot, time) {
             this.Remove(slot,time);
             Popup.close();
           }
-      }],
-      right: [{
+      },{
           text: 'Bonus Die',
           className: 'bonus',
           action: () => {
@@ -278,7 +264,22 @@ popupModifyInitiativeSlot(slot, time) {
             this.addBonusDice(slot, time, 'black');
             Popup.close();
           }
+        }],
+      right: [{
+            text: 'Upgrade Die',
+            className: 'upgrade',
+            action: () => {
+              this.addBonusDice(slot, time, 'upgrade');
+              Popup.close();
+            }
         }, {
+            text: 'Downgrade Die',
+            className: 'downgrade',
+            action: () => {
+              this.addBonusDice(slot, time, 'downgrade');
+              Popup.close();
+            }
+        },  {
           text: 'Flip',
           action: () => {
             this.flip(slot,time);
@@ -332,7 +333,7 @@ genKey() {
             {this.state.Initiative.map((slot)=>
               <div style={{display: 'inline-block', height: '50px', width:'50px'}} key={slot.key}>
                 <div style={{position: 'absolute'}}>
-                {slot.bonusDie.map((type)=>
+                {slot.bonusDie.reverse().map((type)=>
                   <img src={`/images/${type}.png`} alt={type} key={this.genKey()} className='tinydie' />
                 )}
                 </div>
@@ -343,7 +344,7 @@ genKey() {
             {this.state.InitiativePast.map((slot)=>
               <div style={{display: 'inline-block', height: '50px', width:'50px'}} key={slot.key}>
               <div style={{position: 'absolute'}}>
-              {slot.bonusDie.map((type)=>
+              {slot.bonusDie.reverse().map((type)=>
                 <img src={`/images/${type}.png`} alt={type} key={this.genKey()} className='tinydie' />
               )}
               </div>

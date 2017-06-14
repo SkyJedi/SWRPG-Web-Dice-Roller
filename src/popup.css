@@ -88,6 +88,18 @@
         color: #000000;
     }
 
+    .mm-popup__btn--upgrade {
+        background-color: #ffee00;
+        border-color: #27ae60;
+        color: #000000;
+    }
+
+    .mm-popup__btn--downgrade {
+        background-color: #eb2327;
+        border-color: #27ae60;
+        color: #000000;
+    }
+
     .mm-popup__btn--danger {
         background-color: #c5545c;
         border-color: #c5545c;
