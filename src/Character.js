@@ -307,7 +307,7 @@ class Character extends Component {
         break;
       case '':
         character.init = 'X'
-        character.dice = {blue: '', black: ''};
+        character.dice = {blue: '', black: '', upgrade: '', downgrade:''};
         break;
       default:
         character.init = ''

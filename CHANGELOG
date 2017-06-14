@@ -1,5 +1,7 @@
+1.2.11
   -blue dice first for init
   -added stop to keep modify stats in character from going negative
+  -added up/down grade dice for character and init
 
 1.2.10
   -removed the keyData function, cuz it didn't do anything
