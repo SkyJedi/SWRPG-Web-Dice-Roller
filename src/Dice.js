@@ -90,7 +90,9 @@ class Dice extends Component {
       if (this.refs.resetCheck.checked === false){
         this.setState({diceRoll: {yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0, success:0, advantage:0, triumph:0, fail:0, threat:0, despair:0, lightside:0, darkside:0}});
       }
-    }
+      this.refs.caption.value = '';
+      this.refs.polyhedral.value = 100;
+     }
 
   destinyRoll(){
     var destinyResult = rolldice.roll({white:1}, this.refs.polyhedral.value, '', diceOrder, symbols, symbolOrder, user);
