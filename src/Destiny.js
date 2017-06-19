@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import * as firebase from 'firebase';
+import Popup from 'react-popup';
 import './index.css';
 
 var channel = window.location.pathname.slice(1).toLowerCase(),
@@ -52,6 +53,27 @@ class Destiny extends Component {
     }
   }
 
+  destinyReset() {
+    Popup.create({
+    title: 'Reset Destiny',
+    content: 'Would you like to reset Destiny?',
+    className: 'alert',
+    buttons: {
+        left: ['cancel'],
+        right: [{
+            text: 'RESET',
+            className: 'danger',
+            action: () => {
+              this.state.destinyRef.remove();
+              this.state.messageRef.push().set(`${user} resets the destiny pool.`);
+              Popup.close();
+            }
+        }],
+    }});
+  }
+
+
+
   render() {
     return (
       <div className='App' style={{width: '525px'}}>
@@ -59,6 +81,8 @@ class Destiny extends Component {
           <div style={{float: 'left', marginLeft: 6}}>
             <button className='btnAdd' onClick={this.destinyAdd.bind(this)}>+</button>
             <button className='btnAdd' onClick={this.destinyRemove.bind(this)}>-</button>
+            <button className='btnAdd' style={{background: '#9e9e9e'}} onClick={this.destinyReset.bind(this)}>X</button>
+
           </div>
           <div style={{marginLeft: '60px'}}>
             {Object.entries(this.state.destinyPoint).map(([k,v])=>
@@ -67,6 +91,7 @@ class Destiny extends Component {
               </span>
             )}
           </div>
+
         </div>
       </div>
     );

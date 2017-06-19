@@ -224,7 +224,7 @@ addBonusDice(slot, time, color) {
 }
 
 Reset () {
-  firebase.database().ref().child(`${channel}`).child('Initiative').remove();
+  this.state.InitiativeRef.remove();
 }
 
 clearMarks() {

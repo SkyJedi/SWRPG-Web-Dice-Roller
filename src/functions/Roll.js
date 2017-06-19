@@ -36,7 +36,7 @@ function roll(diceRoll, polyhedralValue, caption, diceOrder, symbols, symbolOrde
       return 0;
     }
 
-    message += `<span class=messagetext> ${user} rolled: </span>`;
+    message += `<span> ${user} rolled </span>`;
 
     var color = '';
     for (var j = 0; j < Object.keys(diceFaces).length; j++) {
@@ -64,7 +64,7 @@ function roll(diceRoll, polyhedralValue, caption, diceOrder, symbols, symbolOrde
 
     for(var n = 0; n < rolledDice['polyhedral']; n++) {
       polyhedralRoll.push(Math.floor(Math.random() * polyhedralValue + 1));
-      message += '(D' + polyhedralValue + ') '  + polyhedralRoll[n] + ' ';
+      message += '<span> (D' + polyhedralValue + '): '  + polyhedralRoll[n] + ' </span>';
     }
 
     for(var l=0; symbolOrder.length > l; l++){

@@ -1,8 +1,10 @@
+  1.2.12
   -remove caption on roll
   -reset polyhedral on roll
   -removed borders for dice buttons in popup
   -CSS INJECTION
   -fixed a couple images
+  -added a reset button to destiny
 
 1.2.11
   -blue dice first for init

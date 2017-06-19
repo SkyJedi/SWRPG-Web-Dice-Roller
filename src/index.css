@@ -35,7 +35,7 @@ tr:hover {
 }
 
 .destiny-box {
-  min-height: 70px;
+  min-height: 105px;
   max-width: 525px;
   margin-top: 0.5em;
   border-style: solid;
@@ -104,7 +104,7 @@ tr:hover {
 }
 
 .messagetext {
-    vertical-align: top;
+    vertical-align: super;
 }
 
 input[type=text], select {
