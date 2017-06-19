@@ -64,7 +64,7 @@ function roll(diceRoll, polyhedralValue, caption, diceOrder, symbols, symbolOrde
 
     for(var n = 0; n < rolledDice['polyhedral']; n++) {
       polyhedralRoll.push(Math.floor(Math.random() * polyhedralValue + 1));
-      message += polyhedralRoll[n] + ' ';
+      message += '(D' + polyhedralValue + ') '  + polyhedralRoll[n] + ' ';
     }
 
     for(var l=0; symbolOrder.length > l; l++){
