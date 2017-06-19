@@ -320,13 +320,13 @@ genKey() {
       <div>
         <div className='destiny-box' style={{display: this.state.slideout, minHeight: '150px'}}>
           <div style={{maxWidth: '90px', float: 'left', marginLeft: '6px'}}>
-            <button onClick={this.InitiativeAdd.bind(this)} className='btnAdd' style={{display: 'inline-block'}}>+</button>
-            <button onClick={this.InitiativeNext.bind(this)}className='btnAdd' style={{display: 'inline-block'}}>→</button>
+            <button title='Add Initiative Slot' onClick={this.InitiativeAdd.bind(this)} className='btnAdd' style={{display: 'inline-block'}}>+</button>
+            <button title='Next Initiative Slot' onClick={this.InitiativeNext.bind(this)}className='btnAdd' style={{display: 'inline-block'}}>→</button>
             <br/>
-            <button onClick={this.InitiativeRemove.bind(this)} className='btnAdd' style={{display: 'inline-block'}}>-</button>
-            <button onClick={this.InitiativePrevious.bind(this)}className='btnAdd' style={{display: 'inline-block'}}>←</button>
+            <button title='Remove Initiative Slot' onClick={this.InitiativeRemove.bind(this)} className='btnAdd' style={{display: 'inline-block'}}>-</button>
+            <button title='Previous Initiative Slot' onClick={this.InitiativePrevious.bind(this)}className='btnAdd' style={{display: 'inline-block'}}>←</button>
             <br/>
-            <button type="button" className='lrgButton' style={{marginBottom: '0.25em', fontSize: '14px', background: '#9e9e9e', margin: '0', width: '58px'}} onClick={this.popupReset.bind(this)} >Reset Initiative</button>
+            <button title='Reset Initiative' type="button" className='lrgButton' style={{marginBottom: '0.25em', fontSize: '14px', background: '#9e9e9e', margin: '0', width: '58px', height: '20px'}} onClick={this.popupReset.bind(this)}>Reset</button>
             <b>Round: {this.state.position.round}<br/>Turn: {this.state.position.turn}</b>
           </div>
           <div style={{marginLeft: '90px'}}>
@@ -337,7 +337,7 @@ genKey() {
                   <img src={`/images/${type}.png`} alt={type} key={this.genKey()} className='tinydie' />
                 )}
                 </div>
-              <img src={`/images/${slot.type}.png`} alt={slot.type} className='tokens' style={{height: '45px', width:'45px'}} onClick={this.popupModifyInitiativeSlot.bind(this, slot, 'current')} />
+              <img title='Click to Modify Initiative Slot' src={`/images/${slot.type}.png`} alt={slot.type} className='tokens' style={{height: '45px', width:'45px'}} onClick={this.popupModifyInitiativeSlot.bind(this, slot, 'current')} />
               </div>
             )}
             <img src={`/images/repeat.png`} alt='' className='tokens' style={{height: '45px', width:'45px'}}/>
@@ -348,12 +348,12 @@ genKey() {
                 <img src={`/images/${type}.png`} alt={type} key={this.genKey()} className='tinydie' />
               )}
               </div>
-              <img src={`/images/${slot.type}.png`} alt={slot.type} className='tokens' style={{height: '45px', width:'45px'}} onClick={this.popupModifyInitiativeSlot.bind(this, slot, 'past')} />
+              <img title='Click to Modify Initiative Slot' src={`/images/${slot.type}.png`} alt={slot.type} className='tokens' style={{height: '45px', width:'45px'}} onClick={this.popupModifyInitiativeSlot.bind(this, slot, 'past')} />
               </div>
             )}
           </div>
         </div>
-        <button type="button" style={{margin: '0.5em', fontSize: '14px', height: '15px', width: '55px'}}onClick={this.slideOut.bind(this)} className='lrgButton'>Initiative</button>
+        <button title='Click to Show/Hide Initiative Tracker' type="button" style={{margin: '0.5em', fontSize: '14px', height: '15px', width: '55px'}}onClick={this.slideOut.bind(this)} className='lrgButton'>Initiative</button>
     </div>
     );
   }

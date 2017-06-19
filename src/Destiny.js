@@ -79,15 +79,15 @@ class Destiny extends Component {
       <div className='App' style={{width: '525px'}}>
         <div className="destiny-box">
           <div style={{float: 'left', marginLeft: 6}}>
-            <button className='btnAdd' onClick={this.destinyAdd.bind(this)}>+</button>
-            <button className='btnAdd' onClick={this.destinyRemove.bind(this)}>-</button>
-            <button className='btnAdd' style={{background: '#9e9e9e'}} onClick={this.destinyReset.bind(this)}>X</button>
+            <button className='btnAdd' title='Add Destiny Point'onClick={this.destinyAdd.bind(this)}>+</button>
+            <button className='btnAdd' title='Remove Destiny Point'onClick={this.destinyRemove.bind(this)}>-</button>
+            <button className='btnAdd' title='Reset Destiny' style={{background: '#9e9e9e'}} onClick={this.destinyReset.bind(this)}>X</button>
 
           </div>
           <div style={{marginLeft: '60px'}}>
             {Object.entries(this.state.destinyPoint).map(([k,v])=>
               <span key={k} onClick={this.flip.bind(this, v, k)}>
-              <img className='tokens' style={{padding: '5px 0 0 1px'}}src={`/images/${v}.png`} alt={v} />
+              <img className='tokens' title='Click to flip Destiny Point' style={{padding: '5px 0 0 1px'}}src={`/images/${v}.png`} alt={v} />
               </span>
             )}
           </div>
