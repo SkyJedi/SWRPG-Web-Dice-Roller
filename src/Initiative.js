@@ -103,7 +103,7 @@ InitiativeAdd() {
   } else {
     i = 0;
   }
-  this.state.InitiativeRef.push().set({type: 'PC', roll: i, bonusDie: {blue: 0, black: 0}});
+  this.state.InitiativeRef.push().set({type: 'pc', roll: i, bonusDie: {blue: 0, black: 0}});
 }
 
 InitiativeRemove() {
@@ -175,22 +175,22 @@ objectify(array) {
 
 flip (slot, time) {
   if (time === 'current') {
-    if (slot.type === 'PC') {
-      this.state.InitiativeRef.child(slot.key).update({'type': 'NPC'});
+    if (slot.type === 'pc') {
+      this.state.InitiativeRef.child(slot.key).update({'type': 'npc'});
       this.state.InitiativeRef.child(slot.key).update({'roll': (+slot.roll-1).toString()});
 
     } else {
-      this.state.InitiativeRef.child(slot.key).update({'type': 'PC'});
+      this.state.InitiativeRef.child(slot.key).update({'type': 'pc'});
       this.state.InitiativeRef.child(slot.key).update({'roll': (+slot.roll+1).toString()});
 
     }
   } else {
-      if (slot.type === 'PC') {
-        this.state.InitiativePastRef.child(slot.key).update({'type': 'NPC'});
+      if (slot.type === 'pc') {
+        this.state.InitiativePastRef.child(slot.key).update({'type': 'npc'});
         this.state.InitiativeRef.child(slot.key).update({'roll': (+slot.roll-1).toString()});
 
       } else {
-        this.state.InitiativePastRef.child(slot.key).update({'type': 'PC'});
+        this.state.InitiativePastRef.child(slot.key).update({'type': 'pc'});
         this.state.InitiativeRef.child(slot.key).update({'roll': (+slot.roll+1).toString()});
 
       }

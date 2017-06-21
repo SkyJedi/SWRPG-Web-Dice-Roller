@@ -31,8 +31,25 @@ class Chat extends Component {
 
   sendchat(stop) {
     stop.preventDefault();
-    this.state.chatRef.push().set(`${user}: ${this.refs.chatInput.value}`);
+    let chat = this.imgCheck(this.refs.chatInput.value);
+    chat = `<span>${user}: `+ chat + `</span>`
+    this.state.chatRef.push().set(chat);
     this.refs.chatInput.value = '';
+  }
+
+  imgCheck(chat) {
+    chat = chat.split(' ');
+    for (var i=0; i<chat.length; i++) {
+        if (chat[i].startsWith('[') && chat[i].endsWith(']')) {
+          chat[i] = chat[i].slice(1).slice(0, -1).toLowerCase();
+          chat[i] = `<img class=tinydie src=/images/${chat[i]}.png /> `;
+        }
+    }
+    let final = ''
+    chat.forEach((param) => {
+      final += param + ' ';
+    })
+    return final;
   }
 
   popupDeleteMessage(key) {
@@ -64,7 +81,7 @@ class Chat extends Component {
           {Object.entries(this.state.chat).reverse().map(([k,v])=>
             <div className='message' style={{maxWidth: '18em', minHeight: '0px', lineHeight: 1.2}} key={k}>
             <button onClick={this.popupDeleteMessage.bind(this, k)} style={{float: 'right', height: '20px', width: '20px', background: 'none', color: '#969595', fontSize: '12px', border: 'none'}}>X</button>
-            <div>{v}</div>
+            <div dangerouslySetInnerHTML={{ __html: v }} />
             </div>
           )}
         </div>

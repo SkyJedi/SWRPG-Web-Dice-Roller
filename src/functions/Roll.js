@@ -118,6 +118,8 @@ function roll(diceRoll, polyhedralValue, caption, diceOrder, symbols, symbolOrde
       symbolMessage += printsymbols(number, 'darkside');
     }
     tooltip = tooltip.slice(0, -1);
+    console.log(symbolMessage);
+    if (symbolMessage === '') {symbolMessage = 'All dice have cancelled out'}
     message += `<br><span title=${tooltip}>` + symbolMessage + `</span>`;
 
     if (caption !== '') {
