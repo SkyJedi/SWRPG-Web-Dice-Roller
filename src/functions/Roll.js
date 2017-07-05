@@ -19,7 +19,7 @@ function roll(diceRoll, polyhedralValue, caption, diceOrder, symbols, symbolOrde
         lightside: 'l',
         darkside: 'n'
       },
-      rollResults = {Data: []},
+      rollResults = {polyhedral: []},
       rolledDice = {},
       message = '',
       sides = '',
@@ -46,7 +46,6 @@ function roll(diceRoll, polyhedralValue, caption, diceOrder, symbols, symbolOrde
           var diceSide = diceFaces[color][(Math.floor(Math.random() * diceFaces[color].length) + 1)-1]
           tempArry.push(diceSide);
           sides += diceSide
-          rollResults.Data.push([color, diceSide]);
           message += `<img class=diceface src=/images/dice/${color}-${diceSide}.png /> `;
       }
       rollResults[color] = tempArry;
@@ -58,7 +57,6 @@ function roll(diceRoll, polyhedralValue, caption, diceOrder, symbols, symbolOrde
       for (var p = 0; p < rolledDice[color]; p++) {
           tempArry.push(symbolFaces[color]);
           sides += symbolFaces[color];
-          rollResults.Data.push([color, 0]);
           message += `<img class=diceface src=/images/${color}.png /> `;
       }
       rollResults[color] = tempArry;
@@ -66,7 +64,7 @@ function roll(diceRoll, polyhedralValue, caption, diceOrder, symbols, symbolOrde
 
     for(var n = 0; n < rolledDice['polyhedral']; n++) {
       polyhedralRoll.push(Math.floor(Math.random() * polyhedralValue + 1));
-      rollResults.Data.push(['polyhedral', polyhedralValue, polyhedralRoll[n]]);
+      rollResults.polyhedral.push([polyhedralValue, polyhedralRoll[n]]);
       message += '<span> (D' + polyhedralValue + '): '  + polyhedralRoll[n] + ' </span>';
     }
 
