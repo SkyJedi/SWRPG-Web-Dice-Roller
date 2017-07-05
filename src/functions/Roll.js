@@ -19,11 +19,10 @@ function roll(diceRoll, polyhedralValue, caption, diceOrder, symbols, symbolOrde
         lightside: 'l',
         darkside: 'n'
       },
-      rollResults = {polyhedral: []},
+      rollResults = {polyhedral: [], rolledSymbols: {}},
       rolledDice = {},
       message = '',
       sides = '',
-      rolledSymbols = {},
       polyhedralRoll = [];
 
     for (var i = 0; i < Object.keys(diceRoll).length; i++) {
@@ -75,46 +74,46 @@ function roll(diceRoll, polyhedralValue, caption, diceOrder, symbols, symbolOrde
         ++count;
         }
       }
-      rolledSymbols[symbolOrder[l]] = count;
+      rollResults.rolledSymbols[symbolOrder[l]] = count;
     }
     var number = 0;
     var symbolMessage = ''
     var tooltip = '';
-    if (rolledSymbols['s'] > rolledSymbols['f']) {
-      number = rolledSymbols['s'] - rolledSymbols['f'];
+    if (rollResults.rolledSymbols['s'] > rollResults.rolledSymbols['f']) {
+      number = rollResults.rolledSymbols['s'] - rollResults.rolledSymbols['f'];
       if (number !== 0) {tooltip += number + '-Success_';}
       symbolMessage += printsymbols(number, 'success');
     } else {
-      number = rolledSymbols['f'] - rolledSymbols['s'];
+      number = rollResults.rolledSymbols['f'] - rollResults.rolledSymbols['s'];
       if (number !== 0) {tooltip += number + '-Failure_';}
       symbolMessage += printsymbols(number, 'fail');
     }
-    if (rolledSymbols['a'] > rolledSymbols['t']) {
-      number = rolledSymbols['a'] - rolledSymbols['t'];
+    if (rollResults.rolledSymbols['a'] > rollResults.rolledSymbols['t']) {
+      number = rollResults.rolledSymbols['a'] - rollResults.rolledSymbols['t'];
       if (number !== 0) {tooltip += number + '-Advantage_';}
       symbolMessage += printsymbols(number, 'advantage');
     } else {
-      number = rolledSymbols['t'] - rolledSymbols['a'];
+      number = rollResults.rolledSymbols['t'] - rollResults.rolledSymbols['a'];
       if (number !== 0) {tooltip += number + '-Threat_';}
       symbolMessage += printsymbols(number, 'threat');
     }
-    if (rolledSymbols['!'] !== 0) {
-      number = rolledSymbols['!'];
+    if (rollResults.rolledSymbols['!'] !== 0) {
+      number = rollResults.rolledSymbols['!'];
       tooltip += number + '-Triumph_';
       symbolMessage += printsymbols(number, 'triumph');
     }
-    if (rolledSymbols['d'] !== 0) {
-      number = rolledSymbols['d'];
+    if (rollResults.rolledSymbols['d'] !== 0) {
+      number = rollResults.rolledSymbols['d'];
       tooltip += number + '-Despair_';
       symbolMessage += printsymbols(number, 'despair');
     }
-    if (rolledSymbols['l'] !== 0) {
-      number = rolledSymbols['l'];
+    if (rollResults.rolledSymbols['l'] !== 0) {
+      number = rollResults.rolledSymbols['l'];
       tooltip += number + '-Lightside_';
       symbolMessage += printsymbols(number, 'lightside');
     }
-    if (rolledSymbols['n'] !== 0) {
-      number = rolledSymbols['n'];
+    if (rollResults.rolledSymbols['n'] !== 0) {
+      number = rollResults.rolledSymbols['n'];
       tooltip += number + '-Darkside_';
       symbolMessage += printsymbols(number, 'darkside');
     }
@@ -125,7 +124,7 @@ function roll(diceRoll, polyhedralValue, caption, diceOrder, symbols, symbolOrde
     if (caption !== '') {
       message += `<span> ${caption} </span>`;
     }
-    return [message, rollResults, rolledSymbols];
+    return [message, rollResults];
   }
 
   function printsymbols (number, symbol) {
