@@ -11,7 +11,6 @@ class Character extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      message: {},
       messageRef: firebase.database().ref().child(`${channel}`).child('message'),
       character: {},
       characterRef: firebase.database().ref().child(`${channel}`).child('character'),
@@ -71,7 +70,7 @@ class Character extends Component {
                     }
                     this.state.characterRef.push().set(currentCharacter);
                     this.setState({currentCharacter: currentCharacter});
-                    this.state.messageRef.push().set(currentCharacter['name'] + ' has been successfully added!');
+                    this.state.messageRef.push().set({text: currentCharacter['name'] + ' has been successfully added!'});
                     Popup.close();
                 }
             }]
@@ -125,7 +124,7 @@ class Character extends Component {
                     this.state.characterRef.child(this.getcurrentKey()).set(currentCharacter);
                     this.checkIncap(currentCharacter);
                     this.setState({currentCharacter: currentCharacter});
-                    this.state.messageRef.push().set(currentCharacter['name'] + ' has been successfully edited!');
+                    this.state.messageRef.push().set({text: currentCharacter['name'] + ' has been successfully edited!'});
                     Popup.close();
                 }
             }]
@@ -138,10 +137,10 @@ class Character extends Component {
     if (this.state.currentCharacter.name === 'No Characters') return;
     if (Object.keys(this.state.character).length > 1) {
       this.state.characterRef.child(this.getcurrentKey()).remove();
-      this.state.messageRef.push().set(this.state.currentCharacter['name'] + ' has been removed.');
+      this.state.messageRef.push().set({text: this.state.currentCharacter['name'] + ' has been removed.'});
       this.previous();
     } else {
-      this.state.messageRef.push().set(this.state.currentCharacter['name'] + ' has been removed.');
+      this.state.messageRef.push().set({text: this.state.currentCharacter['name'] + ' has been removed.'});
       this.state.characterRef.remove();
       this.setState({currentCharacter: {name: 'No Characters', currentWounds: 0, maxWounds: 0, currentStrain: 0, maxStrain: 0, credits: 0, imageURL: '/images/crest.png'}});
     }
@@ -204,10 +203,10 @@ class Character extends Component {
       var stat = Object.keys(modifyStat)[j];
       var modifier = modifyStat[stat];
       if (modifier !== '') {
-        var message = currentCharacter['name'];
+        var message = currentCharacter['name'] + '\'s';
         if (modifier.includes('+')) {
-          if (stat === 'credits') {message += ' earns '}
-          else {message += ' takes '}
+          if (stat === 'credits') message += ' earns ';
+          else message += ' takes ';
           modifier = (modifier).replace(/\D/g, '');
           message += (modifier + ' ' + stat.replace('current', '') + ' for a total of ');
           modifier = +this.state.currentCharacter[stat] + +modifier;
@@ -223,7 +222,8 @@ class Character extends Component {
 
         } else {
           modifier = +(modifier).replace(/\D/g, '');
-          message += (' ' + stat.slice(7) + ' set to ' + modifier);
+          if (stat === 'credits') message += (' ' + stat + ' set to ' + modifier);
+          else message += (' ' + stat.slice(7).toLowerCase() + ' set to ' + modifier);
         }
         if (modifier < 0) modifier = 0;
         currentCharacter[stat] = modifier;
@@ -235,7 +235,7 @@ class Character extends Component {
     this.refs.credits.value = '';
     this.state.characterRef.child(this.getcurrentKey()).set(currentCharacter);
     this.checkIncap(currentCharacter);
-    this.state.messageRef.push().set(message);
+    this.state.messageRef.push().set({text: message});
 
     }
   }

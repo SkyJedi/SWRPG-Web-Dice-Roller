@@ -16,7 +16,6 @@ class Dice extends Component {
     super(props);
     this.state = {
       diceRoll: {},
-      message: {},
       messageRef: firebase.database().ref().child(`${channel}`).child('message'),
       showOptions: 'none',
       destinyRef: firebase.database().ref().child(`${channel}`).child('destiny'),
@@ -77,18 +76,15 @@ class Dice extends Component {
       critText = crit.shipcrit(critRoll[0]);
     }
     critText = user + ' ' + critRoll[1] + `<p>` + critText + `</p>`
-    this.state.messageRef.push().set(critText);
+    this.state.messageRef.push().set({text: critText});
     this.refs.modifier.value = '';
 
   }
 
   roll() {
       let roll = rolldice.roll(this.state.diceRoll, this.refs.polyhedral.value, this.refs.caption.value, diceOrder, symbols, symbolOrder, user);
-      let message = roll[0];
-      let rollResults = roll[1];
-      console.log(rollResults)
-      if (message !== undefined) {
-        this.state.messageRef.push().set(message);
+      if (roll.text !== undefined) {
+        this.state.messageRef.push().set(roll);
       }
       if (this.refs.resetCheck.checked === false){
         this.setState({diceRoll: {yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0, success:0, advantage:0, triumph:0, fail:0, threat:0, despair:0, lightside:0, darkside:0}});
@@ -100,9 +96,8 @@ class Dice extends Component {
 
   destinyRoll(){
     var destinyResult = rolldice.roll({white:1}, this.refs.polyhedral.value, '', diceOrder, symbols, symbolOrder, user);
-    var message = destinyResult[0] + `<br/> Adding to the Destiny Pool`;
-    destinyResult = destinyResult[1]['white'][0];
-    switch(destinyResult) {
+    destinyResult.text += `<br/> Adding to the Destiny Pool`;
+    switch(destinyResult.white[0]) {
       case 'l':
         this.state.destinyRef.push().set('lightside');
         break;
@@ -120,18 +115,16 @@ class Dice extends Component {
       default:
         break;
     }
-    this.state.messageRef.push().set(message);
+    this.state.messageRef.push().set(destinyResult);
     this.refs.caption.value = '';
     this.refs.polyhedral.value = 100;
   }
 
   initiativeRoll() {
     var initiativeResult = rolldice.roll(this.state.diceRoll, this.refs.polyhedral.value, this.refs.caption.value, diceOrder, symbols, symbolOrder, user);
-    if (initiativeResult === 0){return;}
-    var message = initiativeResult[0];
-    var initiativeRoll = initiativeResult[2];
+    if (initiativeResult === 0) return;
     var newInit = {};
-    newInit.roll = (initiativeRoll.s - initiativeRoll.f).toString() + (initiativeRoll.a - initiativeRoll.t).toString() + initiativeRoll['!'].toString();
+    newInit.roll = (initiativeResult.rolledSymbols.s - initiativeResult.rolledSymbols.f).toString() + (initiativeResult.rolledSymbols.a - initiativeResult.rolledSymbols.t).toString() + initiativeResult.rolledSymbols['!'].toString();
     newInit.bonusDie = {blue: 0, black: 0};
     if (this.refs.pcCheck.checked === false) {
       newInit.type = 'PC'
@@ -141,8 +134,8 @@ class Dice extends Component {
       newInit.roll += '0'
     }
     this.state.InitiativeRef.push().set(newInit);
-    if (message !== undefined) {
-      this.state.messageRef.push().set(message);
+    if (initiativeResult.text !== undefined) {
+      this.state.messageRef.push().set(initiativeResult);
     }
     if (this.refs.resetCheck.checked === false){
       this.setState({diceRoll: {yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0, success:0, advantage:0, triumph:0, fail:0, threat:0, despair:0, lightside:0, darkside:0}});
@@ -202,7 +195,7 @@ class Dice extends Component {
         </form>
           <input type='button' style={{width: '100px'}} ref='destinyRoll' className='lrgButton' onClick={this.destinyRoll.bind(this)} value='Roll Destiny' />
           <br/>
-          <input type='button' style={{width: '100px'}} ref='initiativeRoll' className='lrgButton' onClick={this.initiativeRoll.bind(this)} value='Roll Initiative' />
+          <input type='button' style={{width: '100px'}} ref='initiativeResult.rolledSymbols' className='lrgButton' onClick={this.initiativeRoll.bind(this)} value='Roll Initiative' />
           &nbsp;<span>PC</span>&nbsp;
           <label className='switch'><input type='checkbox' ref='pcCheck'/><div className='slider round'></div></label>&nbsp;
           <span>NPC</span>

@@ -67,6 +67,7 @@ function roll(diceRoll, polyhedralValue, caption, diceOrder, symbols, symbolOrde
       message += '<span> (D' + polyhedralValue + '): '  + polyhedralRoll[n] + ' </span>';
     }
 
+    //counting symbols
     for(var l=0; symbolOrder.length > l; l++){
       var count = 0;
       for(var m=0; sides.length > m; m++){
@@ -76,6 +77,8 @@ function roll(diceRoll, polyhedralValue, caption, diceOrder, symbols, symbolOrde
       }
       rollResults.rolledSymbols[symbolOrder[l]] = count;
     }
+    
+    //canceling and printing symbols
     var number = 0;
     var symbolMessage = ''
     var tooltip = '';
@@ -124,7 +127,8 @@ function roll(diceRoll, polyhedralValue, caption, diceOrder, symbols, symbolOrde
     if (caption !== '') {
       message += `<span> ${caption} </span>`;
     }
-    return [message, rollResults];
+    rollResults['text'] = message;
+    return rollResults;
   }
 
   function printsymbols (number, symbol) {

@@ -14,7 +14,6 @@ class Destiny extends Component {
     this.state = {
       destinyPoint: {},
       destinyRef: firebase.database().ref().child(`${channel}`).child('destiny'),
-      message: {},
       messageRef: firebase.database().ref().child(`${channel}`).child('message'),
     };
   }
@@ -35,21 +34,21 @@ class Destiny extends Component {
 
   destinyAdd() {
     this.state.destinyRef.push().set('lightside');
-    this.state.messageRef.push().set(`${user} added a light side point.`);
+    this.state.messageRef.push().set({text: `${user} added a light side point.`});
   }
   destinyRemove() {
     if (this.state.destinyPoint !== 0) {
       this.state.destinyRef.child(Object.keys(this.state.destinyPoint)[Object.keys(this.state.destinyPoint).length-1]).remove();
-      this.state.messageRef.push().set(`${user} removed a destiny point.`);
+      this.state.messageRef.push().set({text: `${user} removed a destiny point.`});
     }
   }
   flip (v, k) {
     if (v === 'lightside') {
       this.state.destinyRef.child(k).set('darkside');
-      this.state.messageRef.push().set(`${user} used a light side point.`)
+      this.state.messageRef.push().set({text: `${user} used a light side point.`})
     } else {
       this.state.destinyRef.child(k).set('lightside');
-      this.state.messageRef.push().set(`${user} used a dark side point.`)
+      this.state.messageRef.push().set({text: `${user} used a dark side point.`})
     }
   }
 
@@ -65,7 +64,7 @@ class Destiny extends Component {
             className: 'danger',
             action: () => {
               this.state.destinyRef.remove();
-              this.state.messageRef.push().set(`${user} resets the destiny pool.`);
+              this.state.messageRef.push().set({text: `${user} resets the destiny pool.`});
               Popup.close();
             }
         }],

@@ -18,15 +18,8 @@ class Message extends Component {
 
   componentDidMount() {
     this.state.messageRef.on('value', snap => {
-      if (snap.val() != null) {
-      this.setState({
-        message: snap.val()
-        });
-      } else {
-        this.setState({
-          message: 0
-          });
-      }
+      if (snap.val() !== null) this.setState({message: snap.val()});
+      else this.setState({message: 0});
     });
   }
 
@@ -51,10 +44,10 @@ class Message extends Component {
     return (
       <div className='messagebox'>
       <div>
-        {Object.entries(this.state.message).reverse().map(([k,v])=>
+        {Object.keys(this.state.message).reverse().map((k)=>
           <div className='message' style={{lineHeight: '1.2'}} key={k}>
           <button onClick={this.popupDeleteMessage.bind(this, k)} style={{float: 'right', height: '20px', width: '20px', background: 'none', color: '#969595', fontSize: '12px', border: 'none'}}>X</button>
-          <div dangerouslySetInnerHTML={{ __html: v }} />
+          <div dangerouslySetInnerHTML={{ __html: this.state.message[k].text }} />
           </div>
         )}
       </div>
