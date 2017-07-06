@@ -8,8 +8,7 @@ var rolldice = require("./functions/Roll.js");
 var channel = window.location.pathname.slice(1).toLowerCase(),
     user = window.location.search.slice(1),
     diceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', 'white'],
-    symbols = ['success', 'advantage', 'triumph', 'fail', 'threat', 'despair', 'lightside', 'darkside'],
-    symbolOrder = ['s', 'a', '!', 'f', 't', 'd', 'l', 'n'];
+    symbols = ['success', 'advantage', 'triumph', 'fail', 'threat', 'despair', 'lightside', 'darkside'];
 
 class Dice extends Component {
   constructor(props) {
@@ -82,7 +81,7 @@ class Dice extends Component {
   }
 
   roll() {
-      let roll = rolldice.roll(this.state.diceRoll, this.refs.polyhedral.value, this.refs.caption.value, diceOrder, symbols, symbolOrder, user);
+      let roll = rolldice.roll(this.state.diceRoll, this.refs.polyhedral.value, this.refs.caption.value, diceOrder, symbols, user);
       if (roll.text !== undefined) {
         this.state.messageRef.push().set(roll);
       }
@@ -95,7 +94,7 @@ class Dice extends Component {
      }
 
   destinyRoll(){
-    var destinyResult = rolldice.roll({white:1}, this.refs.polyhedral.value, '', diceOrder, symbols, symbolOrder, user);
+    var destinyResult = rolldice.roll({white:1}, this.refs.polyhedral.value, '', diceOrder, symbols, user);
     destinyResult.text += `<br/> Adding to the Destiny Pool`;
     switch(destinyResult.white[0]) {
       case 'l':
@@ -121,7 +120,7 @@ class Dice extends Component {
   }
 
   initiativeRoll() {
-    var initiativeResult = rolldice.roll(this.state.diceRoll, this.refs.polyhedral.value, this.refs.caption.value, diceOrder, symbols, symbolOrder, user);
+    var initiativeResult = rolldice.roll(this.state.diceRoll, this.refs.polyhedral.value, this.refs.caption.value, diceOrder, symbols, user);
     if (initiativeResult === 0) return;
     var newInit = {};
     newInit.roll = (initiativeResult.rolledSymbols.s - initiativeResult.rolledSymbols.f).toString() + (initiativeResult.rolledSymbols.a - initiativeResult.rolledSymbols.t).toString() + initiativeResult.rolledSymbols['!'].toString();
