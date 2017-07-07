@@ -29,22 +29,30 @@ function roll(diceRoll, polyhedralValue, caption, user) {
 
 
 function rollDicePool(rollResults, diceRoll) {
-  let symbolFaces = {success: 's', advantage: 'a', triumph: '!s', fail: 'f', threat: 't', despair: 'df', lightside: 'l', darkside: 'n'},
-      diceFaces = {
+  let diceFaces = {
             yellow: ['', 's', 's', 'ss', 'ss', 'a', 'sa', 'sa', 'sa', 'aa', 'aa', '!s'],
             green: ['', 's', 's', 'ss', 'a', 'a', 'sa', 'aa'],
             blue: ['', '', 's', 'sa', 'aa', 'a'],
             red: ['', 'f', 'f', 'ff', 'ff', 't', 't', 'ft', 'ft', 'tt', 'tt', 'df'],
             purple: ['', 'f', 'ff', 't', 't', 't', 'tt', 'ft'],
             black: ['', '', 'f', 'f', 't', 't'],
-            white: ['n', 'n', 'n', 'n', 'n', 'n', 'nn', 'l', 'l', 'll', 'll', 'll']
+            white: ['n', 'n', 'n', 'n', 'n', 'n', 'nn', 'l', 'l', 'll', 'll', 'll'],
+            success: 's',
+            advantage: 'a',
+            triumph: '!s',
+            fail: 'f',
+            threat: 't',
+            despair: 'df',
+            lightside: 'l',
+            darkside: 'n',
           };
   //roll dice and match them to a side and add that face to the message
-  Object.keys(diceRoll).forEach((color)=>{
+  Object.keys(diceFaces).forEach((color)=>{
+    if (diceRoll[color] === undefined) return;
     rollResults[color] = [];
     for (var k = 0; k < diceRoll[color]; k++) {
         if (color === 'yellow' || color === 'green' ||  color === 'blue' ||  color === 'red' ||  color === 'purple' ||  color === 'black' || color === 'white') rollResults[color].push(diceFaces[color][(Math.floor(Math.random() * diceFaces[color].length) + 1)-1]);
-        else rollResults[color].push(symbolFaces[color]);
+        else rollResults[color].push(diceFaces[color]);
       }
   })
   return rollResults;
