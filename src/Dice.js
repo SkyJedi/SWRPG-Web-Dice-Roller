@@ -44,6 +44,7 @@ class Dice extends Component {
     diceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', 'white'];
     this.setState({showOptions: 'none'});
     this.refs.caption.value = '';
+    this.refs.polyhedral.value = 100;
   }
 
   expandExtras() {
@@ -80,16 +81,10 @@ class Dice extends Component {
   }
 
   roll() {
-      let roll = rolldice.roll(this.state.diceRoll, this.refs.polyhedral.value, this.refs.caption.value, user);
-      if (roll.text !== undefined) {
-        this.state.messageRef.push().set(roll);
-      }
-      if (this.refs.resetCheck.checked === false){
-        this.setState({diceRoll: {yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0, success:0, advantage:0, triumph:0, fail:0, threat:0, despair:0, lightside:0, darkside:0}});
-        this.refs.caption.value = '';
-        this.refs.polyhedral.value = 100;
-      }
-
+      let diceRoll = Object.assign({}, this.state.diceRoll);
+      let roll = rolldice.roll(diceRoll, this.refs.polyhedral.value, this.refs.caption.value, user);
+      if (roll.text !== undefined) this.state.messageRef.push().set(roll);
+      if (this.refs.resetCheck.checked === false) this.reset();
      }
 
   destinyRoll(){
@@ -119,11 +114,9 @@ class Dice extends Component {
   }
 
   initiativeRoll() {
-    var initiativeResult = rolldice.roll(this.state.diceRoll, this.refs.polyhedral.value, this.refs.caption.value, user);
-    if (initiativeResult === 0) {
-      this.setState({diceRoll: {yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0, success:0, advantage:0, triumph:0, fail:0, threat:0, despair:0, lightside:0, darkside:0}});
-      return;
-    }
+    let diceRoll = Object.assign({}, this.state.diceRoll);
+    var initiativeResult = rolldice.roll(diceRoll, this.refs.polyhedral.value, this.refs.caption.value, user);
+    if (initiativeResult === 0) return;
     var newInit = {};
     newInit.roll = (initiativeResult.rolledSymbols.s - initiativeResult.rolledSymbols.f).toString() + (initiativeResult.rolledSymbols.a - initiativeResult.rolledSymbols.t).toString() + initiativeResult.rolledSymbols['!'].toString();
     newInit.bonusDie = {blue: 0, black: 0};
