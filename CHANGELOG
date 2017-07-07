@@ -1,10 +1,11 @@
+1.2.13
   -reroll samepoll finished
   -modulized Roll.js
   -reformat work to get ready for rerolls
   -added 'All dice have cancelled out' message
   -added emoji to chat
 
-  1.2.12
+1.2.12
   -remove caption on roll
   -reset polyhedral on roll
   -removed borders for dice buttons in popup
