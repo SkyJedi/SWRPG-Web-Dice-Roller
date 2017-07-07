@@ -7,8 +7,7 @@ var rolldice = require("./functions/Roll.js");
 
 var channel = window.location.pathname.slice(1).toLowerCase(),
     user = window.location.search.slice(1),
-    diceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', 'white'],
-    symbols = ['success', 'advantage', 'triumph', 'fail', 'threat', 'despair', 'lightside', 'darkside'];
+    diceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', 'white'];
 
 class Dice extends Component {
   constructor(props) {
@@ -49,7 +48,7 @@ class Dice extends Component {
 
   expandExtras() {
     if (diceOrder.length < 8) {
-      diceOrder = diceOrder.concat(symbols);
+      diceOrder.push('success', 'advantage', 'triumph', 'fail', 'threat', 'despair', 'lightside', 'darkside');
       this.setState({diceRoll:{yellow:this.state.diceRoll['yellow'], green:this.state.diceRoll['green'], blue:this.state.diceRoll['blue'], red:this.state.diceRoll['red'], purple:this.state.diceRoll['purple'], black:this.state.diceRoll['black'], white:this.state.diceRoll['white'], polyhedral:this.state.diceRoll['polyhedral'], success:0, advantage:0, triumph:0, fail:0, threat:0, despair:0, lightside:0, darkside:0}});
     } else {
       this.setState({diceRoll:{yellow:this.state.diceRoll['yellow'], green:this.state.diceRoll['green'], blue:this.state.diceRoll['blue'], red:this.state.diceRoll['red'], purple:this.state.diceRoll['purple'], black:this.state.diceRoll['black'], white:this.state.diceRoll['white'], polyhedral:this.state.diceRoll['polyhedral'], success:0, advantage:0, triumph:0, fail:0, threat:0, despair:0, lightside:0, darkside:0}});
