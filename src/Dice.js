@@ -120,7 +120,10 @@ class Dice extends Component {
 
   initiativeRoll() {
     var initiativeResult = rolldice.roll(this.state.diceRoll, this.refs.polyhedral.value, this.refs.caption.value, user);
-    if (initiativeResult === 0) return;
+    if (initiativeResult === 0) {
+      this.setState({diceRoll: {yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0, success:0, advantage:0, triumph:0, fail:0, threat:0, despair:0, lightside:0, darkside:0}});
+      return;
+    }
     var newInit = {};
     newInit.roll = (initiativeResult.rolledSymbols.s - initiativeResult.rolledSymbols.f).toString() + (initiativeResult.rolledSymbols.a - initiativeResult.rolledSymbols.t).toString() + initiativeResult.rolledSymbols['!'].toString();
     newInit.bonusDie = {blue: 0, black: 0};

@@ -27,7 +27,6 @@ function roll(diceRoll, polyhedralValue, caption, user) {
   return rollResults;
 }
 
-
 function rollDicePool(rollResults, diceRoll) {
   let diceFaces = {
             yellow: ['', 's', 's', 'ss', 'ss', 'a', 'sa', 'sa', 'sa', 'aa', 'aa', '!s'],
