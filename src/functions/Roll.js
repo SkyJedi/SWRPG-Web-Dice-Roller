@@ -1,5 +1,5 @@
 
-function roll(diceRoll, polyhedralValue, caption, diceOrder, symbols, user) {
+function roll(diceRoll, polyhedralValue, caption, user) {
   var rollResults = {};
 
   //build object that contains {color: # of die rolled} and removes all non rolled die

@@ -105,6 +105,10 @@
         color: #fff;
     }
 
+    .mm-popup__btn--ReRoll {
+        width: 140px;
+    }
+
     .mm-popup__box {
         width: 350px;
         position: absolute;
@@ -199,6 +203,10 @@
         position: absolute;
         top: 300px;
         left: 750px;
+    }
+
+    .mm-popup__box--ReRoll {
+        width: 500px;
     }
 
 

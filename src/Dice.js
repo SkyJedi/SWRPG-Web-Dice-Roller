@@ -81,7 +81,7 @@ class Dice extends Component {
   }
 
   roll() {
-      let roll = rolldice.roll(this.state.diceRoll, this.refs.polyhedral.value, this.refs.caption.value, diceOrder, symbols, user);
+      let roll = rolldice.roll(this.state.diceRoll, this.refs.polyhedral.value, this.refs.caption.value, user);
       if (roll.text !== undefined) {
         this.state.messageRef.push().set(roll);
       }
@@ -94,7 +94,7 @@ class Dice extends Component {
      }
 
   destinyRoll(){
-    var destinyResult = rolldice.roll({white:1}, this.refs.polyhedral.value, '', diceOrder, symbols, user);
+    var destinyResult = rolldice.roll({white:1}, this.refs.polyhedral.value, '', user);
     destinyResult.text += `<br/> Adding to the Destiny Pool`;
     switch(destinyResult.white[0]) {
       case 'l':
@@ -120,7 +120,7 @@ class Dice extends Component {
   }
 
   initiativeRoll() {
-    var initiativeResult = rolldice.roll(this.state.diceRoll, this.refs.polyhedral.value, this.refs.caption.value, diceOrder, symbols, user);
+    var initiativeResult = rolldice.roll(this.state.diceRoll, this.refs.polyhedral.value, this.refs.caption.value, user);
     if (initiativeResult === 0) return;
     var newInit = {};
     newInit.roll = (initiativeResult.rolledSymbols.s - initiativeResult.rolledSymbols.f).toString() + (initiativeResult.rolledSymbols.a - initiativeResult.rolledSymbols.t).toString() + initiativeResult.rolledSymbols['!'].toString();

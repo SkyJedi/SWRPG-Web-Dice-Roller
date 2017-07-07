@@ -3,6 +3,8 @@ import Popup from 'react-popup';
 import * as firebase from 'firebase';
 import './index.css';
 import './popup.css';
+var reRoll = require("./functions/reRoll.js").reRoll;
+
 
 
 var channel = window.location.pathname.slice(1).toLowerCase();
@@ -40,6 +42,11 @@ class Message extends Component {
         }]
     }});
   }
+
+  reRoll(key) {
+    if (Object.keys(this.state.message[key]).length > 1) reRoll(this.state.message[key]);
+  }
+
   render() {
     return (
       <div className='messagebox'>
@@ -47,7 +54,7 @@ class Message extends Component {
         {Object.keys(this.state.message).reverse().map((k)=>
           <div className='message' style={{lineHeight: '1.2'}} key={k}>
           <button onClick={this.popupDeleteMessage.bind(this, k)} style={{float: 'right', height: '20px', width: '20px', background: 'none', color: '#969595', fontSize: '12px', border: 'none'}}>X</button>
-          <div dangerouslySetInnerHTML={{ __html: this.state.message[k].text }} />
+          <div onClick={this.reRoll.bind(this, k)} dangerouslySetInnerHTML={{ __html: this.state.message[k].text }} />
           </div>
         )}
       </div>
