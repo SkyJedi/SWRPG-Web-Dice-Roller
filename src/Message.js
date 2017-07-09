@@ -44,7 +44,9 @@ class Message extends Component {
   }
 
   reRoll(key) {
-    if (Object.keys(this.state.message[key]).length > 1) reRoll(this.state.message[key]);
+    let message = Object.assign({}, this.state.message[key]);
+
+    if (Object.keys(message).length > 1) reRoll(message);
   }
 
   render() {

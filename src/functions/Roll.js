@@ -11,7 +11,7 @@ function roll(diceRoll, polyhedralValue, caption, user) {
   if (Object.keys(diceRoll).length === 0) return 0;
 
   //Roll the colored dice and add the extra symbols
-  rollResults = rollDicePool(rollResults, diceRoll);
+  rollResults = rollDicePool(diceRoll);
 
   //count symbols and build message results
   rollResults = countSymbols(rollResults, user);
@@ -27,7 +27,8 @@ function roll(diceRoll, polyhedralValue, caption, user) {
   return rollResults;
 }
 
-function rollDicePool(rollResults, diceRoll) {
+function rollDicePool(diceRoll) {
+  let rollResults = {};
   let diceFaces = {
             yellow: ['', 's', 's', 'ss', 'ss', 'a', 'sa', 'sa', 'sa', 'aa', 'aa', '!s'],
             green: ['', 's', 's', 'ss', 'a', 'a', 'sa', 'aa'],
@@ -71,15 +72,15 @@ function rollPolyhedral(rollResults, diceRoll, polyhedralValue) {
 function countSymbols(rollResults, user) {
   let symbolOrder = ['s', 'a', '!', 'f', 't', 'd', 'l', 'n'];
   let sides = '';
+  let diceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', 'white', 'success', 'advantage', 'triumph', 'fail', 'threat', 'despair', 'lightside', 'darkside'];
   rollResults.text = `<span> ${user} rolled </span>`;
-  Object.keys(rollResults).forEach((color)=> {
-    if (color !== 'polyhedral' && color !== 'text') {
+  diceOrder.forEach((color)=> {
+    if (rollResults[color] === undefined) return;
       rollResults[color].forEach((face)=> {
         sides += face;
         if (color === 'yellow' || color === 'green' ||  color === 'blue' ||  color === 'red' ||  color === 'purple' ||  color === 'black' || color === 'white') rollResults.text += `<img class=diceface src=/images/dice/${color}-${face}.png /> `;
         else rollResults.text += `<img class=diceface src=/images/${color}.png /> `;
       });
-    }
   });
   if (sides === '') return rollResults;
   let rolledSymbols = {};

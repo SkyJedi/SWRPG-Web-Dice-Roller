@@ -1,17 +1,20 @@
+import React from 'react';
 import Popup from 'react-popup';
+import DicePool from './modifyDicePool';
 import * as firebase from 'firebase';
 var rolldice = require("./Roll.js");
 const channel = window.location.pathname.slice(1).toLowerCase(),
       user = window.location.search.slice(1);
+
 function reRoll(message) {
   let roll = {}
   Popup.create({
   title: 'ReRoll',
-  content: 'What would like to do to with this roll',
+  content: 'What would like to do to with this dice pool?',
   className: 'ReRoll',
   buttons: {
       left: [{
-          text: 'Roll Same Pool',
+          text: 'Roll Same Dice Pool',
           className: 'ReRoll',
           action: () => {
             roll = sameDice(message)
@@ -19,13 +22,14 @@ function reRoll(message) {
 
             Popup.close();
           }
-        }/*, {
-          text: 'Add Dice',
+        }, {
+          text: 'Modify Dice Pool',
           className: 'ReRoll',
           action: () => {
+            modifiyDice(message);
             Popup.close();
           }
-        }, {
+        }/*, {
             text: 'Remove Dice',
             className: 'ReRoll',
             action: () => {
@@ -55,17 +59,33 @@ function reRoll(message) {
   }});
 }
 
-function sameDice(message) {
+function rebuiltdiceRoll(message) {
+  let rebuilt = {diceRoll:{}, polyhedral:100, caption:''};
+  if (message.polyhedral !== undefined) rebuilt.polyhedral = message.polyhedral[0][0];
+  if (message.caption !== undefined) rebuilt.caption = message.caption;
+  delete message.caption;
   delete message.text;
-  let diceRoll = {};
+  delete message.rolledSymbols;
   Object.keys(message).forEach((color)=>{
-    diceRoll[color] = message[color].length;
+    rebuilt.diceRoll[color] = message[color].length;
   });
-  let polyhedral = 0, caption = '';
-  if (message.polyhedral !== undefined) polyhedral = message.polyhedral[0][0];
-  if (message.caption !== undefined) caption = message.caption;
-  return rolldice.roll(diceRoll, polyhedral, caption, user);
+  return rebuilt;
 }
+
+function sameDice(message) {
+  let rebuilt = rebuiltdiceRoll(message);
+  return rolldice.roll(rebuilt.diceRoll, rebuilt.polyhedral, rebuilt.caption, user);
+}
+
+function modifiyDice(message) {
+  let rebuilt = rebuiltdiceRoll(message);
+  Popup.create({
+      title: 'Modifiy Dice Pool',
+      className: 'ReRoll',
+      content: <DicePool rollResults={message} rebuilt={rebuilt} popupClose={Popup.close}/>,
+  });
+}
+
 module.exports = {
   reRoll: reRoll,
 }
