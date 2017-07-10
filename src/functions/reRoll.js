@@ -3,6 +3,7 @@ import Popup from 'react-popup';
 import DicePool from './modifyDicePool';
 import * as firebase from 'firebase';
 var rolldice = require("./Roll.js");
+import '../popup.css';
 const channel = window.location.pathname.slice(1).toLowerCase(),
       user = window.location.search.slice(1);
 
@@ -81,7 +82,7 @@ function modifiyDice(message) {
   let rebuilt = rebuiltdiceRoll(message);
   Popup.create({
       title: 'Modifiy Dice Pool',
-      className: 'ReRoll',
+      className: 'reroll',
       content: <DicePool rollResults={message} rebuilt={rebuilt} popupClose={Popup.close}/>,
   });
 }

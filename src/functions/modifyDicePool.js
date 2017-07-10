@@ -92,8 +92,6 @@ class DicePool extends Component {
   deleteDie(modifiedRoll, color, rollResults) {
     if (modifiedRoll[color]+rollResults[color].length===0) delete rollResults[color];
     else {
-      console.log('removing Die')
-
       for(var i=0; i>modifiedRoll[color]; i--) {
         rollResults[color].splice((Math.floor(Math.random() * rollResults[color].length))-1, 1)
       }
