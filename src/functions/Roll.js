@@ -14,6 +14,7 @@ function roll(diceRoll, polyhedralValue, caption, user) {
   rollResults = rollDicePool(diceRoll);
 
   //count symbols and build message results
+  rollResults.text = `<span> ${user} rolled </span>`;
   rollResults = countSymbols(rollResults, user);
 
   //polyhedral
@@ -73,7 +74,6 @@ function countSymbols(rollResults, user) {
   let symbolOrder = ['s', 'a', '!', 'f', 't', 'd', 'l', 'n'];
   let sides = '';
   let diceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', 'white', 'success', 'advantage', 'triumph', 'fail', 'threat', 'despair', 'lightside', 'darkside'];
-  rollResults.text = `<span> ${user} rolled </span>`;
   diceOrder.forEach((color)=> {
     if (rollResults[color] === undefined) return;
       rollResults[color].forEach((face)=> {

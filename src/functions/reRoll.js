@@ -1,6 +1,7 @@
 import React from 'react';
 import Popup from 'react-popup';
-import DicePool from './modifyDicePool';
+import ModifyDicePool from './modifyDicePool';
+import SelectReRoll from './selectReRoll';
 import * as firebase from 'firebase';
 var rolldice = require("./Roll.js");
 import '../popup.css';
@@ -30,33 +31,15 @@ function reRoll(message) {
             modifiyDice(message);
             Popup.close();
           }
-        }/*, {
-            text: 'Remove Dice',
-            className: 'ReRoll',
-            action: () => {
-              Popup.close();
-            }
-        }
-        */]/*,
-      right: [{
+        }, {
             text: 'ReRoll Select Dice',
             className: 'ReRoll',
             action: () => {
+              selectDice(message);
               Popup.close();
             }
-        }, {
-            text: 'Something',
-            className: 'ReRoll',
-            action: () => {
-              Popup.close();
-            }
-        },  {
-          text: 'Something else',
-          className: 'ReRoll',
-          action: () => {
-            Popup.close();
-          }
-      }]*/
+        }
+        ]
   }});
 }
 
@@ -81,9 +64,18 @@ function sameDice(message) {
 function modifiyDice(message) {
   let rebuilt = rebuiltdiceRoll(message);
   Popup.create({
-      title: 'Modifiy Dice Pool',
+      title: 'Modify Dice Pool',
       className: 'reroll',
-      content: <DicePool rollResults={message} rebuilt={rebuilt} popupClose={Popup.close}/>,
+      content: <ModifyDicePool rollResults={message} rebuilt={rebuilt} popupClose={Popup.close}/>,
+  });
+}
+
+function selectDice(message) {
+  let rebuilt = rebuiltdiceRoll(message);
+  Popup.create({
+      title: 'Modify Dice Pool',
+      className: 'rerollselect',
+      content: <SelectReRoll rollResults={message} rebuilt={rebuilt} popupClose={Popup.close}/>,
   });
 }
 

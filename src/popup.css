@@ -209,6 +209,14 @@
         width: 550px;
     }
 
+    .mm-popup__box--ReRoll {
+        width: auto;
+    }
+
+    .mm-popup__box--rerollselect {
+        width: auto;
+    }
+
 
     .mm-popup__box--popover {
         width: 300px;
@@ -292,5 +300,9 @@
 
     .mm-popup__box--reroll {
         width: 550px;
+    }
+
+    .mm-popup__box--rerollselect {
+        min-width: 300px;
     }
 }

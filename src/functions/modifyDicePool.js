@@ -6,7 +6,7 @@ var rolldice = require("./Roll.js"),
     channel = window.location.pathname.slice(1).toLowerCase(),
     diceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', 'white'];
 
-class DicePool extends Component {
+class modifyDicePool extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -61,23 +61,17 @@ class DicePool extends Component {
       let modifiedRoll = Object.assign({}, this.state.modifiedRoll);
       let rollResults = this.props.rollResults
       Object.keys(modifiedRoll).forEach((color)=>{
-        if (modifiedRoll[color] < 0) this.deleteDie(modifiedRoll, color, rollResults);
+        if (modifiedRoll[color] < 0) rollResults = this.deleteDie(modifiedRoll, color, rollResults);
         if (modifiedRoll[color] > 0) rollResults = this.newDie(modifiedRoll, color, rollResults);
       })
-
+      rollResults.text = `<span> ${user} modified dice pool </span>`;
       rollResults = rolldice.countSymbols(rollResults, user);
-
-      //polyhedral
       if (modifiedRoll['polyhedral'] > 0) rollResults = rolldice.rollPolyhedral(rollResults, modifiedRoll, this.refs.polyhedral.value);
-
-      //add the caption in
       if (this.refs.caption.value !== '') {
         rollResults.caption = this.refs.caption.value;
         rollResults.text += `<span> ${this.refs.caption.value} </span>`;
       }
       if (rollResults.text !== undefined) this.state.messageRef.push().set(rollResults);
-
-      //if (roll.text !== undefined) this.state.messageRef.push().set(roll);
       this.props.popupClose();
      }
 
@@ -142,4 +136,4 @@ class DicePool extends Component {
     );
   }
 }
-export default DicePool;
+export default modifyDicePool;

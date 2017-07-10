@@ -13,7 +13,7 @@ class Message extends Component {
   constructor() {
     super();
     this.state = {
-      message: {},
+      message: 0,
       messageRef: firebase.database().ref().child(`${channel}`).child('message'),
     };
   }
@@ -21,7 +21,6 @@ class Message extends Component {
   componentDidMount() {
     this.state.messageRef.on('value', snap => {
       if (snap.val() !== null) this.setState({message: snap.val()});
-      else this.setState({message: 0});
     });
   }
 
