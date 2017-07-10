@@ -33,6 +33,8 @@ class selectReRoll extends Component {
         else displayFaces.push({color: color, position: i,  path: `/images/${color}.png`, key: color + ',' + i});
       }
     })
+    this.setState({displayFaces});
+    this.setState({displayRepeat});
   }
 
   roll() {
