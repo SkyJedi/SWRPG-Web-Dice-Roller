@@ -1,3 +1,5 @@
+  -fixed init reset
+
 1.2.14
   -select rerolls on dice pool
   -reroll add/remove die from pool
