@@ -203,7 +203,7 @@ class Character extends Component {
       var stat = Object.keys(modifyStat)[j];
       var modifier = modifyStat[stat];
       if (modifier !== '') {
-        var message = currentCharacter['name'] + '\'s';
+        var message = currentCharacter['name'];
         if (modifier.includes('+')) {
           if (stat === 'credits') message += ' earns ';
           else message += ' takes ';
