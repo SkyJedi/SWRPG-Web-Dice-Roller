@@ -1,5 +1,6 @@
   -fixed init reset
   -Added clickable links in chat iff it contains 'http'
+  -new session button
 
 1.2.14
   -select rerolls on dice pool

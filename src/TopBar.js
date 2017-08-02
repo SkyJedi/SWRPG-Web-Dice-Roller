@@ -46,10 +46,17 @@ popupDeleteChannel() {
   }});
 }
 
+newSession() {
+  firebase.database().ref().child(`${channel}`).child('destiny').remove();
+  firebase.database().ref().child(`${channel}`).child('chat').push().set(`<span>----------------------------------------------</span>`)
+  firebase.database().ref().child(`${channel}`).child('message').push().set({text: '--------------------------------------------------------------------'})
+
+}
 
 render() {
   return (
     <div>
+      <button className='btnAdd' style={{float: 'right', width: '70px', marginRight: '3px', fontSize: '70%'}} onClick={this.newSession.bind(this)}>New Session</button>
       <button className='btnAdd' style={{float: 'right', width: '70px', marginRight: '3px', fontSize: '70%'}} onClick={this.popupDeleteChannel.bind(this)}>Delete Channel</button>
       <button className='btnAdd' style={{float: 'right', width: '70px', marginRight: '3px'}} onClick={this.signOut.bind(this)}>Logout</button>
   </div>
