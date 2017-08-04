@@ -57,7 +57,7 @@ class Chat extends Component {
     chat = chat.split(' ');
     for (var i=0; i<chat.length; i++) {
         if (chat[i].includes('http')) {
-          chat[i] = `<a herf='${chat[i]}' onclick='window.open("${chat[i]}")' style='color: blue; font-size: small; text-decoration: underline;'>${chat[i]}</a> `;
+          chat[i] = `</span><a href="${chat[i]}" style="font-size: small">${chat[i]}</a><span>`;
         }
     }
     let final = ''
