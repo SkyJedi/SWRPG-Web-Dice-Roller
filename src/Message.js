@@ -21,6 +21,7 @@ class Message extends Component {
   componentDidMount() {
     this.state.messageRef.on('value', snap => {
       if (snap.val() !== null) this.setState({message: snap.val()});
+      else this.setState({message: 0});
     });
   }
 
@@ -48,6 +49,24 @@ class Message extends Component {
     if (Object.keys(message).length > 1) reRoll(message);
   }
 
+  clear() {
+    Popup.create({
+    title: 'Clear Messages',
+    content: 'Are you sure, this will clear all the messages',
+    className: 'alert',
+    buttons: {
+        left: ['cancel'],
+        right: [{
+            text: 'DELETE',
+            className: 'danger',
+            action: () => {
+              this.state.messageRef.remove();
+              Popup.close();
+            }
+        }]
+    }});
+  }
+
   render() {
     return (
       <div className='messagebox'>
@@ -58,6 +77,7 @@ class Message extends Component {
           <div onClick={this.reRoll.bind(this, k)} dangerouslySetInnerHTML={{ __html: this.state.message[k].text }} />
           </div>
         )}
+        <button className='btnAdd' style={{float: 'right', width: '70px', marginRight: '3px', fontSize: '70%'}} onClick={this.clear.bind(this)}>Clear</button>
       </div>
       </div>
     );

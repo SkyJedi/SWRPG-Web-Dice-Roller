@@ -85,6 +85,24 @@ class Chat extends Component {
     }});
   }
 
+  clear() {
+    Popup.create({
+    title: 'Clear Chat',
+    content: 'Are you sure, this will clear all the chat',
+    className: 'chat',
+    buttons: {
+        left: ['cancel'],
+        right: [{
+            text: 'DELETE',
+            className: 'danger',
+            action: () => {
+              this.state.chatRef.remove();
+              Popup.close();
+            }
+        }]
+    }});
+  }
+
   render() {
     return (
       <div className='App' style={{margin: '5px'}}>
@@ -99,7 +117,9 @@ class Chat extends Component {
             <div dangerouslySetInnerHTML={{ __html: v }} />
             </div>
           )}
+          <button className='btnAdd' style={{float: 'right', width: '70px', marginRight: '3px', fontSize: '70%'}} onClick={this.clear.bind(this)}>Clear</button>
         </div>
+
       </div>
     );
   }
