@@ -138,6 +138,16 @@ class Dice extends Component {
     this.refs.polyhedral.value = 100;
   }
 
+  gleepglop () {
+    var Species =
+      ["Aleena", "Anx", "Aqualish", "Arcona", "Arkanian Offshoot", "Arkanian", "Barabel", "Bardottan", "Besalisk", "Bith", "Bothan", "Caamasi", "Cathar", "Cerean", "Chadra-Fan", "Chagrian", "Chevin", "Chiss", "Clawdite", "Corellian Human", "Dashade", "Defel", "Devaronian", "Drall", "Dressellian", "Droid", "Dug", "Duros", "Elom", "Elomin", "Ewok", "Falleen", "Farghul", "Gamorrean", "Gand", "Gank", "Givin", "Gossam", "Gotal", "Gran", "Gungan", "Herglic", "Human", "Hutt", "Iktotchi", "Ishi Tib", "Ithorian", "Jawa", "Kalleran", "Kel Dor", "Klatooinian", "Kubaz", "Kyuzo", "Lannik", "Lepi", "Mandalorian Human", "Mirialan", "Mon Calamari", "Mustafarian", "Muun", "Nagai", "Nautolan", "Neimoidian", "Nikto", "Noghri", "Ortolan", "Pantoran", "Pau'an", "Polis Massan", "Quarren", "Quermian", "Rodian", "Ryn", "Sakiyan", "Sathari", "Selkath", "Selonian", "Shistavanen", "Sluissi", "Snivvian", "Squib", "Sullustan", "Talz", "Thakwaash", "Togorian", "Togruta", "Toydarians", "Trandoshan", "Twi'lek", "Ubese", "Ugnaught", "Verpine", "Weequay", "Whiphid", "Wookiee", "Xexto", "Zabrak", "Zeltron", "Zygerrian"];
+
+    let roll = Math.floor(Math.random() * (Species.length))
+    let gleepglop = Species[roll];
+    this.state.messageRef.push().set({text: "A wild " + gleepglop + " appears!"});
+}
+
+
 
   render() {
     return (
@@ -187,6 +197,7 @@ class Dice extends Component {
           <button onClick={this.critical.bind(this, 'shipcrit')}className='lrgButton' style={{width: '100px'}}>Ship Critical</button>
           <input className='textinput' ref='modifier' name='modifier' placeholder='modifier' style={{width: '70px', paddingLeft: '5px'}}/>
         </form>
+          <input type='button' style={{width: '100px'}} ref='gleepglop' className='lrgButton' onClick={this.gleepglop.bind(this)} value='Gleep Glop' />
           <input type='button' style={{width: '100px'}} ref='destinyRoll' className='lrgButton' onClick={this.destinyRoll.bind(this)} value='Roll Destiny' />
           <br/>
           <input type='button' style={{width: '100px'}} ref='initiativeResult.rolledSymbols' className='lrgButton' onClick={this.initiativeRoll.bind(this)} value='Roll Initiative' />
