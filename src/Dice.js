@@ -121,10 +121,10 @@ class Dice extends Component {
     newInit.roll = (initiativeResult.rolledSymbols.s - initiativeResult.rolledSymbols.f).toString() + (initiativeResult.rolledSymbols.a - initiativeResult.rolledSymbols.t).toString() + initiativeResult.rolledSymbols['!'].toString();
     newInit.bonusDie = {blue: 0, black: 0};
     if (this.refs.pcCheck.checked === false) {
-      newInit.type = 'PC'
+      newInit.type = 'pc'
       newInit.roll += '1'
     } else {
-      newInit.type = 'NPC'
+      newInit.type = 'npc'
       newInit.roll += '0'
     }
     this.state.InitiativeRef.push().set(newInit);
