@@ -11,16 +11,8 @@ class TopBar extends Component {
 constructor() {
   super();
   this.state = {
-    database: {},
     databaseRef: firebase.database().ref(),
   };
-}
-
-componentDidMount() {
-  this.state.databaseRef.on('value', snap => {
-    if (snap.val() !== null) this.setState({database: snap.val()});
-    else this.setState({database: 0});
-  });
 }
 
 signOut() {
