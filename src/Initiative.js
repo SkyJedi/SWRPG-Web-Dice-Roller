@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Popup from 'react-popup';
 import * as firebase from 'firebase';
 import './index.css';
+const dice = require("./functions/misc.js").dice;
 
 var channel = window.location.pathname.slice(1).toLowerCase();
 
@@ -310,7 +311,7 @@ genKey() {
   var text = "";
   var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   for( var i=0; i < 15; i++ )
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
+      text += possible.charAt(dice(possible.length)-1);
   return text;
 }
 

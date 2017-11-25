@@ -1,3 +1,4 @@
+const dice = require("./misc.js").dice;
 
 function roll(diceRoll, polyhedralValue, caption, user) {
   var rollResults = {};
@@ -52,7 +53,7 @@ function rollDicePool(diceRoll) {
     if (diceRoll[color] === undefined) return;
     rollResults[color] = [];
     for (var k = 0; k < diceRoll[color]; k++) {
-        if (color === 'yellow' || color === 'green' ||  color === 'blue' ||  color === 'red' ||  color === 'purple' ||  color === 'black' || color === 'white') rollResults[color].push(diceFaces[color][(Math.floor(Math.random() * diceFaces[color].length) + 1)-1]);
+        if (color === 'yellow' || color === 'green' ||  color === 'blue' ||  color === 'red' ||  color === 'purple' ||  color === 'black' || color === 'white') rollResults[color].push(diceFaces[color][dice(diceFaces[color].length)-1]);
         else rollResults[color].push(diceFaces[color]);
       }
   })
@@ -62,7 +63,7 @@ function rollDicePool(diceRoll) {
 function rollPolyhedral(rollResults, diceRoll, polyhedralValue) {
   let polyhedral = []
   for(var n = 0; n < diceRoll['polyhedral']; n++) {
-    let polyhedralRoll = Math.floor(Math.random() * polyhedralValue + 1);
+    let polyhedralRoll = dice(polyhedralValue);
     polyhedral.push([polyhedralValue, polyhedralRoll]);
     rollResults.text += '<span> (D' + polyhedralValue + '): '  + polyhedralRoll + ' </span>';
   }

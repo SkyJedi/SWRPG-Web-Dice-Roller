@@ -3,7 +3,7 @@ import * as firebase from 'firebase';
 import './index.css';
 var crit = require("./functions/Crit.js");
 var rolldice = require("./functions/Roll.js");
-
+const dice = require("./functions/misc.js").dice;
 
 var channel = window.location.pathname.slice(1).toLowerCase(),
     user = window.location.search.slice(1),
@@ -141,10 +141,7 @@ class Dice extends Component {
   gleepglop () {
     var Species =
       ["Aleena", "Anx", "Aqualish", "Arcona", "Arkanian Offshoot", "Arkanian", "Barabel", "Bardottan", "Besalisk", "Bith", "Bothan", "Caamasi", "Cathar", "Cerean", "Chadra-Fan", "Chagrian", "Chevin", "Chiss", "Clawdite", "Corellian Human", "Dashade", "Defel", "Devaronian", "Drall", "Dressellian", "Droid", "Dug", "Duros", "Elom", "Elomin", "Ewok", "Falleen", "Farghul", "Gamorrean", "Gand", "Gank", "Givin", "Gossam", "Gotal", "Gran", "Gungan", "Herglic", "Human", "Hutt", "Iktotchi", "Ishi Tib", "Ithorian", "Jawa", "Kalleran", "Kel Dor", "Klatooinian", "Kubaz", "Kyuzo", "Lannik", "Lepi", "Mandalorian Human", "Mirialan", "Mon Calamari", "Mustafarian", "Muun", "Nagai", "Nautolan", "Neimoidian", "Nikto", "Noghri", "Ortolan", "Pantoran", "Pau'an", "Polis Massan", "Quarren", "Quermian", "Rodian", "Ryn", "Sakiyan", "Sathari", "Selkath", "Selonian", "Shistavanen", "Sluissi", "Snivvian", "Squib", "Sullustan", "Talz", "Thakwaash", "Togorian", "Togruta", "Toydarians", "Trandoshan", "Twi'lek", "Ubese", "Ugnaught", "Verpine", "Weequay", "Whiphid", "Wookiee", "Xexto", "Zabrak", "Zeltron", "Zygerrian"];
-
-    let roll = Math.floor(Math.random() * (Species.length))
-    let gleepglop = Species[roll];
-    this.state.messageRef.push().set({text: "A wild " + gleepglop + " appears!"});
+    this.state.messageRef.push().set({text: "A wild " + Species[dice(Species.length)-1] + " appears!"});
 }
 
 
