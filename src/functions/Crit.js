@@ -1,3 +1,5 @@
+const dice = require("./misc.js").dice;
+
 var purpledie = `<img src=/images/purple.png alt='' style=max-width:15px />`,
     bluedie = `<img src=/images/blue.png alt='' style=max-width:15px />`,
     blackdie = `<img src=/images/black.png alt='' style=max-width:15px />`;
@@ -222,7 +224,7 @@ function shipcrit(total) {
 
 function d100 (str) {
   var total = 0;
-  var r = Math.floor(Math.random() * 100) + 1;
+  var r = dice(100);
   var modifier = 0;
   var message ='rolled ';
   //no modifier
