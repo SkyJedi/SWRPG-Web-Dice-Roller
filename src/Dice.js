@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import * as firebase from 'firebase';
 import './index.css';
-var crit = require("./functions/Crit.js");
-var rolldice = require("./functions/Roll.js");
+var crit = require("./functions/crit.js");
+var rolldice = require("./functions/roll.js");
+const dice = require("./functions/misc.js").dice;
+const diceFaces = require('./functions/diceFaces.js').dice;
 
 
 var channel = window.location.pathname.slice(1).toLowerCase(),
@@ -40,7 +42,7 @@ class Dice extends Component {
   }
 
   reset() {
-    this.setState({diceRoll: {yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0, success:0, advantage:0, triumph:0, fail:0, threat:0, despair:0, lightside:0, darkside:0}});
+    this.setState({diceRoll: {yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0, success:0, advantage:0, triumph:0, failure:0, threat:0, despair:0, lightside:0, darkside:0}});
     diceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', 'white'];
     this.setState({showOptions: 'none'});
     this.refs.caption.value = '';
@@ -49,10 +51,10 @@ class Dice extends Component {
 
   expandExtras() {
     if (diceOrder.length < 8) {
-      diceOrder.push('success', 'advantage', 'triumph', 'fail', 'threat', 'despair', 'lightside', 'darkside');
-      this.setState({diceRoll:{yellow:this.state.diceRoll['yellow'], green:this.state.diceRoll['green'], blue:this.state.diceRoll['blue'], red:this.state.diceRoll['red'], purple:this.state.diceRoll['purple'], black:this.state.diceRoll['black'], white:this.state.diceRoll['white'], polyhedral:this.state.diceRoll['polyhedral'], success:0, advantage:0, triumph:0, fail:0, threat:0, despair:0, lightside:0, darkside:0}});
+      diceOrder.push('success', 'advantage', 'triumph', 'failure', 'threat', 'despair', 'lightside', 'darkside');
+      this.setState({diceRoll:{yellow:this.state.diceRoll['yellow'], green:this.state.diceRoll['green'], blue:this.state.diceRoll['blue'], red:this.state.diceRoll['red'], purple:this.state.diceRoll['purple'], black:this.state.diceRoll['black'], white:this.state.diceRoll['white'], polyhedral:this.state.diceRoll['polyhedral'], success:0, advantage:0, triumph:0, failure:0, threat:0, despair:0, lightside:0, darkside:0}});
     } else {
-      this.setState({diceRoll:{yellow:this.state.diceRoll['yellow'], green:this.state.diceRoll['green'], blue:this.state.diceRoll['blue'], red:this.state.diceRoll['red'], purple:this.state.diceRoll['purple'], black:this.state.diceRoll['black'], white:this.state.diceRoll['white'], polyhedral:this.state.diceRoll['polyhedral'], success:0, advantage:0, triumph:0, fail:0, threat:0, despair:0, lightside:0, darkside:0}});
+      this.setState({diceRoll:{yellow:this.state.diceRoll['yellow'], green:this.state.diceRoll['green'], blue:this.state.diceRoll['blue'], red:this.state.diceRoll['red'], purple:this.state.diceRoll['purple'], black:this.state.diceRoll['black'], white:this.state.diceRoll['white'], polyhedral:this.state.diceRoll['polyhedral'], success:0, advantage:0, triumph:0, failure:0, threat:0, despair:0, lightside:0, darkside:0}});
       diceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', 'white'];
     }
   }
@@ -90,7 +92,7 @@ class Dice extends Component {
   destinyRoll(){
     var destinyResult = rolldice.roll({white:1}, this.refs.polyhedral.value, '', user);
     destinyResult.text += `<br/> Adding to the Destiny Pool`;
-    switch(destinyResult.white[0]) {
+    switch(diceFaces.white[destinyResult.roll.white[0]].face) {
       case 'l':
         this.state.destinyRef.push().set('lightside');
         break;
@@ -118,7 +120,7 @@ class Dice extends Component {
     var initiativeResult = rolldice.roll(diceRoll, this.refs.polyhedral.value, this.refs.caption.value, user);
     if (initiativeResult === 0) return;
     var newInit = {};
-    newInit.roll = (initiativeResult.rolledSymbols.s - initiativeResult.rolledSymbols.f).toString() + (initiativeResult.rolledSymbols.a - initiativeResult.rolledSymbols.t).toString() + initiativeResult.rolledSymbols['!'].toString();
+    newInit.roll = (initiativeResult.results.success - initiativeResult.results.failure).toString() + (initiativeResult.results.advantage - initiativeResult.results.threat).toString() + initiativeResult.results.triumph.toString();
     newInit.bonusDie = {blue: 0, black: 0};
     if (this.refs.pcCheck.checked === false) {
       newInit.type = 'pc'
@@ -132,7 +134,7 @@ class Dice extends Component {
       this.state.messageRef.push().set(initiativeResult);
     }
     if (this.refs.resetCheck.checked === false){
-      this.setState({diceRoll: {yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0, success:0, advantage:0, triumph:0, fail:0, threat:0, despair:0, lightside:0, darkside:0}});
+      this.setState({diceRoll: {yellow:0, green:0, blue:0, red:0, purple:0, black:0, white:0, polyhedral:0, success:0, advantage:0, triumph:0, failure:0, threat:0, despair:0, lightside:0, darkside:0}});
     }
     this.refs.caption.value = '';
     this.refs.polyhedral.value = 100;
@@ -141,10 +143,7 @@ class Dice extends Component {
   gleepglop () {
     var Species =
       ["Aleena", "Anx", "Aqualish", "Arcona", "Arkanian Offshoot", "Arkanian", "Barabel", "Bardottan", "Besalisk", "Bith", "Bothan", "Caamasi", "Cathar", "Cerean", "Chadra-Fan", "Chagrian", "Chevin", "Chiss", "Clawdite", "Corellian Human", "Dashade", "Defel", "Devaronian", "Drall", "Dressellian", "Droid", "Dug", "Duros", "Elom", "Elomin", "Ewok", "Falleen", "Farghul", "Gamorrean", "Gand", "Gank", "Givin", "Gossam", "Gotal", "Gran", "Gungan", "Herglic", "Human", "Hutt", "Iktotchi", "Ishi Tib", "Ithorian", "Jawa", "Kalleran", "Kel Dor", "Klatooinian", "Kubaz", "Kyuzo", "Lannik", "Lepi", "Mandalorian Human", "Mirialan", "Mon Calamari", "Mustafarian", "Muun", "Nagai", "Nautolan", "Neimoidian", "Nikto", "Noghri", "Ortolan", "Pantoran", "Pau'an", "Polis Massan", "Quarren", "Quermian", "Rodian", "Ryn", "Sakiyan", "Sathari", "Selkath", "Selonian", "Shistavanen", "Sluissi", "Snivvian", "Squib", "Sullustan", "Talz", "Thakwaash", "Togorian", "Togruta", "Toydarians", "Trandoshan", "Twi'lek", "Ubese", "Ugnaught", "Verpine", "Weequay", "Whiphid", "Wookiee", "Xexto", "Zabrak", "Zeltron", "Zygerrian"];
-
-    let roll = Math.floor(Math.random() * (Species.length))
-    let gleepglop = Species[roll];
-    this.state.messageRef.push().set({text: "A wild " + gleepglop + " appears!"});
+    this.state.messageRef.push().set({text: "A wild " + Species[dice(Species.length)-1] + " appears!"});
 }
 
 

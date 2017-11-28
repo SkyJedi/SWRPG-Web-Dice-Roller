@@ -1,8 +1,13 @@
+1.3.0
+  -recoded roll
+
+1.2.15
   -added gleepglob button
   -added hat and message clear buttons
   -fixed init reset
   -Added clickable links in chat iff it contains 'http'
   -new session button
+  -new RNG system
 
 1.2.14
   -select rerolls on dice pool
