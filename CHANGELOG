@@ -10,120 +10,120 @@
   -new RNG system
 
 1.2.14
-  -select rerolls on dice pool
-  -reroll add/remove die from pool
+-select rerolls on dice pool
+-reroll add/remove die from pool
 
 1.2.13
-  -reroll samepoll finished
-  -modulized Roll.js
-  -reformat work to get ready for rerolls
-  -added 'All dice have cancelled out' message
-  -added emoji to chat
+-reroll samepoll finished
+-modulized Roll.js
+-reformat work to get ready for rerolls
+-added 'All dice have cancelled out' message
+-added emoji to chat
 
 1.2.12
-  -remove caption on roll
-  -reset polyhedral on roll
-  -removed borders for dice buttons in popup
-  -CSS INJECTION
-  -fixed a couple images
-  -added a reset button to destiny
+-remove caption on roll
+-reset polyhedral on roll
+-removed borders for dice buttons in popup
+-CSS INJECTION
+-fixed a couple images
+-added a reset button to destiny
 
 1.2.11
-  -blue dice first for init
-  -added stop to keep modify stats in character from going negative
-  -added up/down grade dice for character and init
+-blue dice first for init
+-added stop to keep modify stats in character from going negative
+-added up/down grade dice for character and init
 
 1.2.10
-  -removed the keyData function, cuz it didn't do anything
-  -added bonusdie to init tracker
+-removed the keyData function, cuz it didn't do anything
+-added bonusdie to init tracker
 
 1.2.9
-  -fixed character a lot
-  -added init check box on character list
-    -click init cell on character list to show that character has gone this round
-    -checks will reset on new round with init tracker
-  -added die tracker in character list
-    -click dice cell on character list to add dice for next check
-    -dice will reset on when character's Init is checked
+-fixed character a lot
+-added init check box on character list
+  -click init cell on character list to show that character has gone this round
+  -checks will reset on new round with init tracker
+-added die tracker in character list
+  -click dice cell on character list to add dice for next check
+  -dice will reset on when character's Init is checked
 
 1.2.8
-  -added Character list
+-added Character list
 
 1.2.7.1
-  -added an automatic fix for the broken(ish) characters.  NO NEED TO DELETE ANYTHING ANYMORE
+-added an automatic fix for the broken(ish) characters.  NO NEED TO DELETE ANYTHING ANYMORE
 
 1.2.7
-  -recoded Character tracker a smidge to make it a lot better
+-recoded Character tracker a smidge to make it a lot better
 
 1.2.6
-  -Incap now happens when wounds.strain exceeds threshold
+-Incap now happens when wounds.strain exceeds threshold
 
 1.2.5
-  -you can now edit your character by clicking on the character image
+-you can now edit your character by clicking on the character image
 
 1.2.4
-  -Delete button in messages
-  -Delete button in chat
+-Delete button in messages
+-Delete button in chat
 
 1.2.3
-  -CSS overhaul
+-CSS overhaul
 
 1.2.2
-  -Initiative Roll Button (under Special Rolls)
+-Initiative Roll Button (under Special Rolls)
 
 1.2.1.2
-  -added popups for Initiative slot modification
-  -added Initiative reset button,
-  -start initiativeRoll
+-added popups for Initiative slot modification
+-added Initiative reset button,
+-start initiativeRoll
 
 1.2.1.1
-  -added sweet CSS toggle
+-added sweet CSS toggle
 
 1.2.1
-  -fixed dumb whitespace in the middle
+-fixed dumb whitespace in the middle
 
 1.2.0
-  -Initiative manual tracker up and working!
+-Initiative manual tracker up and working!
 
 1.1.2
-  -Delete Room button
+-Delete Room button
 
 1.1.1
-  -user specific current character and popup confirmation on deleting a character
+-user specific current character and popup confirmation on deleting a character
 
 1.1.0
-  -user based dicepool,
-  -removed reset of symbols and special rolls on roll
+-user based dicepool,
+-removed reset of symbols and special rolls on roll
 
 1.0.10
-  -caption and tooltip
+-caption and tooltip
 
 1.0.9
-  -added Character Tracker
+-added Character Tracker
 
 1.0.8
-  -Added Destiny Roll
+-Added Destiny Roll
 
 1.0.7
-  -Added Critical and Ship Critical
+-Added Critical and Ship Critical
 
 1.0.6
-  -Added Chat
+-Added Chat
 
 1.0.5
-  -Added usernames
+-Added usernames
 
 1.0.4
-  -tweaked the arrow sizes, added click on die to add die
+-tweaked the arrow sizes, added click on die to add die
 
 1.0.3
-  -added keep dice pool checkbox
+-added keep dice pool checkbox
 
 1.0.2
-  -added symbols to roll
+-added symbols to roll
 
 1.0.1
-  -added stop for empty roll
+-added stop for empty roll
 
 1.0
-  - Initial release
+- Initial release
