@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import * as firebase from 'firebase';
 import '../index.css';
-const dice = require("./misc.js").dice;
-var rolldice = require("./Roll.js"),
+var rolldice = require("./roll.js"),
+    dice = require("./misc.js").dice,
     user = window.location.search.slice(1),
     channel = window.location.pathname.slice(1).toLowerCase(),
     diceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', 'white'];
@@ -60,38 +60,43 @@ class modifyDicePool extends Component {
 
   roll() {
       let modifiedRoll = Object.assign({}, this.state.modifiedRoll);
-      let rollResults = this.props.rollResults
+      let diceResult = this.props.rollResults;
+      diceResult.text = `<span> ${user} modified dice pool </span>`;
       Object.keys(modifiedRoll).forEach((color)=>{
-        if (modifiedRoll[color] < 0) rollResults = this.deleteDie(modifiedRoll, color, rollResults);
-        if (modifiedRoll[color] > 0) rollResults = this.newDie(modifiedRoll, color, rollResults);
-      })
-      rollResults.text = `<span> ${user} modified dice pool </span>`;
-      rollResults = rolldice.countSymbols(rollResults, user);
-      if (modifiedRoll['polyhedral'] > 0) rollResults = rolldice.rollPolyhedral(rollResults, modifiedRoll, this.refs.polyhedral.value);
+        //removes dice from the pool
+        if (modifiedRoll[color] < 0) diceResult.roll[color] = this.deleteDie(modifiedRoll[color], diceResult.roll[color], color);
+
+        //add dice to the Pool
+        if (modifiedRoll[color] > 0) diceResult.roll[color] = this.addDice(modifiedRoll[color], diceResult.roll[color], color);
+      });
+      diceResult = rolldice.countSymbols(diceResult, user);
       if (this.refs.caption.value !== '') {
-        rollResults.caption = this.refs.caption.value;
-        rollResults.text += `<span> ${this.refs.caption.value} </span>`;
+        diceResult.caption = this.refs.caption.value;
+        diceResult.text += `<span> ${this.refs.caption.value} </span>`;
       }
-      if (rollResults.text !== undefined) this.state.messageRef.push().set(rollResults);
+      if (diceResult.text !== undefined) this.state.messageRef.push().set(diceResult);
       this.props.popupClose();
      }
 
-  newDie(modifiedRoll, color, rollResults) {
-    let diceRoll = {};
-    diceRoll[color] = modifiedRoll[color];
-    if (rollResults[color] === undefined) rollResults[color]=[];
-    rollResults[color] = rollResults[color].concat(rolldice.rollDicePool(diceRoll)[color]);
-    return rollResults;
-  }
-
-  deleteDie(modifiedRoll, color, rollResults) {
-    if (modifiedRoll[color]+rollResults[color].length===0) delete rollResults[color];
+  addDice(modifiedRoll, diceResult, color) {
+    if (diceResult === undefined) diceResult = [];
+    if (color === 'polyhedral') diceResult = diceResult.concat(rolldice.rollPolyhedral({polyhedral: modifiedRoll}, this.refs.polyhedral.value));
     else {
-      for(var i=0; i>modifiedRoll[color]; i--) {
-        rollResults[color].splice(dice(rollResults[color].length)-1, 1)
+      for (let i=0; modifiedRoll[color]>i; i++) {
+        diceResult.push(rolldice.rollDice(color));
       }
     }
-    return rollResults;
+    return diceResult;
+  }
+
+  deleteDie(modifiedRoll, diceResult, color) {
+    if (modifiedRoll+diceResult.length===0) diceResult = [];
+    else {
+      for(var i=0; i>modifiedRoll; i--) {
+        diceResult.splice(dice(diceResult.length)-1, 1)
+      }
+    }
+    return diceResult;
   }
 
   render() {

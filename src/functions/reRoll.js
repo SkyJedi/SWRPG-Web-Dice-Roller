@@ -3,7 +3,7 @@ import Popup from 'react-popup';
 import ModifyDicePool from './modifyDicePool';
 import SelectReRoll from './selectReRoll';
 import * as firebase from 'firebase';
-var rolldice = require("./Roll.js");
+var rolldice = require("./roll.js");
 import '../popup.css';
 const channel = window.location.pathname.slice(1).toLowerCase(),
       user = window.location.search.slice(1);
@@ -50,8 +50,8 @@ function rebuiltdiceRoll(message) {
   delete message.caption;
   delete message.text;
   delete message.rolledSymbols;
-  Object.keys(message).forEach((color)=>{
-    rebuilt.diceRoll[color] = message[color].length;
+  Object.keys(message.roll).forEach((color)=>{
+    rebuilt.diceRoll[color] = message.roll[color].length;
   });
   return rebuilt;
 }
