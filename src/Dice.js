@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import * as firebase from 'firebase';
 import './index.css';
-var crit = require("./functions/crit.js");
-var rolldice = require("./functions/roll.js");
+var crit = require("./functions/Crit.js");
+var rolldice = require("./functions/Roll.js");
 const dice = require("./functions/misc.js").dice;
 const diceFaces = require('./functions/diceFaces.js').dice;
 

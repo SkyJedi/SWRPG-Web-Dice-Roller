@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import * as firebase from 'firebase';
 import '../index.css';
 const diceFaces = require('./diceFaces.js').dice;
-var rolldice = require("./roll.js"),
+var rolldice = require("./Roll.js"),
     user = window.location.search.slice(1),
     channel = window.location.pathname.slice(1).toLowerCase();
 
