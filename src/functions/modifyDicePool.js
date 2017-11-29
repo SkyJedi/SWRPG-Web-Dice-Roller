@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import * as firebase from 'firebase';
 import '../index.css';
-var rolldice = require("./roll.js"),
+var rolldice = require("./Roll.js"),
     dice = require("./misc.js").dice,
     user = window.location.search.slice(1),
     channel = window.location.pathname.slice(1).toLowerCase(),
@@ -79,13 +79,15 @@ class modifyDicePool extends Component {
      }
 
   addDice(modifiedRoll, diceResult, color) {
+
     if (diceResult === undefined) diceResult = [];
     if (color === 'polyhedral') diceResult = diceResult.concat(rolldice.rollPolyhedral({polyhedral: modifiedRoll}, this.refs.polyhedral.value));
     else {
-      for (let i=0; modifiedRoll[color]>i; i++) {
+      for (let i=0; modifiedRoll>i; i++) {
         diceResult.push(rolldice.rollDice(color));
       }
     }
+    console.log(diceResult);
     return diceResult;
   }
 

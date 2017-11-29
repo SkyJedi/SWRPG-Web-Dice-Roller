@@ -3,7 +3,7 @@ import Popup from 'react-popup';
 import ModifyDicePool from './modifyDicePool';
 import SelectReRoll from './selectReRoll';
 import * as firebase from 'firebase';
-var rolldice = require("./roll.js");
+var rolldice = require("./Roll.js");
 import '../popup.css';
 const channel = window.location.pathname.slice(1).toLowerCase(),
       user = window.location.search.slice(1);
