@@ -18,7 +18,7 @@ class selectReRoll extends Component {
   }
 
   componentDidMount() {
-    let diceResult = this.props.diceResult;
+    let diceResult = this.props.rollResults;
     let rebuilt = this.props.rebuilt;
     let displayFaces = [];
     let displayRepeat = {};
@@ -41,7 +41,7 @@ class selectReRoll extends Component {
   }
 
   roll() {
-      let diceResult = this.props.diceResult;
+      let diceResult = this.props.rollResults;
       let reRoll = Object.assign({}, this.state.reRoll);
       Object.keys(reRoll).forEach((key)=>{
         diceResult.roll[reRoll[key].color].splice(reRoll[key].position, 1, rolldice.rollDice(reRoll[key].color));
@@ -75,7 +75,6 @@ class selectReRoll extends Component {
   render() {
     return (
       <div>
-        <h2>Select Dice to Reroll.</h2>
         {this.state.displayFaces.map((file)=>
           <div key={file.key} className='dice rerollselect' style={{backgroundImage: `url(${file.path})`}} onClick={this.selectDice.bind(this, file)}><img className='dice repeatselect' src={'/images/repeat.png'} alt='' style={{display: this.state.displayRepeat[file.key]}} /></div>
         )}

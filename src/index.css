@@ -162,20 +162,8 @@ input[type=text], select {
   height: 50px;
   background-size: contain;
   background-repeat: no-repeat;
-  margin: 2px 5px;
-  vertical-align: bottom;
+  margin: 0 5px;
 }
-
-.dice.fortuneselect  {
-  display: inline-block;
-  width: 50px;
-  height: 50px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  margin: 2px 5px;
-  vertical-align: bottom;
-}
-
 .dice.repeatselect  {
   width: 35px;
   position: relative;
