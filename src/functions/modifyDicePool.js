@@ -60,7 +60,7 @@ class modifyDicePool extends Component {
 
   roll() {
       let modifiedRoll = Object.assign({}, this.state.modifiedRoll);
-      let diceResult = this.props.rollResults;
+      let diceResult = this.props.diceResult;
       diceResult.text = `<span> ${user} modified dice pool </span>`;
       Object.keys(modifiedRoll).forEach((color)=>{
         //removes dice from the pool
