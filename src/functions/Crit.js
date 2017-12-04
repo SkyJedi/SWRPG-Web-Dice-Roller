@@ -1,5 +1,4 @@
 const dice = require("./misc.js").dice;
-
 var purpledie = `<img src=/images/purple.png alt='' style=max-width:15px />`,
     bluedie = `<img src=/images/blue.png alt='' style=max-width:15px />`,
     blackdie = `<img src=/images/black.png alt='' style=max-width:15px />`;

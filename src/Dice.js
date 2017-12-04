@@ -146,8 +146,6 @@ class Dice extends Component {
     this.state.messageRef.push().set({text: "A wild " + Species[dice(Species.length)-1] + " appears!"});
 }
 
-
-
   render() {
     return (
       <div style={{topMargin: '5px', width: '525px'}}>
