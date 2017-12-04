@@ -1,6 +1,6 @@
-# Genesys-Web-Dice-Roller
+# SWRPG-Web-Dice-Roller
 
-A Web App Companion for the Genesys RPG
+A Web App Companion for the SWRPG
 
 
 #Installation and Setup
