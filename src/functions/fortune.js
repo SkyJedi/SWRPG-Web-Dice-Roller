@@ -32,7 +32,7 @@ class fortune extends Component {
               displayFaces[color+i].fortune[fortuneRoll] = {key: color + i + 'fortune' + fortuneRoll, color: color, position: i, roll: fortuneRoll, path:`/images/dice/${color}-${diceFaces[color][fortuneRoll].face}.png`, display: 'none'};
             })
           }
-          else displayFaces[color+i].current = {color: color, position: i,  path: `/images/${color}.png`, key: color + i};
+          else displayFaces[color+i] = {current:{color: color, position: i,  path: `/images/${color}.png`, key: color + i + 'current'}, fortune: {}};
         }
       }
     })
