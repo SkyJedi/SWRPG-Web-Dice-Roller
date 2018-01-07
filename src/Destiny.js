@@ -86,7 +86,7 @@ class Destiny extends Component {
           <div style={{marginLeft: '60px'}}>
             {Object.entries(this.state.destinyPoint).map(([k,v])=>
               <span key={k} onClick={this.flip.bind(this, v, k)}>
-              <img className='tokens' title='Click to flip Destiny Point' style={{padding: '5px 0 0 1px'}}src={`/images/${v}.png`} alt={v} />
+              <img className='tokens' title='Click to flip Destiny Point' style={{padding: '5px 0 0 1px'}}src={`/images/${v}token.png`} alt={v} />
               </span>
             )}
           </div>
