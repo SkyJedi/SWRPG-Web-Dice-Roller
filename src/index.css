@@ -316,6 +316,15 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
-@media (max-width: 550px) {
- @viewport { min-width: 550px; }
+@media only screen
+  and (max-width: 480px) {
+    #root {
+      width: fit-content;
+    }
+
+    .left {
+      float: left;
+      margin: 0;
+      width: 100%;
+    }
 }
