@@ -1,10 +1,11 @@
-const dice = require("./misc.js").dice;
-const diceFaces = require('./diceFaces.js').dice;
+import { dice as diceFaces } from './diceFaces.js';
+import { dice } from "./misc.js";
 
-function roll(diceRoll, polyhedralValue, caption, user) {
-  var diceResult = {roll: {polyhedral:[]}, results: {}, text: ''};
+export function roll(originalDiceRoll, polyhedralValue, caption, user) {
+  let diceRoll = Object.assign({}, originalDiceRoll);
+  let diceResult = { roll: { polyhedral: [] }, results: {}, text: '' };
   //build object that contains {color: # of die rolled} and removes all non rolled die
-  Object.keys(diceRoll).forEach((color)=>{
+  Object.keys(diceRoll).forEach((color) => {
     if (diceRoll[color] === 0) delete diceRoll[color];
   });
 
@@ -12,8 +13,8 @@ function roll(diceRoll, polyhedralValue, caption, user) {
   if (Object.keys(diceRoll).length === 0) return 0;
 
   //Roll the colored dice and add the extra symbols\
-  Object.keys(diceFaces).forEach((color)=>{
-    if (!(diceRoll[color] === undefined)){
+  Object.keys(diceFaces).forEach((color) => {
+    if (!(diceRoll[color] === undefined)) {
       diceResult.roll[color] = [];
       for (var k = 0; k < diceRoll[color]; k++) {
         diceResult.roll[color].push(rollDice(color));
@@ -36,20 +37,20 @@ function roll(diceRoll, polyhedralValue, caption, user) {
   return diceResult;
 }
 
-function rollDice(die) {
+export function rollDice(die) {
   //roll dice and match them to a side and add that face to the message
   return dice(Object.keys(diceFaces[die]).length);
 }
 
-function rollPolyhedral(diceRoll, polyhedralValue) {
+export function rollPolyhedral(diceRoll, polyhedralValue) {
   let polyhedral = []
-  for(var n = 0; n < diceRoll['polyhedral']; n++) {
+  for (var n = 0; n < diceRoll['polyhedral']; n++) {
     polyhedral.push([polyhedralValue, dice(polyhedralValue)]);
   }
   return polyhedral;
 }
 
-function countSymbols(diceResult, user) {
+export function countSymbols(diceResult, user) {
   diceResult.results = {
     face: '',
     success: 0,
@@ -66,7 +67,7 @@ function countSymbols(diceResult, user) {
     if (!(diceResult.roll[color] === undefined)) {
       diceResult.roll[color].forEach((number) => {
         let face = diceFaces[color][number].face;
-        for(let i=0; face.length > i; i++) {
+        for (let i = 0; face.length > i; i++) {
           switch (face[i]) {
             case 's':
               diceResult.results.success++
@@ -98,7 +99,7 @@ function countSymbols(diceResult, user) {
               break;
           }
         }
-        if (color === 'yellow' || color === 'green' ||  color === 'blue' ||  color === 'red' ||  color === 'purple' ||  color === 'black' || color === 'white') diceResult.text += `<img class=diceface src=/images/dice/${color}-${face}.png /> `;
+        if (color === 'yellow' || color === 'green' || color === 'blue' || color === 'red' || color === 'purple' || color === 'black' || color === 'white') diceResult.text += `<img class=diceface src=/images/dice/${color}-${face}.png /> `;
         else diceResult.text += `<img class=diceface src=/images/${color}.png /> `;
       });
     }
@@ -113,14 +114,14 @@ function printResults(diceResult) {
   //prints faces
   //creates finalCount by cancelling results
   let finalCount = {};
-  if (diceResult.success>diceResult.failure) finalCount.success = diceResult.success-diceResult.failure;
-  if (diceResult.failure>diceResult.success) finalCount.failure = diceResult.failure-diceResult.success;
-  if (diceResult.advantage>diceResult.threat) finalCount.advantage = diceResult.advantage-diceResult.threat;
-  if (diceResult.threat>diceResult.advantage) finalCount.threat = diceResult.threat-diceResult.advantage;
-  if (diceResult.triumph>0) finalCount.triumph = diceResult.triumph;
-  if (diceResult.despair>0) finalCount.despair = diceResult.despair;
-  if (diceResult.lightside>0) finalCount.lightside = diceResult.lightside;
-  if (diceResult.darkside>0) finalCount.darkside = diceResult.darkside;
+  if (diceResult.success > diceResult.failure) finalCount.success = diceResult.success - diceResult.failure;
+  if (diceResult.failure > diceResult.success) finalCount.failure = diceResult.failure - diceResult.success;
+  if (diceResult.advantage > diceResult.threat) finalCount.advantage = diceResult.advantage - diceResult.threat;
+  if (diceResult.threat > diceResult.advantage) finalCount.threat = diceResult.threat - diceResult.advantage;
+  if (diceResult.triumph > 0) finalCount.triumph = diceResult.triumph;
+  if (diceResult.despair > 0) finalCount.despair = diceResult.despair;
+  if (diceResult.lightside > 0) finalCount.lightside = diceResult.lightside;
+  if (diceResult.darkside > 0) finalCount.darkside = diceResult.darkside;
 
   //prints finalCount
   Object.keys(finalCount).forEach((symbol) => {
@@ -132,8 +133,8 @@ function printResults(diceResult) {
 
   //print polyhedral dice if present
   if (diceResult.polyhedral !== undefined) {
-    diceResult.polyhedral.forEach((poly)=>{
-      response += '<span> (D' + poly[0] + '): '  + poly[1] + ' </span>';
+    diceResult.polyhedral.forEach((poly) => {
+      response += '<span> (D' + poly[0] + '): ' + poly[1] + ' </span>';
     });
   }
 
@@ -144,17 +145,10 @@ function printResults(diceResult) {
   return response;
 }
 
-function printsymbols (symbol, number) {
+function printsymbols(symbol, number) {
   let print = '';
-  for (let i=0; i<number; i++){
+  for (let i = 0; i < number; i++) {
     print += `<img class=diceface src=/images/${symbol}.png /> `
   }
   return print;
 }
-
-module.exports = {
-    roll: roll,
-    rollDice: rollDice,
-    rollPolyhedral: rollPolyhedral,
-    countSymbols: countSymbols,
-};

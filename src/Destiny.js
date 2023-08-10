@@ -1,100 +1,115 @@
-import React, { Component } from 'react';
-import * as firebase from 'firebase';
-import Popup from 'react-popup';
-import './index.css';
+import firebase from "firebase/app";
+import "firebase/database";
+import React, { useEffect } from 'react';
+import { Button, ButtonGroup, Col, Container, Modal, Row } from 'react-bootstrap';
+import { ArrowsAngleContract, ArrowsAngleExpand, DashLg, PlusLg, XLg } from "react-bootstrap-icons";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
+import styles from "./Destiny.module.scss";
 
 var channel = window.location.pathname.slice(1).toLowerCase(),
-    user = window.location.search.slice(1);
+  user = window.location.search.slice(1);
 
 
-class Destiny extends Component {
+const Destiny = () => {
+  const [expanded, setExpanded] = React.useState(false);
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      destinyPoint: {},
-      destinyRef: firebase.database().ref().child(`${channel}`).child('destiny'),
-      messageRef: firebase.database().ref().child(`${channel}`).child('message'),
-    };
-  }
+  const [destinyPoint, setDestinyPoint] = React.useState({});
+  const destinyRef = firebase.database().ref().child(`${channel}`).child('destiny');
+  const messageRef = firebase.database().ref().child(`${channel}`).child('message');
 
-  componentDidMount() {
-    this.state.destinyRef.on('value', snap => {
+  const [showModal, setShowModal] = React.useState(false);
+
+  useEffect(() => {
+    destinyRef.on('value', snap => {
       if (snap.val() != null) {
-      this.setState({
-        destinyPoint: snap.val()
-        });
+        setDestinyPoint(snap.val());
       } else {
-        this.setState({
-          destinyPoint: 0
-          });
+        setDestinyPoint({});
       }
     });
-  }
+  }, []);
 
-  destinyAdd() {
-    this.state.destinyRef.push().set('lightside');
-    this.state.messageRef.push().set({text: `${user} added a light side point.`});
+  const destinyAdd = () => {
+    destinyRef.push().set('lightside');
+    messageRef.push().set({ text: `${user} added a light side point.` });
   }
-  destinyRemove() {
-    if (this.state.destinyPoint !== 0) {
-      this.state.destinyRef.child(Object.keys(this.state.destinyPoint)[Object.keys(this.state.destinyPoint).length-1]).remove();
-      this.state.messageRef.push().set({text: `${user} removed a destiny point.`});
+  const destinyRemove = () => {
+    if (destinyPoint !== 0) {
+      destinyRef.child(Object.keys(destinyPoint)[Object.keys(destinyPoint).length - 1]).remove();
+      messageRef.push().set({ text: `${user} removed a destiny point.` });
     }
   }
-  flip (v, k) {
+  const flip = (v, k) => {
     if (v === 'lightside') {
-      this.state.destinyRef.child(k).set('darkside');
-      this.state.messageRef.push().set({text: `${user} used a light side point.`})
+      destinyRef.child(k).set('darkside');
+      messageRef.push().set({ text: `${user} used a light side point.` })
     } else {
-      this.state.destinyRef.child(k).set('lightside');
-      this.state.messageRef.push().set({text: `${user} used a dark side point.`})
+      destinyRef.child(k).set('lightside');
+      messageRef.push().set({ text: `${user} used a dark side point.` })
     }
   }
 
-  destinyReset() {
-    Popup.create({
-    title: 'Reset Destiny',
-    content: 'Would you like to reset Destiny?',
-    className: 'alert',
-    buttons: {
-        left: ['cancel'],
-        right: [{
-            text: 'RESET',
-            className: 'danger',
-            action: () => {
-              this.state.destinyRef.remove();
-              this.state.messageRef.push().set({text: `${user} resets the destiny pool.`});
-              Popup.close();
-            }
-        }],
-    }});
-  }
-
-
-
-  render() {
-    return (
-      <div className='App' style={{width: '525px'}}>
-        <div className="destiny-box">
-          <div style={{float: 'left', marginLeft: 6}}>
-            <button className='btnAdd' title='Add Destiny Point'onClick={this.destinyAdd.bind(this)}>+</button>
-            <button className='btnAdd' title='Remove Destiny Point'onClick={this.destinyRemove.bind(this)}>-</button>
-            <button className='btnAdd' title='Reset Destiny' style={{background: '#9e9e9e'}} onClick={this.destinyReset.bind(this)}>X</button>
-
-          </div>
-          <div style={{marginLeft: '60px'}}>
-            {Object.entries(this.state.destinyPoint).map(([k,v])=>
-              <span key={k} onClick={this.flip.bind(this, v, k)}>
-              <img className='tokens' title='Click to flip Destiny Point' style={{padding: '5px 0 0 1px'}}src={`/images/${v}token.png`} alt={v} />
-              </span>
-            )}
-          </div>
-
-        </div>
-      </div>
-    );
-  }
+  return (
+    <Container className="top-level-container">
+      <Row>
+        <Col className={styles.buttonColumn} hidden={!expanded} sm={1}>
+          <ButtonGroup vertical className={styles.buttonGroup}>
+            <Button className='icon-button-grouped' size='sm' variant="primary" title='Add Destiny Point' onClick={destinyAdd.bind(this)}><PlusLg></PlusLg></Button>
+            <Button className='icon-button-grouped' size='sm' variant="secondary" title='Remove Destiny Point' onClick={destinyRemove.bind(this)}><DashLg></DashLg></Button>
+            <Button className='icon-button-grouped' size='sm' variant="danger" title='Reset Destiny' onClick={(_) => setShowModal(true)}><XLg></XLg></Button>
+          </ButtonGroup>
+          <Modal show={showModal} onHide={(_) => setShowModal(false)}>
+            <Modal.Header closeButton>
+              <Modal.Title>Reset Destiny</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>Would you like to reset Destiny?</Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={(_) => setShowModal(false)}>
+                Cancel
+              </Button>
+              <Button variant="danger" onClick={(_) => {
+                destinyRef.remove();
+                messageRef.push().set({ text: `${user} resets the destiny pool from ${Object.entries(destinyPoint).map(([_, v]) => `<img class=diceface src=/images/${v}.png />`).join('')}` });
+                setShowModal(false);
+              }
+              }>
+                RESET
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </Col>
+        <Col sm={expanded ? '9' : '10'} lg={expanded ? '10' : '11'} className={styles.contentColumn}>
+          <Row >
+            <Col sm="12"><strong>Destiny</strong></Col>
+          </Row>
+          <Row className={styles.tokenContainer}>
+            <Col className={styles.transitionGroupWrapper} id='destinyTokens' sm='12'>
+              {Object.entries(destinyPoint).map(([k, v]) =>
+                <TransitionGroup key={k} className={styles.transitionGroup}>
+                  <CSSTransition
+                    key={`${k}-${v}`}
+                    timeout={400}
+                    classNames={{
+                      enter: styles.tokenoutEnter,
+                      enterActive: styles.tokenoutEnterActive,
+                      exit: styles.tokenoutExit,
+                      exitActive: styles.tokenoutExitActive
+                    }}>
+                    <Button className={styles.tokenButton} variant='light' onClick={flip.bind(this, v, k)}>
+                      <img className={styles.tokenImage} title='Click to flip Destiny Point' src={`/images/${v}token.png`} alt={v} />
+                    </Button>
+                  </CSSTransition>
+                </TransitionGroup>
+              )}
+            </Col>
+          </Row>
+        </Col>
+        <Col sm='2' lg='1' className="toggleCornerColumn">
+          <Button className="toggleCornerButton" title='Click to Show/Hide Destiny Controls' variant={!expanded ? 'primary' : 'light'} onClick={(_) => setExpanded(!expanded)}>{!expanded ? <ArrowsAngleExpand></ArrowsAngleExpand> : <ArrowsAngleContract></ArrowsAngleContract>}</Button>
+        </Col>
+      </Row>
+    </Container>
+  );
 }
 
 export default Destiny;

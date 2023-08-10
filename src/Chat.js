@@ -1,50 +1,50 @@
-import React, { Component } from 'react';
-import * as firebase from 'firebase';
-import './index.css';
-import Popup from 'react-popup';
-import './popup.css';
+import firebase from "firebase/app";
+import "firebase/database";
+import React, { useEffect } from 'react';
+import { Button, ButtonGroup, Col, Container, Form, FormControl, Modal, Row } from 'react-bootstrap';
+import { XLg } from 'react-bootstrap-icons';
+import { Flipped, Flipper } from "react-flip-toolkit";
+import styles from './Chat.module.scss';
+import "./Chat.scss";
+import { isNewSessionText } from './functions/misc';
+
 var channel = window.location.pathname.slice(1).toLowerCase(),
-    user = window.location.search.slice(1);
+  user = window.location.search.slice(1);
 
-class Chat extends Component {
-  constructor() {
-    super();
-    this.state = {
-      chat: {},
-      chatRef: firebase.database().ref().child(`${channel}`).child('chat'),
-    };
-  }
+const Chat = () => {
+  const [chat, setChat] = React.useState({});
+  const chatRef = firebase.database().ref().child(`${channel}`).child('chat');
+  const [chatInput, setChatInput] = React.useState('');
 
-  componentDidMount() {
-    this.state.chatRef.on('value', snap => {
+  const [keyToDelete, setKeyToDelete] = React.useState(null);
+  const [showDeleteAllModal, setShowDeleteAllModal] = React.useState(false);
+
+  useEffect(() => {
+    chatRef.on('value', snap => {
       if (snap.val() != null) {
-      this.setState({
-        chat: snap.val()
-        });
+        setChat(snap.val())
       } else {
-        this.setState({
-          chat: 0
-          });
+        setChat(0);
       }
     });
-  }
+  }, []);
 
-  sendchat(stop) {
+  const sendchat = (stop) => {
     stop.preventDefault();
-    let chat = this.imgCheck(this.refs.chatInput.value);
-    chat = this.urlCheck(chat);
-    chat = `<span>${user}: `+ chat + `</span>`
-    this.state.chatRef.push().set(chat);
-    this.refs.chatInput.value = '';
+    let chat = imgCheck(chatInput);
+    chat = urlCheck(chat);
+    chat = `<span>${user}: ` + chat + `</span>`
+    chatRef.push().set(chat);
+    setChatInput('');
   }
 
-  imgCheck(chat) {
+  const imgCheck = (chat) => {
     chat = chat.split(' ');
-    for (var i=0; i<chat.length; i++) {
-        if (chat[i].startsWith('[') && chat[i].endsWith(']')) {
-          chat[i] = chat[i].slice(1).slice(0, -1).toLowerCase();
-          chat[i] = `<img class=tinydie src=/images/${chat[i]}.png /> `;
-        }
+    for (var i = 0; i < chat.length; i++) {
+      if (chat[i].startsWith('[') && chat[i].endsWith(']')) {
+        chat[i] = chat[i].slice(1).slice(0, -1).toLowerCase();
+        chat[i] = `<img class=tinydie src=/images/${chat[i]}.png /> `;
+      }
     }
     let final = ''
     chat.forEach((param) => {
@@ -53,12 +53,12 @@ class Chat extends Component {
     return final;
   }
 
-  urlCheck(chat) {
+  const urlCheck = (chat) => {
     chat = chat.split(' ');
-    for (var i=0; i<chat.length; i++) {
-        if (chat[i].includes('http')) {
-          chat[i] = `</span><a href="${chat[i]}" style="font-size: small">${chat[i]}</a><span>`;
-        }
+    for (var i = 0; i < chat.length; i++) {
+      if (chat[i].includes('http')) {
+        chat[i] = `</span><a href="${chat[i]}" style="font-size: small">${chat[i]}</a><span>`;
+      }
     }
     let final = ''
     chat.forEach((param) => {
@@ -67,61 +67,82 @@ class Chat extends Component {
     return final;
   }
 
-  popupDeleteMessage(key) {
-    Popup.create({
-    title: 'Delete Message',
-    content: 'Are you sure, this will delete this message',
-    className: 'chat',
-    buttons: {
-        left: ['cancel'],
-        right: [{
-            text: 'DELETE',
-            className: 'danger',
-            action: () => {
-              this.state.chatRef.child(key).remove();
-              Popup.close();
-            }
-        }]
-    }});
-  }
+  return (
+    <Container className="top-level-container">
+      <Row>
+        <Col sm="12"><strong>Chat</strong></Col>
+      </Row>
+      <Row>
+        <Col className={styles.sendWrapper} xs='12'>
+          <Form onSubmit={sendchat.bind(this)}>
+            <ButtonGroup className={styles.buttonGroup}>
+              <FormControl as='textarea' rows='2' className={styles.chatBox} value={chatInput} onChange={event => setChatInput(event.target.value)} placeholder='Text'></FormControl>
+              <Button type='submit' disabled={!chatInput}>Send</Button>
+            </ButtonGroup>
+          </Form>
+        </Col>
 
-  clear() {
-    Popup.create({
-    title: 'Clear Chat',
-    content: 'Are you sure, this will clear all the chat',
-    className: 'chat',
-    buttons: {
-        left: ['cancel'],
-        right: [{
-            text: 'DELETE',
-            className: 'danger',
-            action: () => {
-              this.state.chatRef.remove();
-              Popup.close();
-            }
-        }]
-    }});
-  }
+        <Col className={styles.chatContainer} xs='12'>
+          <Flipper flipKey={Object.entries(chat).length} spring='wobbly'>
+            {Object.entries(chat).reverse().map(([k, v]) =>
+              <Flipped key={k} flipId={k} stagger>
+                <div>
+                  <Row key={k} className={isNewSessionText(v) ? styles.chatMessageNewSession : styles.chatNormalMessage}>
+                    <Col className={styles.chatText} xs='10' lg='11' dangerouslySetInnerHTML={{ __html: v }} />
+                    <Col className={styles.deleteWrapper} xs='2' lg='1'>
+                      <Button size='sm' className={styles.deleteButton} title='Delete chat message' variant='danger' onClick={_ => setKeyToDelete(k)}><XLg></XLg></Button>
+                    </Col>
+                  </Row>
+                </div>
+              </Flipped>
+            )}
+          </Flipper>
+          <Modal show={keyToDelete} onHide={(_) => setKeyToDelete(null)}>
+            <Modal.Header closeButton>
+              <Modal.Title>Delete Message</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>Are you sure, this will delete this message</Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={(_) => setKeyToDelete(null)}>
+                Cancel
+              </Button>
+              <Button variant="danger" onClick={(_) => {
+                chatRef.child(keyToDelete).remove();
+                setKeyToDelete(null);
+              }
+              }>
+                DELETE
+              </Button>
+            </Modal.Footer>
+          </Modal>
 
-  render() {
-    return (
-      <div className='App' style={{margin: '5px'}}>
-        <form ref='chatForm' onSubmit={this.sendchat.bind(this)}>
-        <input className='textinput' style={{width:'285px', margin: '0px'}} ref='chatInput' required/>
-        <button ref='send' className='lrgButton' style={{width:'45px', margin: '0 0 0 2px'}}>Send</button>
-        </form>
-        <div className='messagebox' style={{maxHeight: '350px', maxWidth: '350px'}}>
-          {Object.entries(this.state.chat).reverse().map(([k,v])=>
-            <div className='message' style={{maxWidth: '18em', minHeight: '0px', lineHeight: 1.2}} key={k}>
-            <button onClick={this.popupDeleteMessage.bind(this, k)} style={{float: 'right', height: '20px', width: '20px', background: 'none', color: '#969595', fontSize: '12px', border: 'none'}}>X</button>
-            <div dangerouslySetInnerHTML={{ __html: v }} />
-            </div>
-          )}
-          <button className='btnAdd' style={{float: 'right', width: '70px', marginRight: '3px', fontSize: '70%'}} onClick={this.clear.bind(this)}>Clear</button>
-        </div>
+          <Button className={styles.deleteAllButton} variant="danger" onClick={(_) => {
+            setShowDeleteAllModal(true);
+          }}>
+            <XLg></XLg> Clear Chat
+          </Button>
 
-      </div>
-    );
-  }
+          <Modal show={showDeleteAllModal} onHide={(_) => setShowDeleteAllModal(false)}>
+            <Modal.Header closeButton>
+              <Modal.Title>Clear Chat</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>Are you sure, this will clear all the chat</Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={(_) => setShowDeleteAllModal(false)}>
+                Cancel
+              </Button>
+              <Button variant="danger" onClick={(_) => {
+                chatRef.remove();
+                setShowDeleteAllModal(false);
+              }
+              }>
+                DELETE ALL
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </Col>
+      </Row>
+    </Container>
+  );
 }
-  export default Chat;
+export default Chat;

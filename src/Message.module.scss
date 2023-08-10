@@ -1,0 +1,90 @@
+@import "./bootstrap/our-component-imports.scss";
+
+.messageContainer {
+    max-height: 75vh;
+    overflow: scroll;
+
+    @include media-breakpoint-up(md) {
+        max-height: none;
+    }
+}
+
+@mixin message {
+    @extend .mt-2;
+    @extend .bg-opacity-10;
+    @extend .border;
+}
+
+.textMessage {
+    @include message;
+    @extend .bg-secondary;
+
+    p {
+        @extend .mt-2;
+        @extend .mb-0;
+    }
+}
+
+.newSessionMessage {
+    @include message;
+    @extend .bg-dark;
+    @extend .bg-opacity-75;
+    @extend .text-white;
+}
+
+@mixin rollMessage {
+    @include message;
+
+    span:not(:first-of-type):before {
+        content: '';
+        width: 100%;
+        height: 1px;
+        display: block;
+        @extend .bg-secondary;
+        @extend .bg-opacity-25;
+        @extend .mb-1;
+        @extend .mt-1;
+    }
+}
+
+.rollMessageSuccess {
+    @include rollMessage;
+    @extend .bg-info;
+}
+
+.rollMessageFail {
+    @include rollMessage;
+    @extend .bg-danger;
+}
+
+.noPseudoButton {
+    @extend .p-2;
+    @extend .p-lg-3;
+}
+
+.pseudoButtonDark {
+    cursor: pointer;
+
+    @extend .noPseudoButton;
+    @extend .rounded;
+
+    &:hover {
+        background-color: rgba($color: #d3d4d5, $alpha: 0.4);
+        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+}
+
+.closeMessageColumn {
+    @extend .p-0;
+    @extend .pt-1;
+    @extend .pe-1;
+}
+
+.closeMessageButton {
+    @extend .w-100;
+}
+
+.deleteAllButton {
+    @extend .w-100;
+    @extend .mt-2;
+}

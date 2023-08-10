@@ -1,0 +1,77 @@
+@import "./bootstrap/our-component-imports.scss";
+@import "./Modals.module.scss";
+
+.buttonColumn {
+    @extend .ps-2;
+    @extend .pe-0;
+}
+
+.doubleButtonColumn {
+    @extend .buttonColumn;
+    @extend .mt-1;
+}
+
+.doubleButtonPixelFix {
+    // the double button is two pixels too large because it only has two vertical 1px Borders instead of four
+    padding-left: 1px;
+    padding-right: 1px
+}
+
+.buttonGroup {
+    @extend .w-100;
+    @extend .my-1;
+}
+
+.button {
+    @extend .border;
+    @extend .w-100;
+}
+
+.contentColumn {
+    @extend .d-flex;
+    @extend .flex-column;
+}
+
+.tokenContainer {
+    @extend .mt-1;
+}
+
+.initiativeSlot {
+    height: 3.5em;
+    width: 3.5em;
+
+    @extend .p-1;
+}
+
+.initiativeButton {
+    @extend .initiativeSlot;
+    display: inline-block;
+
+    &:first-child {
+        @extend .border;
+        @extend .border-primary;
+        @extend .rounded;
+    }
+}
+
+.badgeContainer {
+    position: absolute;
+    margin-top: -0.5em;
+}
+
+.badge {
+    height: 1em;
+    width: auto;
+}
+
+.inlineTextImage {
+    height: 1em;
+    width: auto;
+
+    @extend .me-1;
+}
+
+.token {
+    height: 100%;
+    width: auto;
+}

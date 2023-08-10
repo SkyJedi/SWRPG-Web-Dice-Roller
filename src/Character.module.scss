@@ -1,0 +1,126 @@
+@import "./bootstrap/our-component-imports.scss";
+
+@import "./Modals.module.scss";
+
+.controlsColumn {
+    @extend .pe-1;
+    @extend .pt-1;
+}
+
+.doubleButtonLeft {
+    @extend .pe-0;
+}
+
+.doubleButtonRight {
+    @extend .ps-1;
+    @extend .pe-2;
+}
+
+.singleButtons {
+    @extend .pe-2;
+    @extend .mt-1;
+
+    .pixelFix {
+        padding-left: 1px;
+        padding-right: 1px;
+    }
+}
+
+.singleButton {
+    @extend .mb-1;
+    @extend .w-100;
+}
+
+.buttonGroup {
+    @extend .w-100;
+}
+
+.nameBox {
+    min-height: 1em;
+
+    @extend .text-start;
+    @extend .p-1;
+}
+
+.incapacitated {
+    @extend .text-danger;
+}
+
+.valuePairWrapper {
+    @extend .mt-1;
+}
+
+.currentValueWrapper {
+    @extend .pe-0;
+}
+
+.currentValueBox {
+    min-height: 1em;
+
+    @extend .text-end;
+    @extend .p-1;
+    @extend .text-primary;
+}
+
+.maxValueWrapper {
+    @extend .ps-1;
+    @extend .d-flex;
+}
+
+.maxValueLabel {
+    font-size: large;
+
+    @extend .mt-2;
+}
+
+.maxValueBox {
+    min-height: 1em;
+
+    @extend .text-start;
+    @extend .p-1;
+}
+
+.characterImageWrapper {
+    @extend .p-0;
+    @extend .pe-2;
+}
+
+.characterImage {
+    width: fit-content;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.table {
+    @extend .mt-3;
+}
+
+.selectedRow {
+    td {
+        @extend .bg-primary;
+        @extend .bg-opacity-25;
+    }
+}
+
+.unselectedRow {
+    td {
+        @extend .bg-opacity-25;
+    }
+}
+
+.cellButton {
+    @extend .py-0;
+    @extend .w-100;
+    @extend .h-100;
+}
+
+.cellDie {
+    display: inline-block;
+}
+
+.tinydie {
+    height: 1em;
+    width: auto;
+
+    @extend .me-1;
+}

@@ -1,0 +1,20 @@
+@import "./bootstrap/our-component-imports.scss";
+
+.loginBody {
+    @extend .pt-3;
+}
+
+.d1c3 {
+    @extend .px-5;
+    @extend .w-100;
+}
+
+.loginForm {
+    @extend .mt-3;
+    @extend .d-grid;
+    @extend .gap-1;
+}
+
+.footer {
+    @extend .mt-3;
+}

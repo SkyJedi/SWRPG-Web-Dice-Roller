@@ -1,86 +1,147 @@
-import React, { Component } from 'react';
-import Popup from 'react-popup';
-import * as firebase from 'firebase';
-import './index.css';
-import './popup.css';
-var reRoll = require("./functions/reRoll.js").reRoll;
-
-
+import firebase from "firebase/app";
+import "firebase/database";
+import React, { useEffect } from 'react';
+import { Button, Col, Container, Modal, Row } from 'react-bootstrap';
+import { XLg } from 'react-bootstrap-icons';
+import { Flipped, Flipper } from "react-flip-toolkit";
+import styles from './Message.module.scss';
+import './Message.scss';
+import { isNewSessionText } from './functions/misc';
+import ReRoll from './functions/reRoll';
 
 var channel = window.location.pathname.slice(1).toLowerCase();
 
-class Message extends Component {
-  constructor() {
-    super();
-    this.state = {
-      message: 0,
-      messageRef: firebase.database().ref().child(`${channel}`).child('message'),
-    };
-  }
+const Message = () => {
+  const [messages, setMessages] = React.useState(0);
+  const messageRef = firebase.database().ref().child(`${channel}`).child('message');
 
-  componentDidMount() {
-    this.state.messageRef.on('value', snap => {
-      if (snap.val() !== null) this.setState({message: snap.val()});
-      else this.setState({message: 0});
+  const [keyToDelete, setKeyToDelete] = React.useState(null);
+  const [showDeleteAllModal, setShowDeleteAllModal] = React.useState(false);
+
+  let reRoll = { send: _ => { } };
+
+  useEffect(() => {
+    messageRef.on('value', snap => {
+      if (snap.val() !== null) { setMessages(snap.val()); }
+      else { setMessages(0); }
     });
+  }, []);
+
+  const isRollMessage = (message) => {
+    return Object.keys(message).length > 1;
   }
 
-  popupDeleteMessage(key) {
-    Popup.create({
-    title: 'Delete Message',
-    content: 'Are you sure, this will delete this message',
-    className: 'messages',
-    buttons: {
-        left: ['cancel'],
-        right: [{
-            text: 'DELETE',
-            className: 'danger',
-            action: () => {
-              this.state.messageRef.child(key).remove();
-              Popup.close();
+  const doReRoll = (key) => {
+    let message = Object.assign({}, messages[key]);
+
+    if (isRollMessage(message)) { reRoll(message) };
+  }
+
+  const determineMessageClassNames = (message) => {
+    if (!isRollMessage(message)) {
+      if (isNewSessionText(message.text)) {
+        return styles.newSessionMessage;
+      }
+      return styles.textMessage;
+    }
+
+    if (message.roll.yellow || message.roll.green || message.roll.blue
+      || message.roll.red || message.roll.purple || message.roll.black) {
+      // regular roll; success = at least one success
+      if ((message.results.success ?? 0) - (message.results.failure ?? 0) > 0) {
+        return styles.rollMessageSuccess;
+      } else {
+        return styles.rollMessageFail;
+      }
+    }
+
+    if (message.roll.white) {
+      // only force roll; success = at least one lightside
+      if (message.results.lightside > 0) {
+        return styles.rollMessageSuccess;
+      } else {
+        return styles.rollMessageFail;
+      }
+    }
+
+    //all other rolls
+    return styles.rollMessageSuccess;
+  }
+
+  return (
+    <Container className="top-level-container">
+      <Row>
+        <Col sm="12"><strong>Messages</strong></Col>
+      </Row>
+      <Row className={styles.messageContainer}>
+        <Flipper flipKey={Object.keys(messages).length} spring='gentle'>
+          {Object.keys(messages).reverse().map((k, index) =>
+            <Flipped key={k} flipId={k} stagger>
+              <div>
+                <Container key={k} >
+                  <Row id={index === 0 ? 'newestRoll' : k} className={determineMessageClassNames(messages[k])}>
+                    <Col className={isRollMessage(messages[k]) ? styles.pseudoButtonDark : styles.noPseudoButton} xs='10' lg='11'>
+                      <div onClick={doReRoll.bind(this, k)} dangerouslySetInnerHTML={{ __html: messages[k].text }} />
+                    </Col>
+                    <Col className={styles.closeMessageColumn} xs='2' lg='1'>
+                      <Button className={styles.closeMessageButton} title='Delete message' variant='danger' onClick={setKeyToDelete.bind(this, k)}><XLg></XLg></Button>
+                    </Col>
+                  </Row>
+                </Container>
+              </div>
+            </Flipped>
+          )}
+        </Flipper>
+
+        <Modal show={keyToDelete} onHide={(_) => setKeyToDelete(null)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Delete Message</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Are you sure, this will delete this message</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={(_) => setKeyToDelete(null)}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={(_) => {
+              messageRef.child(keyToDelete).remove();
+              setKeyToDelete(null);
             }
-        }]
-    }});
-  }
+            }>
+              DELETE
+            </Button>
+          </Modal.Footer>
+        </Modal>
 
-  reRoll(key) {
-    let message = Object.assign({}, this.state.message[key]);
+        <ReRoll callin={callin => reRoll = callin}></ReRoll>
 
-    if (Object.keys(message).length > 1) reRoll(message);
-  }
+        <Col>
+          <Button className={styles.deleteAllButton} variant="danger" onClick={(_) => {
+            setShowDeleteAllModal(true);
+          }}>
+            <XLg></XLg> Clear All Messages
+          </Button>
 
-  clear() {
-    Popup.create({
-    title: 'Clear Messages',
-    content: 'Are you sure, this will clear all the messages',
-    className: 'alert',
-    buttons: {
-        left: ['cancel'],
-        right: [{
-            text: 'DELETE',
-            className: 'danger',
-            action: () => {
-              this.state.messageRef.remove();
-              Popup.close();
-            }
-        }]
-    }});
-  }
-
-  render() {
-    return (
-      <div className='messagebox'>
-      <div>
-        {Object.keys(this.state.message).reverse().map((k)=>
-          <div className='message' style={{lineHeight: '1.2'}} key={k}>
-          <button onClick={this.popupDeleteMessage.bind(this, k)} style={{float: 'right', height: '20px', width: '20px', background: 'none', color: '#969595', fontSize: '12px', border: 'none'}}>X</button>
-          <div onClick={this.reRoll.bind(this, k)} dangerouslySetInnerHTML={{ __html: this.state.message[k].text }} />
-          </div>
-        )}
-        <button className='btnAdd' style={{float: 'right', width: '70px', marginRight: '3px', fontSize: '70%'}} onClick={this.clear.bind(this)}>Clear</button>
-      </div>
-      </div>
-    );
-  }
+          <Modal show={showDeleteAllModal} onHide={(_) => setShowDeleteAllModal(false)}>
+            <Modal.Header closeButton>
+              <Modal.Title>Clear Messages</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>Are you sure, this will clear all the messages</Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={(_) => setShowDeleteAllModal(false)}>
+                Cancel
+              </Button>
+              <Button variant="danger" onClick={(_) => {
+                messageRef.remove();
+                setShowDeleteAllModal(false);
+              }
+              }>
+                DELETE ALL
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </Col>
+      </Row>
+    </Container>
+  );
 }
-  export default Message;
+export default Message;

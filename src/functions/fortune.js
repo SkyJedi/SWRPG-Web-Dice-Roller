@@ -1,100 +1,113 @@
-import React, { Component } from 'react';
-import * as firebase from 'firebase';
-import '../index.css';
+import firebase from "firebase/app";
+import "firebase/database";
+import React, { useEffect } from 'react';
+import { Button, ButtonGroup, Col, Container, FormControl, Row } from "react-bootstrap";
+import { ChevronDoubleRight } from "react-bootstrap-icons";
+import styles from './fortune.module.scss';
+
 const diceFaces = require('./diceFaces.js').dice;
 var rolldice = require("./Roll.js"),
-    user = window.location.search.slice(1),
-    channel = window.location.pathname.slice(1).toLowerCase();
+  user = window.location.search.slice(1),
+  channel = window.location.pathname.slice(1).toLowerCase();
 
-class fortune extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      messageRef: firebase.database().ref().child(`${channel}`).child('message'),
-      displayFaces: {},
-      swap: {},
-    };
-  }
+const fortune = props => {
+  const messageRef = firebase.database().ref().child(`${channel}`).child('message');
+  const [displayFaces, setDisplayFaces] = React.useState({});
+  const [swap, setSwap] = React.useState({});
 
-  componentDidMount() {
-    let diceResult = this.props.diceResult;
-    let rebuilt = this.props.rebuilt;
+  const [caption, setCaption] = React.useState('');
+
+
+  useEffect(() => {
+    const diceResult = props.diceResult;
+
     let displayFaces = {};
-    this.refs.caption.value = rebuilt.caption;
-    Object.keys(diceFaces).forEach((color)=>{
-      if (diceResult.roll[color] !== undefined){
-        for (var i=0; diceResult.roll[color].length>i; i++){
-          displayFaces[color+i] = {};
-          if (color === 'yellow' || color === 'green' ||  color === 'blue' ||  color === 'red' ||  color === 'purple' ||  color === 'black' || color === 'white') {
-            displayFaces[color+i].current = {color: color, position: i, path: `/images/dice/${color}-${diceFaces[color][diceResult.roll[color][i]].face}.png`, key: color + i + 'current'};
-            displayFaces[color+i].fortune = {};
-            diceFaces[color][diceResult.roll[color][i]].adjacentposition.forEach((fortuneRoll)=>{
-              displayFaces[color+i].fortune[fortuneRoll] = {key: color + i + 'fortune' + fortuneRoll, color: color, position: i, roll: fortuneRoll, path:`/images/dice/${color}-${diceFaces[color][fortuneRoll].face}.png`, display: 'none'};
+    setCaption(diceResult.caption ?? '');
+    Object.keys(diceFaces).forEach((color) => {
+      if (diceResult.roll[color] !== undefined) {
+        for (var i = 0; diceResult.roll[color].length > i; i++) {
+          displayFaces[color + i] = {};
+          if (color === 'yellow' || color === 'green' || color === 'blue' || color === 'red' || color === 'purple' || color === 'black' || color === 'white') {
+            displayFaces[color + i].current = { color: color, position: i, path: `/images/dice/${color}-${diceFaces[color][diceResult.roll[color][i]].face}.png`, key: color + i + 'current' };
+            displayFaces[color + i].fortune = {};
+            diceFaces[color][diceResult.roll[color][i]].adjacentposition.forEach((fortuneRoll) => {
+              displayFaces[color + i].fortune[fortuneRoll] = { key: color + i + 'fortune' + fortuneRoll, color: color, position: i, roll: fortuneRoll, path: `/images/dice/${color}-${diceFaces[color][fortuneRoll].face}.png`, display: false };
             })
           }
-          else displayFaces[color+i] = {current:{color: color, position: i,  path: `/images/${color}.png`, key: color + i + 'current'}, fortune: {}};
+          else {
+            displayFaces[color + i] = { current: { color: color, position: i, path: `/images/${color}.png`, key: color + i + 'current' }, fortune: {} };
+          }
         }
       }
     })
-    this.setState({displayFaces});
-  }
+    setDisplayFaces(displayFaces);
 
-  swap() {
-    let diceResult = this.props.diceResult;
-    let swap = Object.assign({}, this.state.swap);
-    Object.keys(swap).forEach((key)=>{
-      diceResult.roll[swap[key].color].splice(swap[key].position, 1, swap[key].roll);
+  }, []);
+
+
+  const swapFace = () => {
+    let diceResult = props.diceResult;
+    let swapCopy = Object.assign({}, swap);
+    Object.keys(swapCopy).forEach((key) => {
+      diceResult.roll[swapCopy[key].color].splice(swapCopy[key].position, 1, swapCopy[key].roll);
     });
-    diceResult.text = `<span> ${user} swapped dice faces </span>`;
+    const count = Object.keys(swapCopy).length;
+    diceResult.text = `<span> ${user} swapped ${count} ${count === 1 ? 'die face' : 'dice faces'} </span>`;
     diceResult = rolldice.countSymbols(diceResult, user);
-    if (this.refs.caption.value !== '') {
-      diceResult.caption = this.refs.caption.value;
-      diceResult.text += `<span> ${this.refs.caption.value} </span>`;
+    if (caption !== '') {
+      diceResult.caption = caption;
+      diceResult.text += `<span> ${caption} </span>`;
     }
-    if (diceResult.text !== undefined) this.state.messageRef.push().set(diceResult);
-    this.props.popupClose();
+    if (diceResult.text !== undefined) {
+      messageRef.push().set(diceResult);
+    }
+    if (props.callback) {
+      props.callback();
+    }
   }
 
-   selectDice(row, fortuneRoll) {
-     let displayFaces = Object.assign({}, this.state.displayFaces);
-     let swap = Object.assign({}, this.state.swap);
-     Object.keys(displayFaces[row].fortune).forEach((roll)=>{
-       displayFaces[row].fortune[roll].display = 'none';
-     });
-     displayFaces[row].fortune[fortuneRoll].display = 'block'
-     swap[row] = {color: displayFaces[row].fortune[fortuneRoll].color, position: displayFaces[row].fortune[fortuneRoll].position, roll: displayFaces[row].fortune[fortuneRoll].roll}
-     this.setState({displayFaces});
-     this.setState({swap});
-   }
-
-  render() {
-    return (
-      <div>
-        <h2>Select Faces You Would Like To Swap</h2>
-
-          <div>
-            {Object.keys(this.state.displayFaces).map((row)=> {
-              return(
-              <div key={row} style={{borderStyle: 'groove'}}>
-                <div key={this.state.displayFaces[row].current.key} className='dice rerollselect' style={{backgroundImage: `url(${this.state.displayFaces[row].current.path})`, borderRightStyle: 'groove'}}></div>
-                <div key={row+'faces'} style={{display: 'inline-block'}}>
-                  {Object.keys(this.state.displayFaces[row].fortune).map((fortuneRoll)=> {
-                    return(
-                    <div key={this.state.displayFaces[row].fortune[fortuneRoll].key} className='dice rerollselect' style={{backgroundImage: `url(${this.state.displayFaces[row].fortune[fortuneRoll].path})`}} onClick={this.selectDice.bind(this, row, fortuneRoll)}>
-                    <img className='dice repeatselect' src={'/images/repeat.png'} alt='' style={{display: this.state.displayFaces[row].fortune[fortuneRoll].display}} />
-                    </div>
-                  )})}
-                </div>
-              </div>
-            )})}
-          </div>
-        <div style={{display: 'block', marginTop: '10px'}}>
-          <input type='button' ref='swap' className='lrgButton' onClick={this.swap.bind(this)} value='Swap' />
-          <input className='textinput' ref='caption' name='caption' placeholder='caption' style={{width: '150px', paddingLeft: '5px'}}/>
-        </div>
-      </div>
-
-    );
+  const selectDice = (row, fortuneRoll) => {
+    let displayFacesCopy = Object.assign({}, displayFaces);
+    let swapCopy = Object.assign({}, swap);
+    Object.keys(displayFacesCopy[row].fortune).forEach((roll) => {
+      displayFacesCopy[row].fortune[roll].display = false;
+    });
+    displayFacesCopy[row].fortune[fortuneRoll].display = true;
+    swapCopy[row] = { color: displayFacesCopy[row].fortune[fortuneRoll].color, position: displayFacesCopy[row].fortune[fortuneRoll].position, roll: displayFacesCopy[row].fortune[fortuneRoll].roll }
+    setDisplayFaces(displayFacesCopy);
+    setSwap(swapCopy);
   }
+
+  return (
+    <Container>
+      {Object.keys(displayFaces).map((row) =>
+        <Row className={styles.flipRow} key={displayFaces[row].current.key}>
+          <Col className={styles.faceWrapperCenter} xs='2'>
+            <img className={styles.originalFaceImage} src={displayFaces[row].current.path}></img>
+          </Col>
+          <Col className={styles.faceWrapperCenter} xs='1'>
+            <ChevronDoubleRight fontSize="xx-large"></ChevronDoubleRight>
+          </Col>
+          <Col className={styles.faceWrapperLeft} xs='9'>
+            {Object.keys(displayFaces[row].fortune).map((fortuneRoll) =>
+              <Button key={displayFaces[row].fortune[fortuneRoll].key} variant='light' onClick={selectDice.bind(this, row, fortuneRoll)} className={styles.diceButton}>
+                <img className={styles.die} src={displayFaces[row].fortune[fortuneRoll].path}></img>
+                <img className={styles.badge} src={'/images/repeat.png'} hidden={!displayFaces[row].fortune[fortuneRoll].display} />
+              </Button>
+            )}
+          </Col>
+        </Row>
+      )
+      }
+      <Row>
+        <Col xs='6' className={styles.innerColumn}>
+          <ButtonGroup size='lg' className={styles.rollGroup}>
+            <Button onClick={swapFace.bind(this)}>Swap</Button>
+            <FormControl className={styles.captionBox} value={caption} onChange={event => setCaption(event.target.value)} placeholder='Caption'></FormControl>
+          </ButtonGroup>
+        </Col>
+      </Row>
+    </Container >
+  );
 }
 export default fortune;

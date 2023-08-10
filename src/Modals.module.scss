@@ -1,0 +1,18 @@
+@import "./bootstrap/our-component-imports.scss";
+
+.modalButtonContainer {
+    @extend .ps-0;
+    @extend .pe-2;
+    @extend .pb-0;
+}
+
+.modalButtonWrapper {
+    @extend .ps-2;
+    @extend .pe-0;
+    @extend .pb-2;
+}
+
+.modalButton {
+    @extend .w-100;
+    @extend .border;
+}

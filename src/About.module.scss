@@ -1,0 +1,13 @@
+@import "./bootstrap/our-component-imports.scss";
+
+.footer {
+    @extend .text-center;
+    @extend .text-muted;
+}
+
+.textInlineImage {
+    height: 1em;
+    width: auto;
+
+    @extend .me-1;
+}

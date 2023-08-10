@@ -1,0 +1,67 @@
+@import "./bootstrap/our-component-imports.scss";
+
+.sendWrapper {
+    @extend .mt-1;
+    @extend .mb-2;
+}
+
+.buttonGroup {
+    @extend .w-100;
+}
+
+.chatContainer {
+    max-height: 75vh;
+    overflow: scroll;
+
+    @include media-breakpoint-up(md) {
+        max-height: none;
+    }
+}
+
+.chatBox {
+    @extend .rounded-0;
+    @extend .rounded-start;
+}
+
+@mixin chatMessage {
+    @extend .mt-2;
+    @extend .mx-0;
+    @extend .border;
+}
+
+.chatNormalMessage {
+    @include chatMessage;
+
+    @extend .bg-secondary;
+    @extend .bg-opacity-10;
+}
+
+.chatMessageNewSession {
+    @include chatMessage;
+
+    @extend .bg-dark;
+    @extend .bg-opacity-75;
+    @extend .text-white;
+}
+
+.chatText {
+    @extend .p-3;
+    @extend .text-break;
+}
+
+.deleteWrapper {
+    @extend .p-0;
+    @extend .pt-1;
+    @extend .pe-1;
+}
+
+.deleteButton {
+    @extend .w-100;
+    @extend .pt-1;
+}
+
+.deleteAllButton {
+    @extend .w-100;
+    @extend .mt-2;
+    @extend .mb-1;
+}

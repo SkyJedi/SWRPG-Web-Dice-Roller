@@ -18,5 +18,5 @@ A Web App Companion for the SWRPG
 5.  $ npm install
 6.  $ npm install -g firebase-tools
 7.  $ firebase login
-8.  $ firbase deploy
+8.  $ firebase deploy
 9.  terminal will give you a website to go to

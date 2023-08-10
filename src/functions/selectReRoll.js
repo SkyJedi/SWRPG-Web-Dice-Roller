@@ -1,91 +1,118 @@
-import React, { Component } from 'react';
-import * as firebase from 'firebase';
-import '../index.css';
+import firebase from "firebase/app";
+import "firebase/database";
+import React, { useEffect } from 'react';
+import { Button, ButtonGroup, Col, Container, FormControl, Row } from 'react-bootstrap';
+import styles from './selectReRoll.module.scss';
+
 const diceFaces = require('./diceFaces.js').dice;
 var rolldice = require("./Roll.js"),
-    user = window.location.search.slice(1),
-    channel = window.location.pathname.slice(1).toLowerCase();
+  user = window.location.search.slice(1),
+  channel = window.location.pathname.slice(1).toLowerCase();
 
-class selectReRoll extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      messageRef: firebase.database().ref().child(`${channel}`).child('message'),
-      displayFaces: [],
-      displayRepeat: {},
-      reRoll: {},
-    };
-  }
+const selectReRoll = (props) => {
+  const messageRef = firebase.database().ref().child(`${channel}`).child('message');
+  const [displayFaces, setDisplayFaces] = React.useState([]);
+  const [displayRepeat, setDisplayRepeat] = React.useState({});
+  const [reRoll, setReRoll] = React.useState({});
 
-  componentDidMount() {
-    let diceResult = this.props.diceResult;
-    let rebuilt = this.props.rebuilt;
-    let displayFaces = [];
-    let displayRepeat = {};
-    this.refs.caption.value = rebuilt.caption;
+  const [caption, setCaption] = React.useState('');
 
-    Object.keys(diceFaces).forEach((color)=>{
-      if (diceResult.roll[color] !== undefined){
-        for (var i=0; diceResult.roll[color].length>i; i++){
-          let key = color + ',' + i
-          displayRepeat[key] = 'none'
-          if (color === 'yellow' || color === 'green' ||  color === 'blue' ||  color === 'red' ||  color === 'purple' ||  color === 'black' || color === 'white') {
-            displayFaces.push({color: color, position: i,  path: `/images/dice/${color}-${diceFaces[color][diceResult.roll[color][i]].face}.png`, key: color + ',' + i});
+  useEffect(() => {
+    if (props.diceResult) {
+      const diceResult = props.diceResult;
+
+      let displayFaces = [];
+      let displayRepeat = {};
+      setCaption(diceResult.caption ?? '');
+
+      Object.keys(diceFaces).forEach((color) => {
+        if (diceResult.roll[color] !== undefined) {
+          for (var i = 0; diceResult.roll[color].length > i; i++) {
+            let key = color + ',' + i
+            displayRepeat[key] = false;
+            if (color === 'yellow' || color === 'green' || color === 'blue' || color === 'red' || color === 'purple' || color === 'black' || color === 'white') {
+              displayFaces.push({ color: color, position: i, path: `/images/dice/${color}-${diceFaces[color][diceResult.roll[color][i]].face}.png`, key: color + ',' + i });
+            }
+            else displayFaces.push({ color: color, position: i, path: `/images/${color}.png`, key: color + ',' + i });
           }
-          else displayFaces.push({color: color, position: i,  path: `/images/${color}.png`, key: color + ',' + i});
         }
-      }
-    })
-    this.setState({displayFaces});
-    this.setState({displayRepeat});
+      })
+      setDisplayFaces(displayFaces);
+      setDisplayRepeat(displayRepeat);
+
+    }
+  }
+    , []);
+
+
+  const roll = () => {
+    let diceResult = Object.assign({}, props.diceResult);
+    let reRollCopy = Object.assign({}, reRoll);
+    Object.keys(reRollCopy).forEach((key) => {
+      diceResult.roll[reRollCopy[key].color].splice(reRollCopy[key].position, 1, rolldice.rollDice(reRollCopy[key].color));
+    });
+    diceResult.text = `<span> ${user} ${makeText(Object.keys(reRollCopy).length)}</span>`;
+    diceResult = rolldice.countSymbols(diceResult, user);
+    if (caption !== '') {
+      diceResult.caption = caption;
+      diceResult.text += `<span> ${caption} </span>`;
+    }
+    if (diceResult.text !== undefined) {
+      messageRef.push().set(diceResult);
+    }
+
+    if (props.callback) {
+      props.callback();
+    }
   }
 
-  roll() {
-      let diceResult = this.props.diceResult;
-      let reRoll = Object.assign({}, this.state.reRoll);
-      Object.keys(reRoll).forEach((key)=>{
-        diceResult.roll[reRoll[key].color].splice(reRoll[key].position, 1, rolldice.rollDice(reRoll[key].color));
-      });
-      diceResult.text = `<span> ${user} rerolled selected dice </span>`;
-      diceResult = rolldice.countSymbols(diceResult, user);
-      if (this.refs.caption.value !== '') {
-        diceResult.caption = this.refs.caption.value;
-        diceResult.text += `<span> ${this.refs.caption.value} </span>`;
-      }
-      if (diceResult.text !== undefined) this.state.messageRef.push().set(diceResult);
-      this.props.popupClose();
-     }
+  const makeText = count => {
+    switch (count) {
+      case 0:
+        return 'rolled ';
+      case 1:
+        return 'rerolled 1 selected die ';
+      default:
+        return `rerolled ${count} selected dice `
+    }
+  }
 
-
-  selectDice(file) {
-    let displayRepeat = Object.assign({}, this.state.displayRepeat);
-    let reRoll = Object.assign({}, this.state.reRoll);
-    if (displayRepeat[file.key] === 'block') {
-      displayRepeat[file.key] = 'none';
-      delete reRoll[file.key];
+  const selectDice = (file) => {
+    let displayRepeatCopy = Object.assign({}, displayRepeat);
+    let reRollCopy = Object.assign({}, reRoll);
+    if (displayRepeatCopy[file.key]) {
+      displayRepeatCopy[file.key] = false;
+      delete reRollCopy[file.key];
     }
     else {
-      displayRepeat[file.key] = 'block';
-      reRoll[file.key] = file;
+      displayRepeatCopy[file.key] = true;
+      reRollCopy[file.key] = file;
     }
-    this.setState({displayRepeat});
-    this.setState({reRoll});
+    setDisplayRepeat(displayRepeatCopy);
+    setReRoll(reRollCopy);
   }
 
-  render() {
-    return (
-      <div>
-        <h2>Select Dice to Reroll.</h2>
-        {this.state.displayFaces.map((file)=>
-          <div key={file.key} className='dice rerollselect' style={{backgroundImage: `url(${file.path})`}} onClick={this.selectDice.bind(this, file)}><img className='dice repeatselect' src={'/images/repeat.png'} alt='' style={{display: this.state.displayRepeat[file.key]}} /></div>
-        )}
-        <div style={{display: 'block', marginTop: '10px'}}>
-          <input type='button' ref='roll' className='lrgButton' onClick={this.roll.bind(this)} value='Roll' />
-          <input className='textinput' ref='caption' name='caption' placeholder='caption' style={{width: '150px', paddingLeft: '5px'}}/>
-        </div>
-      </div>
-
-    );
-  }
+  return (
+    <Container>
+      <Row>
+        <Col xs='12' className={styles.innerColumn}>
+          {displayFaces.map((file) =>
+            <Button key={file.key} variant='light' onClick={selectDice.bind(this, file)}>
+              <div className={styles.diceContainer}>
+                <img className={styles.die} src={file.path}></img>
+                <img className={styles.badge} src={'/images/repeat.png'} hidden={!displayRepeat[file.key]} />
+              </div>
+            </Button>
+          )}
+        </Col>
+        <Col xs='6' className={styles.innerColumn}>
+          <ButtonGroup size='lg' className={styles.rollGroup}>
+            <Button onClick={roll.bind(this)}>Roll</Button>
+            <FormControl className={styles.captionBox} value={caption} onChange={event => setCaption(event.target.value)} placeholder='Caption'></FormControl>
+          </ButtonGroup>
+        </Col>
+      </Row>
+    </Container>
+  );
 }
 export default selectReRoll;
