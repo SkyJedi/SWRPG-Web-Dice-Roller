@@ -262,21 +262,21 @@ const Initiative = () => {
   return (
     <Container className="top-level-container">
       <Row>
-        <Col sm="2" hidden={!expanded}>
+        <Col xs="3" sm="2" hidden={!expanded}>
           <Row>
-            <Col sm="6" className={styles.buttonColumn}>
+            <Col xs="6" className={styles.buttonColumn}>
               <ButtonGroup vertical className={styles.buttonGroup}>
                 <Button className='icon-button-grouped' size='sm' variant="primary" title='Add Initiative Slot' onClick={initiativeAdd.bind(this)}><PlusLg></PlusLg></Button>
                 <Button className='icon-button-grouped' size='sm' variant="danger" title='Remove Initiative Slot' onClick={initiativeRemove.bind(this)}><DashLg></DashLg></Button>
               </ButtonGroup>
             </Col>
-            <Col sm="6" className={styles.buttonColumn}>
+            <Col xs="6" className={styles.buttonColumn}>
               <ButtonGroup vertical className={styles.buttonGroup}>
                 <Button className='icon-button-grouped' size='sm' variant="primary" title='Next Initiative Slot' onClick={initiativeNext.bind(this)}><CaretRight></CaretRight></Button>
                 <Button className='icon-button-grouped' size='sm' variant="secondary" title='Previous Initiative Slot' onClick={initiativePrevious.bind(this)}><CaretLeft></CaretLeft></Button>
               </ButtonGroup>
             </Col>
-            <Col sm="12" className={styles.doubleButtonColumn}>
+            <Col className={styles.doubleButtonColumn}>
               <div className={styles.doubleButtonPixelFix}>
                 <Button className='icon-button-grouped' size='sm' variant="danger" title='Reset Initiative' onClick={(_) => setShowResetModal(true)}><XLg></XLg> Reset</Button>
               </div>
@@ -301,12 +301,12 @@ const Initiative = () => {
             </Col>
           </Row>
         </Col>
-        <Col sm={expanded ? '8' : '10'} lg={expanded ? '9' : '11'} className={styles.contentColumn}>
+        <Col xs={expanded ? '7' : '10'} sm={expanded ? '8' : '10'} lg={expanded ? '9' : '11'} className={styles.contentColumn}>
           <Row>
-            <Col sm="12"><strong>Initiative</strong> &nbsp; Round: {position.round} | Turn: {position.turn}</Col>
+            <Col><strong>Initiative</strong> &nbsp; Round: {position.round} | Turn: {position.turn}</Col>
           </Row>
           <Row>
-            <Col sm="12" className={styles.tokenContainer}>
+            <Col className={styles.tokenContainer}>
               <Flipper flipKey={`${initiative.length}-${initiativePast.length}`} spring='gentle'>
                 {initiative.map((slot) =>
                   <Flipped key={slot.key} flipId={slot.key} >
@@ -344,7 +344,7 @@ const Initiative = () => {
                 <Modal.Body>What would like to do to this Initiative Slot?</Modal.Body>
                 <Modal.Footer className={styles.modalButtonContainer}>
                   <Row>
-                    <Col sm="4" className={styles.modalButtonWrapper}>
+                    <Col xs="4" className={styles.modalButtonWrapper}>
                       <Button className={styles.modalButton} variant="light" onClick={(_) => {
                         addBonusDice(modifyModalTarget.slot, modifyModalTarget.time, 'blue');
                         setModifyModalTarget(null);
@@ -353,7 +353,7 @@ const Initiative = () => {
                         Bonus
                       </Button>
                     </Col>
-                    <Col sm="4" className={styles.modalButtonWrapper}>
+                    <Col xs="4" className={styles.modalButtonWrapper}>
                       <Button className={styles.modalButton} variant="light" onClick={(_) => {
                         addBonusDice(modifyModalTarget.slot, modifyModalTarget.time, 'black');
                         setModifyModalTarget(null);
@@ -362,7 +362,7 @@ const Initiative = () => {
                         Setback
                       </Button>
                     </Col>
-                    <Col sm="4" className={styles.modalButtonWrapper}>
+                    <Col xs="4" className={styles.modalButtonWrapper}>
                       <Button className={styles.modalButton} variant="danger" onClick={(_) => {
                         remove(modifyModalTarget.slot, modifyModalTarget.time);
                         setModifyModalTarget(null);
@@ -371,7 +371,7 @@ const Initiative = () => {
                         DELETE
                       </Button>
                     </Col>
-                    <Col sm="4" className={styles.modalButtonWrapper}>
+                    <Col xs="4" className={styles.modalButtonWrapper}>
                       <Button className={styles.modalButton} variant="light" onClick={(_) => {
                         addBonusDice(modifyModalTarget.slot, modifyModalTarget.time, 'upgrade');
                         setModifyModalTarget(null);
@@ -380,7 +380,7 @@ const Initiative = () => {
                         Upgrade
                       </Button>
                     </Col>
-                    <Col sm="4" className={styles.modalButtonWrapper}>
+                    <Col xs="4" className={styles.modalButtonWrapper}>
                       <Button className={styles.modalButton} variant="light" onClick={(_) => {
                         addBonusDice(modifyModalTarget.slot, modifyModalTarget.time, 'downgrade');
                         setModifyModalTarget(null);
@@ -389,7 +389,7 @@ const Initiative = () => {
                         Downgrade
                       </Button>
                     </Col>
-                    <Col sm="4" className={styles.modalButtonWrapper}>
+                    <Col xs="4" className={styles.modalButtonWrapper}>
                       <Button className={styles.modalButton} variant="primary" onClick={(_) => {
                         flip(modifyModalTarget.slot, modifyModalTarget.time);
                         setModifyModalTarget(null);
@@ -404,7 +404,7 @@ const Initiative = () => {
             </Col>
           </Row>
         </Col>
-        <Col sm='2' lg='1' className="toggleCornerColumn">
+        <Col xs='2' lg='1' className="toggleCornerColumn">
           <Button className="toggleCornerButton" title='Click to Show/Hide Initiative Controls' variant={!expanded ? 'primary' : 'light'} onClick={(_) => setExpanded(!expanded)}>{!expanded ? <ArrowsAngleExpand></ArrowsAngleExpand> : <ArrowsAngleContract></ArrowsAngleContract>}</Button>
         </Col>
       </Row>

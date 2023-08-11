@@ -105,7 +105,7 @@ const selectReRoll = (props) => {
             </Button>
           )}
         </Col>
-        <Col xs='6' className={styles.innerColumn}>
+        <Col md='6' className={styles.innerColumn}>
           <ButtonGroup size='lg' className={styles.rollGroup}>
             <Button onClick={roll.bind(this)}>Roll</Button>
             <FormControl className={styles.captionBox} value={caption} onChange={event => setCaption(event.target.value)} placeholder='Caption'></FormControl>

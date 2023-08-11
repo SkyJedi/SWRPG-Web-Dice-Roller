@@ -202,14 +202,14 @@ const Dice = (params) => {
   return (
     <Container className="top-level-container">
       <Row>
-        <Col sm='10' lg='11'><strong>Rolling Dice</strong></Col>
-        <Col hidden={simplifiedLayout} className="toggleCornerColumn" sm='2' lg='1'>
+        <Col xs='10' lg='11'><strong>Rolling Dice</strong></Col>
+        <Col hidden={simplifiedLayout} className="toggleCornerColumn" xs='2' lg='1'>
           <Button className="toggleCornerButton" title='Click to Show/Hide Symbols' variant={diceOrder.length === defaultDiceOrder.length ? 'primary' : 'light'} onClick={expandExtras.bind(this)}>{diceOrder.length === defaultDiceOrder.length ? <ArrowsAngleExpand></ArrowsAngleExpand> : <ArrowsAngleContract></ArrowsAngleContract>}</Button>
         </Col>
       </Row>
       <Row>
         {diceOrder.map((diceColor) =>
-          <Col className={styles.dieColumn} key={diceColor} sm='4' md='4' lg='4' xl='4'>
+          <Col className={styles.dieColumn} key={diceColor} xs='6' sm='4'>
             <Row className={styles.dieContainer}>
               <Col className={styles.arrowContainer} xs='3'>
                 <ButtonGroup vertical className={styles.arrowGroup}>
@@ -231,7 +231,7 @@ const Dice = (params) => {
             </Row>
           </Col>
         )}
-        <Col className={styles.dieColumn} sm='6' md='6' lg='4' xl='4'>
+        <Col className={styles.dieColumn} xs='6' md='6' lg='4' xl='4'>
           <Row className={styles.dieContainer}>
             <Col className={styles.arrowContainer} xs='3'>
               <ButtonGroup vertical className={styles.arrowGroup}>
@@ -247,7 +247,7 @@ const Dice = (params) => {
             </Col>
           </Row>
         </Col>
-        <Col className={styles.dieColumn} hidden={simplifiedLayout} sm='6' md='6' lg='4' xl='4'>
+        <Col className={styles.dieColumn} hidden={simplifiedLayout} xs='6' md='6' lg='4' xl='4'>
           <Row className={styles.dieContainer}>
             <Col className={styles.arrowContainer} xs='7'>
               <ButtonGroup vertical className={styles.arrowGroup}>

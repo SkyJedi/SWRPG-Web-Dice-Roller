@@ -82,13 +82,13 @@ const fortune = props => {
     <Container>
       {Object.keys(displayFaces).map((row) =>
         <Row className={styles.flipRow} key={displayFaces[row].current.key}>
-          <Col className={styles.faceWrapperCenter} xs='2'>
+          <Col className={styles.faceWrapperLeft} xs='3' lg='2'>
             <img className={styles.originalFaceImage} src={displayFaces[row].current.path}></img>
           </Col>
           <Col className={styles.faceWrapperCenter} xs='1'>
             <ChevronDoubleRight fontSize="xx-large"></ChevronDoubleRight>
           </Col>
-          <Col className={styles.faceWrapperLeft} xs='9'>
+          <Col className={styles.faceWrapperRight} xs='8' lg='9'>
             {Object.keys(displayFaces[row].fortune).map((fortuneRoll) =>
               <Button key={displayFaces[row].fortune[fortuneRoll].key} variant='light' onClick={selectDice.bind(this, row, fortuneRoll)} className={styles.diceButton}>
                 <img className={styles.die} src={displayFaces[row].fortune[fortuneRoll].path}></img>
@@ -100,7 +100,7 @@ const fortune = props => {
       )
       }
       <Row>
-        <Col xs='6' className={styles.innerColumn}>
+        <Col md='6' className={styles.innerColumn}>
           <ButtonGroup size='lg' className={styles.rollGroup}>
             <Button onClick={swapFace.bind(this)}>Swap</Button>
             <FormControl className={styles.captionBox} value={caption} onChange={event => setCaption(event.target.value)} placeholder='Caption'></FormControl>

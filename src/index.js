@@ -58,14 +58,14 @@ function setChanPage() {
 function startUp() {
   let webApp = wrapPage(
     <Row className={styles.mainRow}>
-      <Col className={styles.mainColumn} sm={12} md={6} lg={7}>
+      <Col className={styles.mainColumn} xs={{ offset: 1, span: 10 }} sm={{ offset: 0, span: 12 }} md={6} lg={7}>
         <TopBar className={styles.topbarFirst} />
         <Destiny />
         <Initiative />
         <Dice />
         <Message />
       </Col>
-      <Col className={styles.mainColumn} sm={12} md={6} lg={5}>
+      <Col className={styles.mainColumn} xs={{ offset: 1, span: 10 }} sm={{ offset: 0, span: 12 }} md={6} lg={5}>
         <TopBar className={styles.topbarSecond} />
         <Character />
         <Chat />

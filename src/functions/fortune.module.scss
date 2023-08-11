@@ -10,6 +10,9 @@
 }
 
 .faceWrapperCenter {
+    @extend .px-0;
+    @extend .px-md-2;
+
     @extend .d-flex;
     @extend .align-items-center;
     @extend .justify-content-center;
@@ -18,12 +21,19 @@
 .faceWrapperLeft {
     @extend .d-flex;
     @extend .align-items-center;
+    @extend .justify-content-center;
+}
+
+.faceWrapperRight {
+    flex-flow: row wrap;
+    @extend .d-flex;
+    @extend .align-items-center;
     @extend .justify-content-start;
 }
 
 .originalFaceImage {
-    width: auto;
-    @extend .h-100;
+    height: auto;
+    @extend .w-100;
 }
 
 .diceButton {

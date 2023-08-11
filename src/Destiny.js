@@ -52,7 +52,7 @@ const Destiny = () => {
   return (
     <Container className="top-level-container">
       <Row>
-        <Col className={styles.buttonColumn} hidden={!expanded} sm={1}>
+        <Col className={styles.buttonColumn} hidden={!expanded} xs='2' sm='1'>
           <ButtonGroup vertical className={styles.buttonGroup}>
             <Button className='icon-button-grouped' size='sm' variant="primary" title='Add Destiny Point' onClick={destinyAdd.bind(this)}><PlusLg></PlusLg></Button>
             <Button className='icon-button-grouped' size='sm' variant="secondary" title='Remove Destiny Point' onClick={destinyRemove.bind(this)}><DashLg></DashLg></Button>
@@ -78,12 +78,12 @@ const Destiny = () => {
             </Modal.Footer>
           </Modal>
         </Col>
-        <Col sm={expanded ? '9' : '10'} lg={expanded ? '10' : '11'} className={styles.contentColumn}>
+        <Col xs={expanded ? '8' : '10'} sm={expanded ? '9' : '10'} lg={expanded ? '10' : '11'} className={styles.contentColumn}>
           <Row >
-            <Col sm="12"><strong>Destiny</strong></Col>
+            <Col><strong>Destiny</strong></Col>
           </Row>
           <Row className={styles.tokenContainer}>
-            <Col className={styles.transitionGroupWrapper} id='destinyTokens' sm='12'>
+            <Col className={styles.transitionGroupWrapper} id='destinyTokens'>
               {Object.entries(destinyPoint).map(([k, v]) =>
                 <TransitionGroup key={k} className={styles.transitionGroup}>
                   <CSSTransition
@@ -104,7 +104,7 @@ const Destiny = () => {
             </Col>
           </Row>
         </Col>
-        <Col sm='2' lg='1' className="toggleCornerColumn">
+        <Col xs='2' lg='1' className="toggleCornerColumn">
           <Button className="toggleCornerButton" title='Click to Show/Hide Destiny Controls' variant={!expanded ? 'primary' : 'light'} onClick={(_) => setExpanded(!expanded)}>{!expanded ? <ArrowsAngleExpand></ArrowsAngleExpand> : <ArrowsAngleContract></ArrowsAngleContract>}</Button>
         </Col>
       </Row>

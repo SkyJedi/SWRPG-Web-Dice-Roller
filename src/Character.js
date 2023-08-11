@@ -233,25 +233,25 @@ const Character = () => {
     <Container className="top-level-container">
       <Form onSubmit={modifyStats.bind(this)}>
         <Row>
-          <Col sm="10"><strong>Characters</strong></Col>
-          <Col sm='2' className="toggleCornerColumn">
+          <Col xs="10"><strong>Characters</strong></Col>
+          <Col xs='2' className="toggleCornerColumn">
             <Button className="toggleCornerButton" title='Click to Show/Hide Character Controls' variant={!expanded ? 'primary' : 'light'} onClick={(_) => setExpanded(!expanded)}>{!expanded ? <ArrowsAngleExpand></ArrowsAngleExpand> : <ArrowsAngleContract></ArrowsAngleContract>}</Button>
           </Col>
-          <Col sm="2" className={styles.controlsColumn} hidden={!expanded}>
+          <Col xs="3" sm="2" className={styles.controlsColumn} hidden={!expanded}>
             <Row>
-              <Col sm="6" className={styles.doubleButtonLeft}>
+              <Col xs="6" className={styles.doubleButtonLeft}>
                 <ButtonGroup vertical className={styles.buttonGroup}>
                   <Button disabled={characterEdit} className="icon-button-grouped" size='sm' variant="primary" title='Add Character' onClick={_ => setCharacterEdit(createEmptyCharacter())}><PlusLg></PlusLg></Button>
                   <Button disabled={characterEdit} className="icon-button-grouped" size='sm' variant="danger" title='Remove Character' onClick={setShowDeleteModal.bind(this, true)}><DashLg></DashLg></Button>
                 </ButtonGroup>
               </Col>
-              <Col sm="6" className={styles.doubleButtonRight}>
+              <Col xs="6" className={styles.doubleButtonRight}>
                 <ButtonGroup vertical className={styles.buttonGroup}>
                   <Button disabled={characterEdit} className="icon-button-grouped" size='sm' variant="primary" title='Next Character' onClick={next.bind(this)}><CaretRight></CaretRight></Button>
                   <Button disabled={characterEdit} className="icon-button-grouped" size='sm' variant="secondary" title='Previous Character' onClick={previous.bind(this)}><CaretLeft></CaretLeft></Button>
                 </ButtonGroup>
               </Col>
-              <Col sm="12" className={styles.singleButtons}>
+              <Col xs="12" className={styles.singleButtons}>
                 <div className={styles.pixelFix}>
                   <Button hidden={characterEdit} className={styles.singleButton} variant="secondary" title='Edit Character' onClick={_ => setCharacterEdit(currentCharacter)}>Edit</Button>
                   <Button hidden={!characterEdit} className={styles.singleButton} variant="secondary" title='Abort Editing' onClick={_ => setCharacterEdit(null)}>Abort</Button>
@@ -260,52 +260,52 @@ const Character = () => {
               </Col>
             </Row>
           </Col>
-          <Col sm={expanded ? '6' : '8'}>
+          <Col xs={expanded ? '6' : '9'} sm={expanded ? '6' : '8'}>
             <Row>
-              <Col sm='12'>
+              <Col xs='12'>
                 <h3 hidden={characterEdit}>{currentCharacter['name']}</h3>
                 <Form.Control className={styles.nameBox} size='lg' hidden={!characterEdit} value={characterEdit?.name ?? ''} onChange={e => setCharacterEdit(char => { return { ...char, name: e.target.value } })} placeholder='Character Name'></Form.Control>
                 <h4 className={styles.incapacitated} hidden={!incapacitated || characterEdit}><strong>Incapacitated</strong></h4>
               </Col>
               <Row className={styles.valuePairWrapper}>
-                <Col sm={expanded ? '4' : '3'} className={styles.currentValueWrapper}>
+                <Col xs={expanded ? '4' : '3'} className={styles.currentValueWrapper}>
                   <Form.Control className={styles.currentValueBox} size='lg' value={newWounds} onChange={e => setNewWounds(e.target.value)} placeholder={characterEdit ? characterEdit.currentWounds : currentCharacter['currentWounds']}></Form.Control>
                 </Col>
-                <Col sm={expanded ? '8' : '9'} className={styles.maxValueWrapper}>
+                <Col xs={expanded ? '8' : '9'} className={styles.maxValueWrapper}>
                   <strong className={styles.maxValueLabel}>/<span className={styles.maxValueLabel} hidden={characterEdit}>{currentCharacter['maxWounds']}</span></strong>
                   <Form.Control hidden={!characterEdit} className={styles.maxValueBox} size='lg' value={characterEdit?.maxWounds ?? ''} onChange={e => setCharacterEdit(char => { return { ...char, maxWounds: e.target.value } })} placeholder='Max'></Form.Control>
                   <strong className={styles.maxValueLabel}>&nbsp;Wounds</strong>
                 </Col>
               </Row>
               <Row className={styles.valuePairWrapper}>
-                <Col sm={expanded ? '4' : '3'} className={styles.currentValueWrapper}>
+                <Col xs={expanded ? '4' : '3'} className={styles.currentValueWrapper}>
                   <Form.Control className={styles.currentValueBox} size='lg' value={newStrain} onChange={e => setNewStrain(e.target.value)} placeholder={characterEdit ? characterEdit.currentStrain : currentCharacter['currentStrain']}></Form.Control>
                 </Col>
-                <Col sm={expanded ? '8' : '9'} className={styles.maxValueWrapper}>
+                <Col xs={expanded ? '8' : '9'} className={styles.maxValueWrapper}>
                   <strong className={styles.maxValueLabel}>/<span className={styles.maxValueLabel} hidden={characterEdit}>{currentCharacter['maxStrain']}</span></strong>
                   <Form.Control hidden={!characterEdit} className={styles.maxValueBox} size='lg' value={characterEdit?.maxStrain ?? ''} onChange={e => setCharacterEdit(char => { return { ...char, maxStrain: e.target.value } })} placeholder='Max'></Form.Control>
                   <strong className={styles.maxValueLabel}>&nbsp;Strain</strong>
                 </Col>
               </Row>
               <Row className={styles.valuePairWrapper}>
-                <Col sm={expanded ? '4' : '3'} className={styles.currentValueWrapper}>
+                <Col xs={expanded ? '4' : '3'} className={styles.currentValueWrapper}>
                   <Form.Control className={styles.currentValueBox} size='lg' value={newCredits} onChange={e => setNewCredits(e.target.value)} placeholder={characterEdit ? characterEdit.credits : currentCharacter['credits']}></Form.Control>
                 </Col>
-                <Col sm={expanded ? '8' : '9'} className={styles.maxValueWrapper}>
+                <Col xs={expanded ? '8' : '9'} className={styles.maxValueWrapper}>
                   <strong className={styles.maxValueLabel}> Credits</strong>
                 </Col>
               </Row>
             </Row>
           </Col>
-          <Col sm='4' className={styles.characterImageWrapper}>
+          <Col xs='3' sm='4' className={styles.characterImageWrapper}>
             <Image className={styles.characterImage} src={characterEdit ? characterEdit.imageURL : currentCharacter['imageURL']} alt='Character Image'></Image>
           </Col>
         </Row>
         <Row hidden={!characterEdit} className={styles.valuePairWrapper}>
-          <Col sm='12' className={styles.maxValueLabel}>
+          <Col xs='12' className={styles.maxValueLabel}>
             Image URL:
           </Col>
-          <Col sm='12'>
+          <Col xs='12'>
             <Form.Control value={characterEdit?.imageURL ?? ''} onChange={e => setCharacterEdit(char => { return { ...char, imageURL: e.target.value } })} placeholder='https://...'></Form.Control>
           </Col>
         </Row>
@@ -366,7 +366,7 @@ const Character = () => {
         <Modal.Footer className={styles.modalButtonContainer}>
           <Container>
             <Row>
-              <Col sm="6" className={styles.modalButtonWrapper}>
+              <Col xs="6" className={styles.modalButtonWrapper}>
                 <Button className={styles.modalButton} variant="light" onClick={(_) => {
                   modifyModalTarget.dice.blue += "<img src='/images/blue.png' alt='blue.png' style='height: 1em' width: 1em;'/>";
                   characterRef.child(modifyModalTarget.key).set(modifyModalTarget);
@@ -376,7 +376,7 @@ const Character = () => {
                   Bonus
                 </Button>
               </Col>
-              <Col sm="6" className={styles.modalButtonWrapper}>
+              <Col xs="6" className={styles.modalButtonWrapper}>
                 <Button className={styles.modalButton} variant="light" onClick={(_) => {
                   modifyModalTarget.dice.black += "<img src='/images/black.png' alt='black.png' style='height: 1em; width: 1em;'/>";
                   characterRef.child(modifyModalTarget.key).set(modifyModalTarget);
@@ -386,7 +386,7 @@ const Character = () => {
                   Setback
                 </Button>
               </Col>
-              <Col sm="6" className={styles.modalButtonWrapper}>
+              <Col xs="6" className={styles.modalButtonWrapper}>
                 <Button className={styles.modalButton} variant="light" onClick={(_) => {
                   modifyModalTarget.dice.upgrade += "<img src='/images/upgrade.png' alt='upgrade.png' style='height: 15px' width: 15px;'/>";
                   characterRef.child(modifyModalTarget.key).set(modifyModalTarget);
@@ -396,7 +396,7 @@ const Character = () => {
                   Upgrade
                 </Button>
               </Col>
-              <Col sm="6" className={styles.modalButtonWrapper}>
+              <Col xs="6" className={styles.modalButtonWrapper}>
                 <Button className={styles.modalButton} variant="light" onClick={(_) => {
                   modifyModalTarget.dice.downgrade += "<img src='/images/downgrade.png' alt='downgrade.png' style='height: 15px' width: 15px;'/>";
                   characterRef.child(modifyModalTarget.key).set(modifyModalTarget);

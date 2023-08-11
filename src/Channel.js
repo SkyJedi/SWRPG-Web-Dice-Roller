@@ -35,7 +35,7 @@ const Channel = (callback) => {
   return (
     <Container>
       <Row>
-        <Col sm={12} md={{ span: 6, offset: 3 }} lg={{ span: 4, offset: 4 }} className={styles.loginBody}>
+        <Col xs={{ span: 10, offset: 1 }} sm={{ span: 8, offset: 2 }} md={{ span: 6, offset: 3 }} lg={{ span: 4, offset: 4 }} className={styles.loginBody}>
           <h1 className="text-center"><strong>D1-C3</strong></h1>
           <Image className={styles.d1c3} src={`/favicon.png`} alt="D1-C3 droid" />
           <Form className={styles.loginForm} onSubmit={handleSubmit}>
