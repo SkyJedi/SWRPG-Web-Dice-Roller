@@ -28,6 +28,7 @@ const Dice = (params) => {
   const [critModifier, setCritModifier] = React.useState('');
   const [saveCheck, setSaveCheck] = React.useState(false);
   const [diceOrder, setDiceOrder] = React.useState(params.simplified ? extendedDiceOrder : defaultDiceOrder);
+  const [noDiceChosen, setNoDiceChosen] = React.useState(true);
 
   useEffect(() => {
     if (params.previousRoll) {
@@ -47,6 +48,8 @@ const Dice = (params) => {
     let newDiceRoll = Object.assign({}, diceRoll);
     newDiceRoll[diceColor] += 1;
     setDiceRoll(newDiceRoll);
+
+    calculateNoDiceChosen(newDiceRoll);
   }
 
   const removeDie = (diceColor) => {
@@ -54,24 +57,43 @@ const Dice = (params) => {
       let newDiceRoll = Object.assign({}, diceRoll);
       newDiceRoll[diceColor] -= 1;
       setDiceRoll(newDiceRoll);
+
+      calculateNoDiceChosen(newDiceRoll);
     }
   }
 
+  const calculateNoDiceChosen = (rolls) => {
+    for (let key in rolls) {
+      if (rolls[key] > 0) {
+        setNoDiceChosen(false);
+        return;
+      }
+    }
+
+    setNoDiceChosen(true);
+  }
+
   const reset = () => {
-    setDiceRoll({ yellow: 0, green: 0, blue: 0, red: 0, purple: 0, black: 0, white: 0, polyhedral: 0, success: 0, advantage: 0, triumph: 0, failure: 0, threat: 0, despair: 0, lightside: 0, darkside: 0 });
+    let newDiceRoll = { yellow: 0, green: 0, blue: 0, red: 0, purple: 0, black: 0, white: 0, polyhedral: 0, success: 0, advantage: 0, triumph: 0, failure: 0, threat: 0, despair: 0, lightside: 0, darkside: 0 };
+    setDiceRoll(newDiceRoll);
     setDiceOrder(simplifiedLayout ? extendedDiceOrder : defaultDiceOrder);
     setCaption('');
     setPolyhedral(100);
+
+    calculateNoDiceChosen(newDiceRoll);
   }
 
   const expandExtras = () => {
-    setDiceRoll(Object.assign(diceRoll, { success: 0, advantage: 0, triumph: 0, failure: 0, threat: 0, despair: 0, lightside: 0, darkside: 0 }));
+    let newDiceRoll = Object.assign(diceRoll, { success: 0, advantage: 0, triumph: 0, failure: 0, threat: 0, despair: 0, lightside: 0, darkside: 0 });
+    setDiceRoll(newDiceRoll);
 
     if (diceOrder.length === defaultDiceOrder.length) {
       setDiceOrder(extendedDiceOrder);
     } else {
       setDiceOrder(defaultDiceOrder);
     }
+
+    calculateNoDiceChosen(newDiceRoll);
   }
 
   const critical = (critical, stop) => {
@@ -268,12 +290,12 @@ const Dice = (params) => {
               <Form onSubmit={roll.bind(this)}>
                 <ButtonGroup className={styles.rollButtonGroup} size='lg'>
                   <DropdownButton hidden={simplifiedLayout} className={styles.rollButton} as={ButtonGroup} title="" id="bg-nested-dropdown">
-                    <Dropdown.Item eventKey="1" onClick={initiativeRoll.bind(this, false)}>Roll Player Initiative</Dropdown.Item>
+                    <Dropdown.Item eventKey="1" disabled={noDiceChosen} onClick={initiativeRoll.bind(this, false)}>Roll Player Initiative</Dropdown.Item>
                     <Dropdown.Item eventKey="2" onClick={destinyRoll.bind(this)}>Roll Destiny</Dropdown.Item>
                     <Dropdown.Item eventKey="3" onClick={gleepglop.bind(this)}>Gleep Glop</Dropdown.Item>
-                    <Dropdown.Item eventKey="4" onClick={initiativeRoll.bind(this, true)}>Roll NPC Initiative</Dropdown.Item>
+                    <Dropdown.Item eventKey="4" disabled={noDiceChosen} onClick={initiativeRoll.bind(this, true)}>Roll NPC Initiative</Dropdown.Item>
                   </DropdownButton>
-                  <Button className={simplifiedLayout ? styles.pretendFirstRollButton : styles.rollButton} type='submit'>Roll</Button>
+                  <Button disabled={noDiceChosen} className={simplifiedLayout ? styles.pretendFirstRollButton : styles.rollButton} type='submit'>Roll</Button>
                   <FormControl className={styles.captionBox} value={caption} onChange={event => setCaption(event.target.value)} placeholder='Caption'></FormControl>
                 </ButtonGroup>
               </Form>
