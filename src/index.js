@@ -1,5 +1,5 @@
-import firebase from "firebase/app";
-import "firebase/database";
+import firebase from "firebase/compat/app";
+import "firebase/compat/database";
 import React from 'react';
 import { Col, Container, Row, ThemeProvider } from 'react-bootstrap';
 import { CookiesProvider } from 'react-cookie';
