@@ -1,5 +1,5 @@
-import firebase from "firebase/app";
-import "firebase/database";
+import firebase from "firebase/compat/app";
+import "firebase/compat/database";
 import React from 'react';
 import { Button, Col, Container, Modal, Row } from 'react-bootstrap';
 import { CashCoin, DoorClosed, PlusCircle, XLg } from 'react-bootstrap-icons';

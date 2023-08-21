@@ -1,5 +1,5 @@
-import firebase from "firebase/app";
-import "firebase/database";
+import firebase from "firebase/compat/app";
+import "firebase/compat/database";
 import React, { useEffect } from 'react';
 import { Button, ButtonGroup, Col, Container, Form, FormControl, Modal, Row } from 'react-bootstrap';
 import { XLg } from 'react-bootstrap-icons';
