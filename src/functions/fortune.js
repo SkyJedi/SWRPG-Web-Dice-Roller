@@ -1,5 +1,5 @@
-import firebase from "firebase/compat/app";
-import "firebase/compat/database";
+
+import { child, getDatabase, push, ref } from '@firebase/database';
 import React, { useEffect } from 'react';
 import { Button, ButtonGroup, Col, Container, FormControl, Row } from "react-bootstrap";
 import { ChevronDoubleRight } from "react-bootstrap-icons";
@@ -11,7 +11,7 @@ var rolldice = require("./Roll.js"),
   channel = window.location.pathname.slice(1).toLowerCase();
 
 const fortune = props => {
-  const messageRef = firebase.database().ref().child(`${channel}`).child('message');
+  const messageRef = child(ref(getDatabase()), `${channel}/message`);
   const [displayFaces, setDisplayFaces] = React.useState({});
   const [swap, setSwap] = React.useState({});
 
@@ -59,7 +59,7 @@ const fortune = props => {
       diceResult.text += `<span> ${caption} </span>`;
     }
     if (diceResult.text !== undefined) {
-      messageRef.push().set(diceResult);
+      push(messageRef, diceResult);
     }
     if (props.callback) {
       props.callback();

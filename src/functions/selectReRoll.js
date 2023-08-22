@@ -1,5 +1,4 @@
-import firebase from "firebase/compat/app";
-import "firebase/compat/database";
+import { child, getDatabase, push, ref } from "@firebase/database";
 import React, { useEffect } from 'react';
 import { Button, ButtonGroup, Col, Container, FormControl, Row } from 'react-bootstrap';
 import styles from './selectReRoll.module.scss';
@@ -10,7 +9,7 @@ var rolldice = require("./Roll.js"),
   channel = window.location.pathname.slice(1).toLowerCase();
 
 const selectReRoll = (props) => {
-  const messageRef = firebase.database().ref().child(`${channel}`).child('message');
+  const messageRef = child(ref(getDatabase()), `${channel}/message`);
   const [displayFaces, setDisplayFaces] = React.useState([]);
   const [displayRepeat, setDisplayRepeat] = React.useState({});
   const [reRoll, setReRoll] = React.useState({});
@@ -58,7 +57,7 @@ const selectReRoll = (props) => {
       diceResult.text += `<span> ${caption} </span>`;
     }
     if (diceResult.text !== undefined) {
-      messageRef.push().set(diceResult);
+      push(messageRef, diceResult);
     }
 
     if (props.callback) {

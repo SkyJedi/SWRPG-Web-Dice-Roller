@@ -1,5 +1,4 @@
-import firebase from "firebase/compat/app";
-import "firebase/compat/database";
+import { child, getDatabase, onValue, push, ref, remove, set } from "@firebase/database";
 import React, { useEffect } from 'react';
 import { Button, ButtonGroup, Col, Container, Form, Image, Modal, Row, Table } from 'react-bootstrap';
 import { ArrowsAngleContract, ArrowsAngleExpand, CaretLeft, CaretRight, DashLg, PlusLg, Square, XSquare } from 'react-bootstrap-icons';
@@ -9,9 +8,9 @@ const dice = require("./functions/misc.js").dice;
 var channel = window.location.pathname.slice(1).toLowerCase();
 
 const Character = () => {
-  const messageRef = firebase.database().ref().child(`${channel}`).child('message');
+  const messageRef = child(ref(getDatabase()), `${channel}/message`);
   const [character, setCharacter] = React.useState({});
-  const characterRef = firebase.database().ref().child(`${channel}`).child('character');
+  const characterRef = child(ref(getDatabase()), `${channel}/character`);
   const [currentCharacter, setCurrentCharacter] = React.useState({ name: 'No Characters', currentWounds: 0, maxWounds: 0, currentStrain: 0, maxStrain: 0, credits: 0, imageURL: '/images/crest.png' });
   const [incapacitated, setIncapacitated] = React.useState(false);
 
@@ -26,7 +25,7 @@ const Character = () => {
   const [modifyModalTarget, setModifyModalTarget] = React.useState(null);
 
   useEffect(() => {
-    characterRef.on('value', snap => {
+    onValue(characterRef, snap => {
 
       let newCharacter = currentCharacter;
       if (snap.val() !== null) {
@@ -61,18 +60,18 @@ const Character = () => {
     }
   };
 
-  const remove = () => {
+  const removeCharacter = () => {
     if (currentCharacter.name === 'No Characters') return;
     if (Object.keys(character).length > 1) {
       previous();
-      characterRef.child(getcurrentKey()).remove();
-      messageRef.push().set({ text: currentCharacter['name'] + ' has been removed.' });
+      remove(child(characterRef, getcurrentKey()));
+      push(messageRef, { text: currentCharacter['name'] + ' has been removed.' });
     } else {
       let newCharacter = { name: 'No Characters', currentWounds: 0, maxWounds: 0, currentStrain: 0, maxStrain: 0, credits: 0, imageURL: '/images/crest.png' };
       setCurrentCharacter(newCharacter);
       checkIncap(newCharacter);
-      characterRef.remove();
-      messageRef.push().set({ text: currentCharacter['name'] + ' has been removed.' });
+      remove(characterRef);
+      push(messageRef, { text: currentCharacter['name'] + ' has been removed.' });
     }
   }
 
@@ -113,9 +112,9 @@ const Character = () => {
         currentCharacterCopy.imageURL = '/images/crest.png';
       }
       if (currentCharacter.key === currentCharacterCopy.key) {
-        messageRef.push().set({ text: currentCharacterCopy['name'] + ' has been successfully edited!' });
+        push(messageRef, { text: currentCharacterCopy['name'] + ' has been successfully edited!' });
       } else {
-        messageRef.push().set({ text: currentCharacterCopy['name'] + ' has been successfully added!' });
+        push(messageRef, { text: currentCharacterCopy['name'] + ' has been successfully added!' });
       }
 
       setCharacterEdit(null);
@@ -157,7 +156,7 @@ const Character = () => {
         }
         if (modifier < 0) modifier = 0;
         currentCharacterCopy[stat] = modifier;
-        messageRef.push().set({ text: message });
+        push(messageRef, { text: message });
 
       }
     }
@@ -165,7 +164,7 @@ const Character = () => {
     setNewWounds('');
     setNewStrain('');
     setNewCredits('');
-    characterRef.child(currentCharacterCopy.key).set(currentCharacterCopy);
+    set(child(characterRef, currentCharacterCopy.key), currentCharacterCopy);
     checkIncap(currentCharacterCopy);
     setCurrentCharacter(currentCharacterCopy);
   }
@@ -197,7 +196,7 @@ const Character = () => {
       default:
         characterCopy.init = ''
     }
-    characterRef.child(key).set(characterCopy);
+    set(child(characterRef, key), characterCopy);
   }
 
   const getcurrentKey = () => {
@@ -321,7 +320,7 @@ const Character = () => {
             Cancel
           </Button>
           <Button variant="danger" onClick={(_) => {
-            remove();
+            removeCharacter();
             setShowDeleteModal(false);
           }
           }>
@@ -369,7 +368,7 @@ const Character = () => {
               <Col xs="6" className={styles.modalButtonWrapper}>
                 <Button className={styles.modalButton} variant="light" onClick={(_) => {
                   modifyModalTarget.dice.blue += "<img src='/images/blue.png' alt='blue.png' style='height: 1em' width: 1em;'/>";
-                  characterRef.child(modifyModalTarget.key).set(modifyModalTarget);
+                  set(child(characterRef, modifyModalTarget.key), modifyModalTarget);
                   setModifyModalTarget(null);
                 }}>
                   <img src={`/images/blue.png`} alt="Blue die" className={`${styles.tinydie} me-1`} />
@@ -379,7 +378,7 @@ const Character = () => {
               <Col xs="6" className={styles.modalButtonWrapper}>
                 <Button className={styles.modalButton} variant="light" onClick={(_) => {
                   modifyModalTarget.dice.black += "<img src='/images/black.png' alt='black.png' style='height: 1em; width: 1em;'/>";
-                  characterRef.child(modifyModalTarget.key).set(modifyModalTarget);
+                  set(child(characterRef, modifyModalTarget.key), modifyModalTarget);
                   setModifyModalTarget(null);
                 }}>
                   <img src={`/images/black.png`} alt="Black die" className={`${styles.tinydie} me-1`} />
@@ -389,7 +388,7 @@ const Character = () => {
               <Col xs="6" className={styles.modalButtonWrapper}>
                 <Button className={styles.modalButton} variant="light" onClick={(_) => {
                   modifyModalTarget.dice.upgrade += "<img src='/images/upgrade.png' alt='upgrade.png' style='height: 15px' width: 15px;'/>";
-                  characterRef.child(modifyModalTarget.key).set(modifyModalTarget);
+                  set(child(characterRef, modifyModalTarget.key), modifyModalTarget);
                   setModifyModalTarget(null);
                 }}>
                   <img src={`/images/upgrade.png`} alt="Upgrade die" className={styles.tinydie} />
@@ -399,7 +398,7 @@ const Character = () => {
               <Col xs="6" className={styles.modalButtonWrapper}>
                 <Button className={styles.modalButton} variant="light" onClick={(_) => {
                   modifyModalTarget.dice.downgrade += "<img src='/images/downgrade.png' alt='downgrade.png' style='height: 15px' width: 15px;'/>";
-                  characterRef.child(modifyModalTarget.key).set(modifyModalTarget);
+                  set(child(characterRef, modifyModalTarget.key), modifyModalTarget);
                   setModifyModalTarget(null);
                 }}>
                   <img src={`/images/downgrade.png`} alt="Downgrade die" className={`${styles.tinydie} me-1`} />

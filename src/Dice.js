@@ -1,5 +1,4 @@
-import firebase from "firebase/compat/app";
-import "firebase/compat/database";
+import { child, getDatabase, push, ref } from '@firebase/database';
 import React, { useEffect } from 'react';
 import { Button, ButtonGroup, Col, Container, Dropdown, DropdownButton, Form, FormCheck, FormControl, Row } from 'react-bootstrap';
 import { ArrowDown, ArrowUp, ArrowsAngleContract, ArrowsAngleExpand, XLg } from 'react-bootstrap-icons';
@@ -20,9 +19,9 @@ const extendedDiceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', 
 const Dice = (params) => {
   const [simplifiedLayout, setSimplifiedLayout] = React.useState(params.simplified ? true : false)
   const [diceRoll, setDiceRoll] = React.useState({ yellow: 0, green: 0, blue: 0, red: 0, purple: 0, black: 0, white: 0, polyhedral: 0, success: 0, advantage: 0, triumph: 0, failure: 0, threat: 0, despair: 0, lightside: 0, darkside: 0 });
-  const messageRef = firebase.database().ref().child(`${channel}`).child('message');
-  const destinyRef = firebase.database().ref().child(`${channel}`).child('destiny');
-  const InitiativeRef = firebase.database().ref().child(`${channel}`).child('Initiative').child('order');
+  const messageRef = child(ref(getDatabase()), `${channel}/message`);
+  const destinyRef = child(ref(getDatabase()), `${channel}/destiny`);
+  const initiativeRef = child(ref(getDatabase()), `${channel}/Initiative/order`);
   const [caption, setCaption] = React.useState('');
   const [polyhedral, setPolyhedral] = React.useState(100);
   const [critModifier, setCritModifier] = React.useState('');
@@ -105,8 +104,9 @@ const Dice = (params) => {
     } else {
       critText = crit.shipcrit(critRoll[0]);
     }
-    critText = user + ' ' + critRoll[1] + `<p>` + critText + `</p>`
-    messageRef.push().set({ text: critText });
+    critText = user + ' ' + critRoll[1] + `<p>` + critText + `</p>`;
+
+    push(messageRef, { text: critText });
     setCritModifier('');
   }
 
@@ -125,7 +125,9 @@ const Dice = (params) => {
 
   const rollNew = () => {
     let roll = rolldice.roll(diceRoll, polyhedral, caption, user);
-    if (roll.text !== undefined) messageRef.push().set(roll);
+    if (roll.text !== undefined) {
+      push(messageRef, roll);
+    }
     if (!saveCheck) {
       reset();
     }
@@ -160,7 +162,7 @@ const Dice = (params) => {
       previousRoll.text += `<span> ${caption} </span>`;
     }
     if (previousRoll.text !== undefined) {
-      messageRef.push().set(previousRoll);
+      push(messageRef, previousRoll);
     }
   }
 
@@ -169,23 +171,23 @@ const Dice = (params) => {
     destinyResult.text += `<br/><span>Adding to the Destiny Pool</span>`;
     switch (diceFaces.white[destinyResult.roll.white[0]].face) {
       case 'l':
-        destinyRef.push().set('lightside');
+        push(destinyRef, 'lightside');
         break;
       case 'll':
-        destinyRef.push().set('lightside');
-        destinyRef.push().set('lightside');
+        push(destinyRef, 'lightside');
+        push(destinyRef, 'lightside');
         break;
       case "n":
-        destinyRef.push().set('darkside');
+        push(destinyRef, 'darkside');
         break;
       case 'nn':
-        destinyRef.push().set('darkside');
-        destinyRef.push().set('darkside');
+        push(destinyRef, 'darkside');
+        push(destinyRef, 'darkside');
         break;
       default:
         break;
     }
-    messageRef.push().set(destinyResult);
+    push(messageRef, destinyResult);
     document.getElementById('newestRoll')?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
   }
 
@@ -202,9 +204,9 @@ const Dice = (params) => {
       newInit.type = 'npc'
       newInit.roll += '0'
     }
-    InitiativeRef.push().set(newInit);
+    push(initiativeRef, newInit);
     if (initiativeResult.text !== undefined) {
-      messageRef.push().set(initiativeResult);
+      push(messageRef, initiativeResult);
     }
     if (!saveCheck) {
       setDiceRoll({ yellow: 0, green: 0, blue: 0, red: 0, purple: 0, black: 0, white: 0, polyhedral: 0, success: 0, advantage: 0, triumph: 0, failure: 0, threat: 0, despair: 0, lightside: 0, darkside: 0 });
@@ -216,7 +218,7 @@ const Dice = (params) => {
   const gleepglop = () => {
     let Species =
       ["Aleena", "Anx", "Aqualish", "Arcona", "Arkanian Offshoot", "Arkanian", "Barabel", "Bardottan", "Besalisk", "Bith", "Bothan", "Caamasi", "Cathar", "Cerean", "Chadra-Fan", "Chagrian", "Chevin", "Chiss", "Clawdite", "Corellian Human", "Dashade", "Defel", "Devaronian", "Drall", "Dressellian", "Droid", "Dug", "Duros", "Elom", "Elomin", "Ewok", "Falleen", "Farghul", "Gamorrean", "Gand", "Gank", "Givin", "Gossam", "Gotal", "Gran", "Gungan", "Herglic", "Human", "Hutt", "Iktotchi", "Ishi Tib", "Ithorian", "Jawa", "Kalleran", "Kel Dor", "Klatooinian", "Kubaz", "Kyuzo", "Lannik", "Lepi", "Mandalorian Human", "Mirialan", "Mon Calamari", "Mustafarian", "Muun", "Nagai", "Nautolan", "Neimoidian", "Nikto", "Noghri", "Ortolan", "Pantoran", "Pau'an", "Polis Massan", "Quarren", "Quermian", "Rodian", "Ryn", "Sakiyan", "Sathari", "Selkath", "Selonian", "Shistavanen", "Sluissi", "Snivvian", "Squib", "Sullustan", "Talz", "Thakwaash", "Togorian", "Togruta", "Toydarians", "Trandoshan", "Twi'lek", "Ubese", "Ugnaught", "Verpine", "Weequay", "Whiphid", "Wookiee", "Xexto", "Zabrak", "Zeltron", "Zygerrian"];
-    messageRef.push().set({ text: "A wild " + Species[dice(Species.length) - 1] + " appears!" });
+    push(messageRef, { text: "A wild " + Species[dice(Species.length) - 1] + " appears!" });
 
     document.getElementById('newestRoll')?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
   }

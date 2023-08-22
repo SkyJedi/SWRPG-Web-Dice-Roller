@@ -1,5 +1,4 @@
-import firebase from "firebase/compat/app";
-import "firebase/compat/database";
+import { child, getDatabase, onValue, orderByChild, push, query, ref, remove, set, update } from '@firebase/database';
 import React, { useEffect } from 'react';
 import { Button, ButtonGroup, Col, Container, Modal, Row } from 'react-bootstrap';
 import { ArrowRepeat, ArrowsAngleContract, ArrowsAngleExpand, CaretLeft, CaretRight, DashLg, PlusLg, Trash, XLg } from 'react-bootstrap-icons';
@@ -11,21 +10,21 @@ var channel = window.location.pathname.slice(1).toLowerCase();
 
 const Initiative = () => {
   const [expanded, setExpanded] = React.useState(false);
-  const messageRef = firebase.database().ref().child(`${channel}`).child('message');
-  const initiativeRef = firebase.database().ref().child(`${channel}`).child('Initiative').child('order');
+  const messageRef = child(ref(getDatabase()), `${channel}/message`);
+  const initiativeRef = child(ref(getDatabase()), `${channel}/Initiative/order`);
   const [initiative, setInitiative] = React.useState([]);
-  const initiativePastRef = firebase.database().ref().child(`${channel}`).child('Initiative').child('past');
+  const initiativePastRef = child(ref(getDatabase()), `${channel}/Initiative/past`);
   const [initiativePast, setInitiativePast] = React.useState([]);
   const [position, setPosition] = React.useState({ round: 1, turn: 1 });
-  const positionRef = firebase.database().ref().child(`${channel}`).child('Initiative').child('position');
+  const positionRef = child(ref(getDatabase()), `${channel}/Initiative/position`);
   const [character, setCharacter] = React.useState({});
-  const characterRef = firebase.database().ref().child(`${channel}`).child('character');
+  const characterRef = child(ref(getDatabase()), `${channel}/character`);
 
   const [showResetModal, setShowResetModal] = React.useState(false);
   const [modifyModalTarget, setModifyModalTarget] = React.useState(null);
 
   useEffect(() => {
-    initiativeRef.orderByChild('roll').on('value', snap => {
+    onValue(query(initiativeRef, orderByChild('roll')), snap => {
       let final = [];
       snap.forEach(function (child) {
         let tempBonus = [];
@@ -50,7 +49,7 @@ const Initiative = () => {
       }
     });
 
-    initiativePastRef.orderByChild('roll').on('value', snap => {
+    onValue(query(initiativePastRef, orderByChild('roll')), snap => {
       let final = [];
       snap.forEach(function (child) {
         let tempBonus = [];
@@ -73,7 +72,7 @@ const Initiative = () => {
       }
     });
 
-    positionRef.on('value', snap => {
+    onValue(positionRef, snap => {
       if (snap.val() != null) {
         setPosition(snap.val());
       } else {
@@ -81,7 +80,7 @@ const Initiative = () => {
       }
     });
 
-    characterRef.on('value', snap => {
+    onValue(characterRef, snap => {
       if (snap.val() !== null) {
         setCharacter(snap.val());
       } else {
@@ -100,12 +99,12 @@ const Initiative = () => {
     } else {
       i = 0;
     }
-    initiativeRef.push().set({ type: 'pc', roll: i, bonusDie: { blue: 0, black: 0 } });
+    push(initiativeRef, { type: 'pc', roll: i, bonusDie: { blue: 0, black: 0 } });
   }
 
   const initiativeRemove = () => {
     if (initiative.length !== 0) {
-      initiativeRef.child((initiative[initiative.length - 1]).key).remove();
+      remove(child(initiativeRef, initiative[initiative.length - 1].key));
     }
   }
 
@@ -133,9 +132,9 @@ const Initiative = () => {
       currPos.turn--;
       Initiative.unshift(InitiativePast.pop());
     }
-    positionRef.set(currPos);
-    initiativeRef.set(objectify(Initiative));
-    initiativePastRef.set(objectify(InitiativePast));
+    set(positionRef, currPos);
+    set(initiativeRef, objectify(Initiative));
+    set(initiativePastRef, objectify(InitiativePast));
   }
 
   const initiativeNext = () => {
@@ -165,9 +164,9 @@ const Initiative = () => {
       currPos.turn++;
       InitiativePast.push(Initiative.shift());
     }
-    positionRef.set(currPos);
-    initiativeRef.set(objectify(Initiative));
-    initiativePastRef.set(objectify(InitiativePast));
+    set(positionRef, currPos);
+    set(initiativeRef, objectify(Initiative));
+    set(initiativePastRef, objectify(InitiativePast));
   }
 
   const objectify = (array) => {
@@ -190,32 +189,32 @@ const Initiative = () => {
   const flip = (slot, time) => {
     if (time === 'current') {
       if (slot.type === 'pc') {
-        initiativeRef.child(slot.key).update({ 'type': 'npc' });
-        initiativeRef.child(slot.key).update({ 'roll': (+slot.roll - 1).toString() });
+        update(child(initiativeRef, slot.key), { 'type': 'npc' });
+        update(child(initiativeRef, slot.key), { 'roll': (+slot.roll - 1).toString() });
 
       } else {
-        initiativeRef.child(slot.key).update({ 'type': 'pc' });
-        initiativeRef.child(slot.key).update({ 'roll': (+slot.roll + 1).toString() });
+        update(child(initiativeRef, slot.key), { 'type': 'pc' });
+        update(child(initiativeRef, slot.key), { 'roll': (+slot.roll + 1).toString() });
 
       }
     } else {
       if (slot.type === 'pc') {
-        initiativePastRef.child(slot.key).update({ 'type': 'npc' });
-        initiativeRef.child(slot.key).update({ 'roll': (+slot.roll - 1).toString() });
+        update(child(initiativePastRef, slot.key), { 'type': 'npc' });
+        update(child(initiativeRef, slot.key), { 'roll': (+slot.roll - 1).toString() });
 
       } else {
-        initiativePastRef.child(slot.key).update({ 'type': 'pc' });
-        initiativeRef.child(slot.key).update({ 'roll': (+slot.roll + 1).toString() });
+        update(child(initiativePastRef, slot.key), { 'type': 'pc' });
+        update(child(initiativeRef, slot.key), { 'roll': (+slot.roll + 1).toString() });
 
       }
     }
   }
 
-  const remove = (slot, time) => {
+  const removeInitiative = (slot, time) => {
     if (time === 'current') {
-      initiativeRef.child(slot.key).remove();
+      remove(child(initiativeRef, slot.key));
     } else {
-      initiativePastRef.child(slot.key).remove();
+      remove(child(initiativePastRef, slot.key));
     }
   }
 
@@ -227,18 +226,18 @@ const Initiative = () => {
     }
     if (time === 'current') {
       tempbonusDie[color]++;
-      initiativeRef.child(slot.key).update({ 'bonusDie': tempbonusDie });
+      update(child(initiativeRef, slot.key), { 'bonusDie': tempbonusDie });
 
     }
     if (time === 'past') {
       tempbonusDie[color]++;
-      initiativePastRef.child(slot.key).update({ 'bonusDie': tempbonusDie });
+      update(child(initiativePastRef, slot.key), { 'bonusDie': tempbonusDie });
 
     }
   }
 
   const reset = () => {
-    firebase.database().ref().child(`${channel}`).child('Initiative').remove();
+    remove(child(ref(getDatabase()), `${channel}/Initiative`));
   }
 
   const clearMarks = () => {
@@ -247,7 +246,7 @@ const Initiative = () => {
       Object.keys(newCharacters).forEach((key) =>
         newCharacters[key].init = '',
       );
-      characterRef.set(newCharacters);
+      set(characterRef, newCharacters);
     }
   }
 
@@ -364,7 +363,7 @@ const Initiative = () => {
                     </Col>
                     <Col xs="4" className={styles.modalButtonWrapper}>
                       <Button className={styles.modalButton} variant="danger" onClick={(_) => {
-                        remove(modifyModalTarget.slot, modifyModalTarget.time);
+                        removeInitiative(modifyModalTarget.slot, modifyModalTarget.time);
                         setModifyModalTarget(null);
                       }}>
                         <Trash className={styles.inlineTextImage}></Trash>

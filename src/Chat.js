@@ -1,5 +1,4 @@
-import firebase from "firebase/compat/app";
-import "firebase/compat/database";
+import { child, getDatabase, onValue, push, ref, remove } from "@firebase/database";
 import React, { useEffect } from 'react';
 import { Button, ButtonGroup, Col, Container, Form, FormControl, Modal, Row } from 'react-bootstrap';
 import { XLg } from 'react-bootstrap-icons';
@@ -13,14 +12,14 @@ var channel = window.location.pathname.slice(1).toLowerCase(),
 
 const Chat = () => {
   const [chat, setChat] = React.useState({});
-  const chatRef = firebase.database().ref().child(`${channel}`).child('chat');
+  const chatRef = child(ref(getDatabase()), `${channel}/chat`);
   const [chatInput, setChatInput] = React.useState('');
 
   const [keyToDelete, setKeyToDelete] = React.useState(null);
   const [showDeleteAllModal, setShowDeleteAllModal] = React.useState(false);
 
   useEffect(() => {
-    chatRef.on('value', snap => {
+    onValue(chatRef, snap => {
       if (snap.val() != null) {
         setChat(snap.val())
       } else {
@@ -34,7 +33,7 @@ const Chat = () => {
     let chat = imgCheck(chatInput);
     chat = urlCheck(chat);
     chat = `<span>${user}: ` + chat + `</span>`
-    chatRef.push().set(chat);
+    push(chatRef, chat);
     setChatInput('');
   }
 
@@ -107,7 +106,7 @@ const Chat = () => {
                 Cancel
               </Button>
               <Button variant="danger" onClick={(_) => {
-                chatRef.child(keyToDelete).remove();
+                remove(child(chatRef, keyToDelete));
                 setKeyToDelete(null);
               }
               }>
@@ -132,7 +131,7 @@ const Chat = () => {
                 Cancel
               </Button>
               <Button variant="danger" onClick={(_) => {
-                chatRef.remove();
+                remove(chatRef);
                 setShowDeleteAllModal(false);
               }
               }>

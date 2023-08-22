@@ -1,5 +1,4 @@
-import firebase from "firebase/compat/app";
-import "firebase/compat/database";
+import { child, getDatabase, onValue, ref, remove } from "@firebase/database";
 import React, { useEffect } from 'react';
 import { Button, Col, Container, Modal, Row } from 'react-bootstrap';
 import { XLg } from 'react-bootstrap-icons';
@@ -13,7 +12,7 @@ var channel = window.location.pathname.slice(1).toLowerCase();
 
 const Message = () => {
   const [messages, setMessages] = React.useState(0);
-  const messageRef = firebase.database().ref().child(`${channel}`).child('message');
+  const messageRef = child(ref(getDatabase()), `${channel}/message`);
 
   const [keyToDelete, setKeyToDelete] = React.useState(null);
   const [showDeleteAllModal, setShowDeleteAllModal] = React.useState(false);
@@ -21,7 +20,7 @@ const Message = () => {
   let reRoll = { send: _ => { } };
 
   useEffect(() => {
-    messageRef.on('value', snap => {
+    onValue(messageRef, snap => {
       if (snap.val() !== null) { setMessages(snap.val()); }
       else { setMessages(0); }
     });
@@ -103,7 +102,7 @@ const Message = () => {
               Cancel
             </Button>
             <Button variant="danger" onClick={(_) => {
-              messageRef.child(keyToDelete).remove();
+              remove(child(messageRef, keyToDelete));
               setKeyToDelete(null);
             }
             }>
@@ -131,7 +130,7 @@ const Message = () => {
                 Cancel
               </Button>
               <Button variant="danger" onClick={(_) => {
-                messageRef.remove();
+                remove(messageRef);
                 setShowDeleteAllModal(false);
               }
               }>

@@ -1,5 +1,4 @@
-import firebase from "firebase/compat/app";
-import "firebase/compat/database";
+import { child, getDatabase, push, ref } from '@firebase/database';
 import React from 'react';
 import { Button, Col, Container, Modal, Row } from 'react-bootstrap';
 import Dice from '../Dice';
@@ -20,6 +19,8 @@ const ReRoll = (params) => {
   const [modifyRollResult, setModifyRollResult] = React.useState(null);
   const [selectDiceResult, setSelectDiceResut] = React.useState(null);
   const [flipDiceResult, setFlipDiceResut] = React.useState(null);
+
+  const messageRef = child(ref(getDatabase()), `${channel}/message`);
 
   const rebuiltdiceRoll = (message) => {
     let rebuilt = { diceRoll: {}, polyhedral: 100, caption: '' };
@@ -51,7 +52,7 @@ const ReRoll = (params) => {
             <Col sm="6" className={styles.modalButtonWrapper}>
               <Button className={styles.modalButton} variant="light" onClick={(_) => {
                 const roll = sameDice(reRollMessage);
-                firebase.database().ref().child(`${channel}`).child('message').push().set(roll);
+                push(messageRef, roll);
                 setReRollMessage(null);
               }}>
                 Roll Same Dice Pool

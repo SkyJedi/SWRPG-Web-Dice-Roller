@@ -1,5 +1,4 @@
-import firebase from "firebase/compat/app";
-import "firebase/compat/database";
+import { child, getDatabase, push, ref, remove } from '@firebase/database';
 import React from 'react';
 import { Button, Col, Container, Modal, Row } from 'react-bootstrap';
 import { CashCoin, DoorClosed, PlusCircle, XLg } from 'react-bootstrap-icons';
@@ -8,14 +7,12 @@ import styles from './TopBar.module.scss';
 var channel = window.location.pathname.slice(1).toLowerCase();
 
 const TopBar = (props) => {
-  const databaseRef = firebase.database().ref();
-
   const [showDeleteModal, setShowDeleteModal] = React.useState(false);
 
   const newSession = () => {
-    firebase.database().ref().child(`${channel}`).child('destiny').remove();
-    firebase.database().ref().child(`${channel}`).child('chat').push().set(`<span>----------------------------------------------</span>`)
-    firebase.database().ref().child(`${channel}`).child('message').push().set({ text: '--------------------------------------------------------------------' })
+    remove(child(ref(getDatabase()), `${channel}/destiny`));
+    push(child(ref(getDatabase()), `${channel}/chat`), `<span>----------------------------------------------</span>`);
+    push(child(ref(getDatabase()), `${channel}/message`), { text: '--------------------------------------------------------------------' })
   }
 
   return (
@@ -39,7 +36,7 @@ const TopBar = (props) => {
                 Cancel
               </Button>
               <Button variant="danger" onClick={(_) => {
-                firebase.database().ref().child(`${channel}`).remove();
+                remove(child(ref(getDatabase()), `${channel}`));
                 setShowDeleteModal(false);
                 window.location = `/`;
               }

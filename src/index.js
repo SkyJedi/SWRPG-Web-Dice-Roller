@@ -1,5 +1,4 @@
-import firebase from "firebase/compat/app";
-import "firebase/compat/database";
+import { initializeApp } from '@firebase/app';
 import React from 'react';
 import { Col, Container, Row, ThemeProvider } from 'react-bootstrap';
 import { CookiesProvider } from 'react-cookie';
@@ -18,7 +17,7 @@ import styles from './index.module.scss';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
-firebase.initializeApp(config.config);
+let firebaseApp = initializeApp(config.config);
 
 if (window.location.pathname !== '/') {
   var channel = window.location.pathname.slice(1).toLowerCase();

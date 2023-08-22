@@ -1,5 +1,4 @@
-import firebase from "firebase/compat/app";
-import "firebase/compat/database";
+import { child, getDatabase, onValue, push, ref, remove, set } from '@firebase/database';
 import React, { useEffect } from 'react';
 import { Button, ButtonGroup, Col, Container, Modal, Row } from 'react-bootstrap';
 import { ArrowsAngleContract, ArrowsAngleExpand, DashLg, PlusLg, XLg } from "react-bootstrap-icons";
@@ -14,13 +13,13 @@ const Destiny = () => {
   const [expanded, setExpanded] = React.useState(false);
 
   const [destinyPoint, setDestinyPoint] = React.useState({});
-  const destinyRef = firebase.database().ref().child(`${channel}`).child('destiny');
-  const messageRef = firebase.database().ref().child(`${channel}`).child('message');
+  const destinyRef = child(ref(getDatabase()), `${channel}/destiny`);
+  const messageRef = child(ref(getDatabase()), `${channel}/message`);
 
   const [showModal, setShowModal] = React.useState(false);
 
   useEffect(() => {
-    destinyRef.on('value', snap => {
+    onValue(destinyRef, snap => {
       if (snap.val() != null) {
         setDestinyPoint(snap.val());
       } else {
@@ -30,22 +29,22 @@ const Destiny = () => {
   }, []);
 
   const destinyAdd = () => {
-    destinyRef.push().set('lightside');
-    messageRef.push().set({ text: `${user} added a light side point.` });
+    push(destinyRef, 'lightside');
+    push(messageRef, { text: `${user} added a light side point.` });
   }
   const destinyRemove = () => {
     if (destinyPoint !== 0) {
-      destinyRef.child(Object.keys(destinyPoint)[Object.keys(destinyPoint).length - 1]).remove();
-      messageRef.push().set({ text: `${user} removed a destiny point.` });
+      remove(child(destinyRef, Object.keys(destinyPoint)[Object.keys(destinyPoint).length - 1]));
+      push(messageRef, { text: `${user} removed a destiny point.` });
     }
   }
   const flip = (v, k) => {
     if (v === 'lightside') {
-      destinyRef.child(k).set('darkside');
-      messageRef.push().set({ text: `${user} used a light side point.` })
+      set(child(destinyRef, k), 'darkside');
+      push(messageRef, { text: `${user} used a light side point.` })
     } else {
-      destinyRef.child(k).set('lightside');
-      messageRef.push().set({ text: `${user} used a dark side point.` })
+      set(child(destinyRef, k), 'lightside');
+      push(messageRef, { text: `${user} used a dark side point.` })
     }
   }
 
@@ -68,8 +67,8 @@ const Destiny = () => {
                 Cancel
               </Button>
               <Button variant="danger" onClick={(_) => {
-                destinyRef.remove();
-                messageRef.push().set({ text: `${user} resets the destiny pool from ${Object.entries(destinyPoint).map(([_, v]) => `<img class=diceface src=/images/${v}.png />`).join('')}` });
+                remove(destinyRef);
+                push(messageRef, { text: `${user} resets the destiny pool from ${Object.entries(destinyPoint).map(([_, v]) => `<img class=diceface src=/images/${v}.png />`).join('')}` });
                 setShowModal(false);
               }
               }>
