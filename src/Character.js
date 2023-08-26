@@ -151,8 +151,12 @@ const Character = () => {
 
         } else {
           modifier = +(modifier).replace(/\D/g, '');
-          if (stat === 'credits') message += (' ' + stat + ' set from ' + (currentCharacterCopy[stat].length > 0 ? currentCharacterCopy[stat] : '0') + ' to ' + modifier);
-          else message += (' ' + stat.slice(7).toLowerCase() + ' set from ' + (currentCharacterCopy[stat].length > 0 ? currentCharacterCopy[stat] : '0') + ' to ' + modifier);
+          if (stat === 'credits') {
+            message += (' ' + stat + ' set from ' + (currentCharacterCopy[stat] ? currentCharacterCopy[stat] : '0') + ' to ' + modifier);
+          }
+          else {
+            message += (' ' + stat.slice(7).toLowerCase() + ' set from ' + (currentCharacterCopy[stat] ? currentCharacterCopy[stat] : '0') + ' to ' + modifier);
+          }
         }
         if (modifier < 0) modifier = 0;
         currentCharacterCopy[stat] = modifier;
