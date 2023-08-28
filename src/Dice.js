@@ -17,7 +17,7 @@ const defaultDiceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', '
 const extendedDiceOrder = ['yellow', 'green', 'blue', 'red', 'purple', 'black', 'white', 'lightside', 'darkside', 'success', 'advantage', 'triumph', 'failure', 'threat', 'despair'];
 
 const Dice = (params) => {
-  const [simplifiedLayout, setSimplifiedLayout] = React.useState(params.simplified ? true : false)
+  const [simplifiedLayout,] = React.useState(params.simplified ? true : false)
   const [diceRoll, setDiceRoll] = React.useState({ yellow: 0, green: 0, blue: 0, red: 0, purple: 0, black: 0, white: 0, polyhedral: 0, success: 0, advantage: 0, triumph: 0, failure: 0, threat: 0, despair: 0, lightside: 0, darkside: 0 });
   const messageRef = child(ref(getDatabase()), `${channel}/message`);
   const destinyRef = child(ref(getDatabase()), `${channel}/destiny`);
@@ -40,8 +40,9 @@ const Dice = (params) => {
       setPolyhedral((params.previousRoll.roll.polyhedral ?? [[100]])[0][0]);
 
     }
-  }
-    , []);
+  },
+    // eslint-disable-next-line
+    [params.previousRoll]);
 
   const addDie = (diceColor) => {
     let newDiceRoll = Object.assign({}, diceRoll);
@@ -138,6 +139,7 @@ const Dice = (params) => {
 
     let previousRoll = Object.assign({}, params.previousRoll);
     previousRoll.text = `<span> ${user} modified dice pool </span>`;
+    previousRoll.description = `${user} modified dice pool`;
 
     extendedDiceOrder.concat(['polyhedral']).forEach(color => {
       if (previousRoll.roll[color]) {

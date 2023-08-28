@@ -26,7 +26,9 @@ const Destiny = () => {
         setDestinyPoint({});
       }
     });
-  }, []);
+  },
+    // eslint-disable-next-line
+    []);
 
   const destinyAdd = () => {
     push(destinyRef, 'lightside');

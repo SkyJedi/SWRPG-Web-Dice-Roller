@@ -10,7 +10,7 @@ var rolldice = require("./Roll.js"),
   user = window.location.search.slice(1),
   channel = window.location.pathname.slice(1).toLowerCase();
 
-const fortune = props => {
+const Fortune = props => {
   const messageRef = child(ref(getDatabase()), `${channel}/message`);
   const [displayFaces, setDisplayFaces] = React.useState({});
   const [swap, setSwap] = React.useState({});
@@ -25,7 +25,7 @@ const fortune = props => {
     setCaption(diceResult.caption ?? '');
     Object.keys(diceFaces).forEach((color) => {
       if (diceResult.roll[color] !== undefined) {
-        for (var i = 0; diceResult.roll[color].length > i; i++) {
+        for (let i = 0; diceResult.roll[color].length > i; i++) {
           displayFaces[color + i] = {};
           if (color === 'yellow' || color === 'green' || color === 'blue' || color === 'red' || color === 'purple' || color === 'black' || color === 'white') {
             displayFaces[color + i].current = { color: color, position: i, path: `/images/dice/${color}-${diceFaces[color][diceResult.roll[color][i]].face}.png`, key: color + i + 'current' };
@@ -42,7 +42,7 @@ const fortune = props => {
     })
     setDisplayFaces(displayFaces);
 
-  }, []);
+  }, [props.diceResult]);
 
 
   const swapFace = () => {
@@ -53,6 +53,7 @@ const fortune = props => {
     });
     const count = Object.keys(swapCopy).length;
     diceResult.text = `<span> ${user} swapped ${count} ${count === 1 ? 'die face' : 'dice faces'} </span>`;
+    diceResult.description = `${user} swapped ${count} ${count === 1 ? 'die face' : 'dice faces'}`;
     diceResult = rolldice.countSymbols(diceResult, user);
     if (caption !== '') {
       diceResult.caption = caption;
@@ -83,7 +84,7 @@ const fortune = props => {
       {Object.keys(displayFaces).map((row) =>
         <Row className={styles.flipRow} key={displayFaces[row].current.key}>
           <Col className={styles.faceWrapperLeft} xs='3' lg='2'>
-            <img className={styles.originalFaceImage} src={displayFaces[row].current.path}></img>
+            <img className={styles.originalFaceImage} src={displayFaces[row].current.path} alt='original die'></img>
           </Col>
           <Col className={styles.faceWrapperCenter} xs='1'>
             <ChevronDoubleRight fontSize="xx-large"></ChevronDoubleRight>
@@ -91,8 +92,8 @@ const fortune = props => {
           <Col className={styles.faceWrapperRight} xs='8' lg='9'>
             {Object.keys(displayFaces[row].fortune).map((fortuneRoll) =>
               <Button key={displayFaces[row].fortune[fortuneRoll].key} variant='light' onClick={selectDice.bind(this, row, fortuneRoll)} className={styles.diceButton}>
-                <img className={styles.die} src={displayFaces[row].fortune[fortuneRoll].path}></img>
-                <img className={styles.badge} src={'/images/repeat.png'} hidden={!displayFaces[row].fortune[fortuneRoll].display} />
+                <img className={styles.die} src={displayFaces[row].fortune[fortuneRoll].path} alt='selectable die'></img>
+                <img className={styles.badge} src={'/images/repeat.png'} alt='selected die' hidden={!displayFaces[row].fortune[fortuneRoll].display} />
               </Button>
             )}
           </Col>
@@ -110,4 +111,4 @@ const fortune = props => {
     </Container >
   );
 }
-export default fortune;
+export default Fortune;

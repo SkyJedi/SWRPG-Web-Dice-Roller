@@ -1,33 +1,45 @@
 import { child, getDatabase, onValue, ref, remove } from "@firebase/database";
-import React, { useEffect } from 'react';
-import { Button, Col, Container, Modal, Row } from 'react-bootstrap';
+import { useEffect, useState } from 'react';
+import { Button, Col, Container, Image, Modal, Row } from 'react-bootstrap';
 import { XLg } from 'react-bootstrap-icons';
 import { Flipped, Flipper } from "react-flip-toolkit";
 import styles from './Message.module.scss';
-import './Message.scss';
 import { isNewSessionText } from './functions/misc';
 import ReRoll from './functions/reRoll';
 
+import { LegacyMessageTransformer } from "./model/LegacyMessageTransformer";
+import { Message, SeparatorEntry, SymbolEntry, TextEntry } from "./model/Message";
+import { MessageTransformer } from "./model/MessageTransformer";
+
+
 var channel = window.location.pathname.slice(1).toLowerCase();
 
-const Message = () => {
-  const [messages, setMessages] = React.useState(0);
+const MessageModule = () => {
+  const messageTransformer = new LegacyMessageTransformer(new MessageTransformer());
+  const [messages, setMessages] = useState({});
   const messageRef = child(ref(getDatabase()), `${channel}/message`);
 
-  const [keyToDelete, setKeyToDelete] = React.useState(null);
-  const [showDeleteAllModal, setShowDeleteAllModal] = React.useState(false);
+  const [keyToDelete, setKeyToDelete] = useState(null);
+  const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
 
-  let reRoll = { send: _ => { } };
+  let reRoll = _ => { };
 
   useEffect(() => {
     onValue(messageRef, snap => {
-      if (snap.val() !== null) { setMessages(snap.val()); }
-      else { setMessages(0); }
+      const values: any = snap.val();
+      if (values !== null) {
+        setMessages(values);
+      }
+      else {
+        setMessages({});
+      }
     });
-  }, []);
+  },
+    // eslint-disable-next-line
+    []);
 
   const isRollMessage = (message) => {
-    return Object.keys(message).length > 1;
+    return message.roll !== undefined;
   }
 
   const doReRoll = (key) => {
@@ -46,7 +58,7 @@ const Message = () => {
 
     if (message.roll.yellow || message.roll.green || message.roll.blue
       || message.roll.red || message.roll.purple || message.roll.black) {
-      // regular roll; success = at least one success
+      // regular roll; success=at least one success
       if ((message.results.success ?? 0) - (message.results.failure ?? 0) > 0) {
         return styles.rollMessageSuccess;
       } else {
@@ -55,7 +67,7 @@ const Message = () => {
     }
 
     if (message.roll.white) {
-      // only force roll; success = at least one lightside
+      // only force roll; success=at least one lightside
       if (message.results.lightside > 0) {
         return styles.rollMessageSuccess;
       } else {
@@ -67,23 +79,43 @@ const Message = () => {
     return styles.rollMessageSuccess;
   }
 
+  const toReact = (key: string, message: Message) => {
+
+    let result: JSX.Element[] = [];
+
+    message.entries.forEach((entry, index) => {
+      if (entry instanceof TextEntry) {
+        result.push(<span key={key + index}>{(entry as TextEntry).text}</span>);
+      }
+      if (entry instanceof SeparatorEntry) {
+        result.push(<hr key={key + index} />);
+      }
+      if (entry instanceof SymbolEntry) {
+        const symbol = entry as SymbolEntry;
+        result.push(<Image key={key + index} className={styles.diceface} src={`/images/${symbol.symbol}.png`} alt={Symbol[symbol.symbol]} />);
+      }
+    });
+
+    return result;
+  };
+
   return (
     <Container className="top-level-container">
       <Row>
-        <Col sm="12"><strong>Messages</strong></Col>
+        <Col sm="12"> <strong>Messages </strong></Col>
       </Row>
       <Row className={styles.messageContainer}>
         <Flipper flipKey={Object.keys(messages).length} spring='gentle'>
-          {Object.keys(messages).reverse().map((k, index) =>
+          {Object.entries(messages).reverse().map(([k, message]: [string, any], index) =>
             <Flipped key={k} flipId={k} stagger>
               <div>
-                <Container key={k} >
-                  <Row id={index === 0 ? 'newestRoll' : k} className={determineMessageClassNames(messages[k])}>
-                    <Col className={isRollMessage(messages[k]) ? styles.pseudoButtonDark : styles.noPseudoButton} xs='10' lg='11'>
-                      <div onClick={doReRoll.bind(this, k)} dangerouslySetInnerHTML={{ __html: messages[k].text }} />
+                <Container key={k}>
+                  <Row id={index === 0 ? 'newestRoll' : k} className={determineMessageClassNames(message)}>
+                    <Col onClick={doReRoll.bind(this, k)} className={isRollMessage(message) ? styles.pseudoButtonDark : styles.noPseudoButton} xs='10' lg='11'>
+                      {toReact(k, messageTransformer.toMessage(message.text, message.roll, message.caption, message.results))}
                     </Col>
                     <Col className={styles.closeMessageColumn} xs='2' lg='1'>
-                      <Button className={styles.closeMessageButton} title='Delete message' variant='danger' onClick={setKeyToDelete.bind(this, k)}><XLg></XLg></Button>
+                      <Button className={styles.closeMessageButton} title='Delete message' variant='danger' onClick={setKeyToDelete.bind(this, k)}> <XLg></XLg></Button>
                     </Col>
                   </Row>
                 </Container>
@@ -92,11 +124,11 @@ const Message = () => {
           )}
         </Flipper>
 
-        <Modal show={keyToDelete} onHide={(_) => setKeyToDelete(null)}>
+        <Modal show={keyToDelete} onHide={() => setKeyToDelete(null)}>
           <Modal.Header closeButton>
-            <Modal.Title>Delete Message</Modal.Title>
+            <Modal.Title>Delete MessageComponent </Modal.Title>
           </Modal.Header>
-          <Modal.Body>Are you sure, this will delete this message</Modal.Body>
+          <Modal.Body> Are you sure, this will delete this message </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={(_) => setKeyToDelete(null)}>
               Cancel
@@ -111,7 +143,7 @@ const Message = () => {
           </Modal.Footer>
         </Modal>
 
-        <ReRoll callin={callin => reRoll = callin}></ReRoll>
+        <ReRoll callin={callin => reRoll = callin}> </ReRoll>
 
         <Col>
           <Button className={styles.deleteAllButton} variant="danger" onClick={(_) => {
@@ -120,11 +152,11 @@ const Message = () => {
             <XLg></XLg> Clear All Messages
           </Button>
 
-          <Modal show={showDeleteAllModal} onHide={(_) => setShowDeleteAllModal(false)}>
+          <Modal show={showDeleteAllModal} onHide={() => setShowDeleteAllModal(false)}>
             <Modal.Header closeButton>
-              <Modal.Title>Clear Messages</Modal.Title>
+              <Modal.Title>Clear Messages </Modal.Title>
             </Modal.Header>
-            <Modal.Body>Are you sure, this will clear all the messages</Modal.Body>
+            <Modal.Body> Are you sure, this will clear all the messages </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={(_) => setShowDeleteAllModal(false)}>
                 Cancel
@@ -132,8 +164,7 @@ const Message = () => {
               <Button variant="danger" onClick={(_) => {
                 remove(messageRef);
                 setShowDeleteAllModal(false);
-              }
-              }>
+              }}>
                 DELETE ALL
               </Button>
             </Modal.Footer>
@@ -143,4 +174,4 @@ const Message = () => {
     </Container>
   );
 }
-export default Message;
+export default MessageModule;

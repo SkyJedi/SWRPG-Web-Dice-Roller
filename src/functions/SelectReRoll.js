@@ -8,7 +8,7 @@ var rolldice = require("./Roll.js"),
   user = window.location.search.slice(1),
   channel = window.location.pathname.slice(1).toLowerCase();
 
-const selectReRoll = (props) => {
+const SelectReRoll = (props) => {
   const messageRef = child(ref(getDatabase()), `${channel}/message`);
   const [displayFaces, setDisplayFaces] = React.useState([]);
   const [displayRepeat, setDisplayRepeat] = React.useState({});
@@ -40,8 +40,7 @@ const selectReRoll = (props) => {
       setDisplayRepeat(displayRepeat);
 
     }
-  }
-    , []);
+  }, [props.diceResult]);
 
 
   const roll = () => {
@@ -51,6 +50,7 @@ const selectReRoll = (props) => {
       diceResult.roll[reRollCopy[key].color].splice(reRollCopy[key].position, 1, rolldice.rollDice(reRollCopy[key].color));
     });
     diceResult.text = `<span> ${user} ${makeText(Object.keys(reRollCopy).length)}</span>`;
+    diceResult.description = `${user} ${makeText(Object.keys(reRollCopy).length)}`;
     diceResult = rolldice.countSymbols(diceResult, user);
     if (caption !== '') {
       diceResult.caption = caption;
@@ -98,8 +98,8 @@ const selectReRoll = (props) => {
           {displayFaces.map((file) =>
             <Button key={file.key} variant='light' onClick={selectDice.bind(this, file)}>
               <div className={styles.diceContainer}>
-                <img className={styles.die} src={file.path}></img>
-                <img className={styles.badge} src={'/images/repeat.png'} hidden={!displayRepeat[file.key]} />
+                <img className={styles.die} src={file.path} alt='selectable die'></img>
+                <img className={styles.badge} src={'/images/repeat.png'} alt='selected die' hidden={!displayRepeat[file.key]} />
               </div>
             </Button>
           )}
@@ -114,4 +114,4 @@ const selectReRoll = (props) => {
     </Container>
   );
 }
-export default selectReRoll;
+export default SelectReRoll;

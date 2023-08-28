@@ -1,5 +1,12 @@
-//******Paste var config = {xxxxxxx};******
+// REPLACE FROM HERE
+var config = {
+    apiKey: "",
+    authDomain: "",
+    databaseURL: "",
+    projectId: "",
+    storageBucket: "",
+    messagingSenderId: ""
+};
+// END REPLACE
 
-
-
- exports.config = config;
+exports.config = config;

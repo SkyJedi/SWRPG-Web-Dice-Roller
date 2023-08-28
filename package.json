@@ -3,6 +3,11 @@
   "version": "2.0.0",
   "private": true,
   "dependencies": {
+    "@testing-library/jest-dom": "^6.1.1",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/user-event": "^14.4.3",
+    "@types/jest": "^29.5.4",
+    "@types/react-bootstrap": "^0.32.32",
     "bootstrap": "^5.3.1",
     "firebase": "^10.2.0",
     "prop-types": "^15.8.1",
@@ -14,6 +19,7 @@
     "react-flip-toolkit": "^7.1.0",
     "sass": "^1.66.1",
     "seedrandom": "^3.0.5",
+    "ts-jest": "^29.1.1",
     "universal-cookie": "^6.0.1",
     "uuid": "^9.0.0"
   },
@@ -23,8 +29,15 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom --passWithNoTests",
+    "test": "react-scripts test --passWithNoTests",
+    "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache",
     "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "browserslist": {
     "production": [

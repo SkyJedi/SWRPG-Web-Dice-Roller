@@ -27,6 +27,7 @@ export function roll(originalDiceRoll, polyhedralValue, caption, user) {
 
   //count symbols and build message results
   diceResult.text = `<span> ${user} rolled </span>`;
+  diceResult.description = `${user} rolled`;
   diceResult = countSymbols(diceResult, user);
 
   //add the caption in
@@ -99,8 +100,11 @@ export function countSymbols(diceResult, user) {
               break;
           }
         }
-        if (color === 'yellow' || color === 'green' || color === 'blue' || color === 'red' || color === 'purple' || color === 'black' || color === 'white') diceResult.text += `<img class=diceface src=/images/dice/${color}-${face}.png /> `;
-        else diceResult.text += `<img class=diceface src=/images/${color}.png /> `;
+        if (color === 'yellow' || color === 'green' || color === 'blue' || color === 'red' || color === 'purple' || color === 'black' || color === 'white') {
+          diceResult.text += `<img class=diceface src=/images/dice/${color}-${face}.png /> `;
+        } else {
+          diceResult.text += `<img class=diceface src=/images/${color}.png /> `;
+        }
       });
     }
   });

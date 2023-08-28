@@ -42,7 +42,9 @@ const Character = () => {
       checkIncap(newCharacter);
       setCurrentCharacter(newCharacter);
     });
-  }, []);
+  },
+    // eslint-disable-next-line
+    []);
 
 
   const createEmptyCharacter = () => {
@@ -232,6 +234,20 @@ const Character = () => {
     return text;
   }
 
+  const toReact = (html) => {
+    let result = [];
+    let symbolMatches = [...html.matchAll(/<img [^>]*src=['"]?\/images\/([^.]+)\.png['"]? [^>]*\/>/g)];
+
+    for (let i = 0; i < symbolMatches.length; i++) {
+      const symbolMatch = symbolMatches[i];
+      if (symbolMatch) {
+        result.push(<Image key={i} className={styles.tinydie} src={`/images/${symbolMatch[1]}.png`} alt={Symbol[symbolMatch[1]]} />);
+      }
+    }
+
+    return result;
+  }
+
   return (
     <Container className="top-level-container">
       <Form onSubmit={modifyStats.bind(this)}>
@@ -352,10 +368,12 @@ const Character = () => {
               <td role='button' onClick={selectCharacter.bind(this, k)}>&nbsp;{character[k].currentStrain}/{character[k].maxStrain}</td>
               <td role='button' onClick={_ => setModifyModalTarget(character[k])}>
                 <Button size='sm' className={styles.cellButton} variant='primary' hidden={character[k].dice?.blue || character[k].dice?.black || character[k].dice?.upgrade || character[k].dice?.downgrade}><PlusLg></PlusLg></Button>
-                <div className={styles.cellDie} dangerouslySetInnerHTML={{ __html: character[k].dice?.blue }} />
-                <div className={styles.cellDie} dangerouslySetInnerHTML={{ __html: character[k].dice?.black }} />
-                <div className={styles.cellDie} dangerouslySetInnerHTML={{ __html: character[k].dice?.upgrade }} />
-                <div className={styles.cellDie} dangerouslySetInnerHTML={{ __html: character[k].dice?.downgrade }} />
+                <div className={styles.cellDie}>
+                  {toReact(character[k].dice?.blue)}
+                  {toReact(character[k].dice?.black)}
+                  {toReact(character[k].dice?.upgrade)}
+                  {toReact(character[k].dice?.downgrade)}
+                </div>
               </td>
             </tr>
           )}
