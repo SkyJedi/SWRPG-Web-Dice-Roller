@@ -36,7 +36,11 @@
 @mixin rollMessage {
     @include message;
 
-    span:not(:first-of-type):before {
+    hr {
+        @extend .my-1;
+    }
+
+    /*span:not(:first-of-type):before {
         content: '';
         width: 100%;
         height: 1px;
@@ -45,7 +49,8 @@
         @extend .bg-opacity-25;
         @extend .mb-1;
         @extend .mt-1;
-    }
+        
+}*/
 }
 
 .rollMessageSuccess {
@@ -88,4 +93,12 @@
 .deleteAllButton {
     @extend .w-100;
     @extend .mt-2;
+}
+
+.diceface {
+    height: 3em;
+    width: auto;
+
+    @extend .mb-1;
+    @extend .me-1;
 }

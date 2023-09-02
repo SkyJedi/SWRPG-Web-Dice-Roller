@@ -1,35 +1,43 @@
 import { child, getDatabase, onValue, push, ref, remove } from "@firebase/database";
-import React, { useEffect } from 'react';
-import { Button, ButtonGroup, Col, Container, Form, FormControl, Modal, Row } from 'react-bootstrap';
+import { useEffect, useState } from 'react';
+import { Button, ButtonGroup, Col, Container, Form, FormControl, Image, Modal, Row } from 'react-bootstrap';
 import { XLg } from 'react-bootstrap-icons';
 import { Flipped, Flipper } from "react-flip-toolkit";
 import styles from './Chat.module.scss';
 import "./Chat.scss";
 import { isNewSessionText } from './functions/misc';
+import { Chat, LinkEntry, SymbolEntry, TextEntry } from "./model/Chat";
+import { LegacyChatTransformer } from "./model/LegacyChatTransformer";
 
 var channel = window.location.pathname.slice(1).toLowerCase(),
   user = window.location.search.slice(1);
 
-const Chat = () => {
-  const [chat, setChat] = React.useState({});
-  const chatRef = child(ref(getDatabase()), `${channel}/chat`);
-  const [chatInput, setChatInput] = React.useState('');
+const ChatModule = () => {
+  const chatTransformer = new LegacyChatTransformer();
 
-  const [keyToDelete, setKeyToDelete] = React.useState(null);
-  const [showDeleteAllModal, setShowDeleteAllModal] = React.useState(false);
+  const [chat, setChat] = useState({});
+  const chatRef = child(ref(getDatabase()), `${channel}/chat`);
+  const [chatInput, setChatInput] = useState('');
+
+  const [keyToDelete, setKeyToDelete] = useState(null);
+  const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
 
   useEffect(() => {
     onValue(chatRef, snap => {
       if (snap.val() != null) {
-        setChat(snap.val())
+        setChat(snap.val());
       } else {
-        setChat(0);
+        setChat(null);
       }
     });
-  }, []);
+  },
+    // eslint-disable-next-line
+    []);
 
   const sendchat = (stop) => {
-    stop.preventDefault();
+    if (stop) {
+      stop.preventDefault();
+    }
     let chat = imgCheck(chatInput);
     chat = urlCheck(chat);
     chat = `<span>${user}: ` + chat + `</span>`
@@ -66,6 +74,33 @@ const Chat = () => {
     return final;
   }
 
+  const toReact = (key: string, message: Chat) => {
+
+    let result: JSX.Element[] = [];
+
+    message.entries.forEach((entry, index) => {
+      if (entry instanceof TextEntry) {
+        result.push(<span key={key + index}>{(entry as TextEntry).text}</span>);
+      }
+      if (entry instanceof LinkEntry) {
+        const link = entry as LinkEntry;
+        result.push(<a key={key + index} href={link.url}>{link.text}</a>);
+      }
+      if (entry instanceof SymbolEntry) {
+        const symbol = entry as SymbolEntry;
+        result.push(<Image key={key + index} className={styles.diceface} src={`/images/${symbol.symbol}.png`} alt={Symbol[symbol.symbol]} />);
+      }
+    });
+
+    return result;
+  };
+
+  const onKeyDown = (event: KeyboardEvent) => {
+    if (event.ctrlKey && event.code === 'Enter' && chatInput.length > 0) {
+      sendchat(null);
+    }
+  }
+
   return (
     <Container className="top-level-container">
       <Row>
@@ -75,7 +110,7 @@ const Chat = () => {
         <Col className={styles.sendWrapper} xs='12'>
           <Form onSubmit={sendchat.bind(this)}>
             <ButtonGroup className={styles.buttonGroup}>
-              <FormControl as='textarea' rows='2' className={styles.chatBox} value={chatInput} onChange={event => setChatInput(event.target.value)} placeholder='Text'></FormControl>
+              <FormControl as='textarea' rows={2} className={styles.chatBox} value={chatInput} onChange={event => setChatInput(event.target.value)} placeholder='Text' onKeyDown={onKeyDown.bind(this)}></FormControl>
               <Button type='submit' disabled={!chatInput}>Send</Button>
             </ButtonGroup>
           </Form>
@@ -83,11 +118,13 @@ const Chat = () => {
 
         <Col className={styles.chatContainer} xs='12'>
           <Flipper flipKey={Object.entries(chat).length} spring='wobbly'>
-            {Object.entries(chat).reverse().map(([k, v]) =>
+            {Object.entries(chat).reverse().map(([k, v]: [string, string]) =>
               <Flipped key={k} flipId={k} stagger>
                 <div>
                   <Row key={k} className={isNewSessionText(v) ? styles.chatMessageNewSession : styles.chatNormalMessage}>
-                    <Col className={styles.chatText} xs='10' lg='11' dangerouslySetInnerHTML={{ __html: v }} />
+                    <Col className={styles.chatText} xs='10' lg='11'>
+                      {toReact(k, chatTransformer.toChat(v))}
+                    </Col>
                     <Col className={styles.deleteWrapper} xs='2' lg='1'>
                       <Button size='sm' className={styles.deleteButton} title='Delete chat message' variant='danger' onClick={_ => setKeyToDelete(k)}><XLg></XLg></Button>
                     </Col>
@@ -96,7 +133,7 @@ const Chat = () => {
               </Flipped>
             )}
           </Flipper>
-          <Modal show={keyToDelete} onHide={(_) => setKeyToDelete(null)}>
+          <Modal show={keyToDelete} onHide={() => setKeyToDelete(null)}>
             <Modal.Header closeButton>
               <Modal.Title>Delete Message</Modal.Title>
             </Modal.Header>
@@ -121,7 +158,7 @@ const Chat = () => {
             <XLg></XLg> Clear Chat
           </Button>
 
-          <Modal show={showDeleteAllModal} onHide={(_) => setShowDeleteAllModal(false)}>
+          <Modal show={showDeleteAllModal} onHide={() => setShowDeleteAllModal(false)}>
             <Modal.Header closeButton>
               <Modal.Title>Clear Chat</Modal.Title>
             </Modal.Header>
@@ -144,4 +181,4 @@ const Chat = () => {
     </Container>
   );
 }
-export default Chat;
+export default ChatModule;

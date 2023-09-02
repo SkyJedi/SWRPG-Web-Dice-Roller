@@ -6,26 +6,22 @@ import ReactDOM from 'react-dom/client';
 import './App.scss';
 import Channel from './Channel';
 import Character from './Character';
-import Chat from './Chat';
+import Chat from './Chat.module';
 import Destiny from './Destiny';
 import Dice from './Dice';
 import Initiative from './Initiative.js';
-import Message from './Message';
+import MessageModule from './Message.module';
 import TopBar from './TopBar';
 import config from './config';
 import styles from './index.module.scss';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
-let firebaseApp = initializeApp(config.config);
+initializeApp(config.config);
 
 if (window.location.pathname !== '/') {
   var channel = window.location.pathname.slice(1).toLowerCase();
 }
-
-const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
-
 
 if (channel !== undefined) {
   startUp();
@@ -62,7 +58,7 @@ function startUp() {
         <Destiny />
         <Initiative />
         <Dice />
-        <Message />
+        <MessageModule />
       </Col>
       <Col className={styles.mainColumn} xs={{ offset: 1, span: 10 }} sm={{ offset: 0, span: 12 }} md={6} lg={5}>
         <TopBar className={styles.topbarSecond} />

@@ -10,7 +10,6 @@ var channel = window.location.pathname.slice(1).toLowerCase();
 
 const Initiative = () => {
   const [expanded, setExpanded] = React.useState(false);
-  const messageRef = child(ref(getDatabase()), `${channel}/message`);
   const initiativeRef = child(ref(getDatabase()), `${channel}/Initiative/order`);
   const [initiative, setInitiative] = React.useState([]);
   const initiativePastRef = child(ref(getDatabase()), `${channel}/Initiative/past`);
@@ -88,7 +87,9 @@ const Initiative = () => {
       }
     });
 
-  }, []);
+  },
+    // eslint-disable-next-line
+    []);
 
   const initiativeAdd = () => {
     let i = 0;

@@ -2,9 +2,9 @@ import { child, getDatabase, push, ref } from '@firebase/database';
 import React from 'react';
 import { Button, Col, Container, Modal, Row } from 'react-bootstrap';
 import Dice from '../Dice';
-import Fortune from './fortune';
+import Fortune from './Fortune';
+import SelectReRoll from './SelectReRoll';
 import styles from './reRoll.module.scss';
-import SelectReRoll from './selectReRoll';
 
 var rolldice = require("./Roll.js");
 
