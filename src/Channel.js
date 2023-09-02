@@ -20,8 +20,8 @@ const Channel = (callback) => {
 
     if (myCookies) {
       // User wishes to use cookies: set channel name and user name for next visit; expire in one year
-      setCookie('channel', normalizedChannel, { path: '/', maxAge: 60 * 60 * 24 * 366 });
-      setCookie('user', normalizedUser, { path: '/', maxAge: 60 * 60 * 24 * 366 });
+      setCookie('channel', normalizedChannel, { path: '/', maxAge: 60 * 60 * 24 * 366, sameSite: 'strict', secure: true });
+      setCookie('user', normalizedUser, { path: '/', maxAge: 60 * 60 * 24 * 366, sameSite: 'strict', secure: true });
     } else {
       // User does not wish to use cookies; remove existing ones if present
       const cookies = new Cookies();

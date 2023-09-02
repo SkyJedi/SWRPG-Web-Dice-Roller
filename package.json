@@ -9,7 +9,7 @@
     "@types/jest": "^29.5.4",
     "@types/react-bootstrap": "^0.32.32",
     "bootstrap": "^5.3.1",
-    "firebase": "^10.2.0",
+    "firebase": "^10.3.1",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.8.0",
@@ -20,7 +20,7 @@
     "sass": "^1.66.1",
     "seedrandom": "^3.0.5",
     "ts-jest": "^29.1.1",
-    "universal-cookie": "^6.0.1",
+    "universal-cookie": "^6.1.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
