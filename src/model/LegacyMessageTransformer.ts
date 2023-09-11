@@ -9,7 +9,7 @@ export class LegacyMessageTransformer {
     constructor(private messageTransformer: MessageTransformer) {
     }
 
-    public toMessage(text: string, roll?: DiceRoll, caption?: string, results?: DiceResult, description?: string): Message {
+    public toMessage(text: string, roll?: DiceRoll, caption?: string, results?: DiceResult, description?: string, expanded?: boolean): Message {
 
         let segments = text.split(/(<[^>]+>)/);
 
@@ -17,11 +17,11 @@ export class LegacyMessageTransformer {
 
         if (roll) {
             if (description) {
-                entries = this.messageTransformer.fromRoll(description, roll, caption, results);
+                entries = this.messageTransformer.fromRoll(description, roll, caption, results, expanded);
             } else {
                 for (const segment of segments) {
                     if (segment.length > 0 && !segment.startsWith('<')) {
-                        entries = this.messageTransformer.fromRoll(segment, roll, caption, results);
+                        entries = this.messageTransformer.fromRoll(segment, roll, caption, results, expanded);
                         break;
                     }
                 }

@@ -6,13 +6,13 @@ import { Symbol } from './Symbol';
 
 export class MessageTransformer {
 
-    public fromRoll(description: string, roll: DiceRoll, caption?: string, results?: DiceResult): Entry[] {
+    public fromRoll(description: string, roll: DiceRoll, caption?: string, results?: DiceResult, expanded?: boolean): Entry[] {
         let result: Entry[] = [];
 
         result.push(new TextEntry(description));
         MessageTransformer.rollToEntries(roll, result);
         result.push(new SeparatorEntry());
-        MessageTransformer.resultsToEntries(results, result);
+        MessageTransformer.resultsToEntries(results, result, expanded);
 
         if (caption) {
             result.push(new SeparatorEntry());
@@ -39,7 +39,7 @@ export class MessageTransformer {
     }
 
 
-    private static resultsToEntries(diceResult: DiceResult, result: Entry[]) {
+    private static resultsToEntries(diceResult: DiceResult, result: Entry[], expanded: boolean) {
         //prints faces
         //creates finalCount by cancelling results
         let finalCount: any = {};
@@ -55,7 +55,12 @@ export class MessageTransformer {
         //prints finalCount
         Object.keys(finalCount).forEach((symbol) => {
             if (finalCount[symbol] !== 0) {
-                for (let i = 0; i < finalCount[symbol]; i++) {
+                if (expanded) {
+                    for (let i = 0; i < finalCount[symbol]; i++) {
+                        result.push(new SymbolEntry(Symbol[symbol]));
+                    }
+                } else {
+                    result.push(new TextEntry(` ${finalCount[symbol]}x`))
                     result.push(new SymbolEntry(Symbol[symbol]));
                 }
             }
