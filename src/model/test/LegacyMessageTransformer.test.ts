@@ -82,24 +82,30 @@ describe("Testing LegacyMessageTransformer", () => {
     it("passes through the roll", () => {
         const actual = classUnderTest.toMessage("text", new DiceRoll({ yellow: [7] }));
 
-        expect(messageTransformerMock.fromRoll).toHaveBeenCalledWith("text", new DiceRoll({ yellow: [7] }), undefined, undefined);
+        expect(messageTransformerMock.fromRoll).toHaveBeenCalledWith("text", new DiceRoll({ yellow: [7] }), undefined, undefined, undefined);
     });
 
     it("passes through the roll and caption", () => {
         const actual = classUnderTest.toMessage("text", new DiceRoll({ yellow: [7] }), "my caption");
 
-        expect(messageTransformerMock.fromRoll).toHaveBeenCalledWith("text", new DiceRoll({ yellow: [7] }), "my caption", undefined);
+        expect(messageTransformerMock.fromRoll).toHaveBeenCalledWith("text", new DiceRoll({ yellow: [7] }), "my caption", undefined, undefined);
     });
 
     it("passes through the roll and caption and result", () => {
-        const actual = classUnderTest.toMessage("text", new DiceRoll({ yellow: [7] }), "my caption", new DiceResult({ success: 2 }));
+        const actual = classUnderTest.toMessage("text", new DiceRoll({ yellow: [7] }), "my caption", new DiceResult({ success: 2 }), undefined);
 
-        expect(messageTransformerMock.fromRoll).toHaveBeenCalledWith("text", new DiceRoll({ yellow: [7] }), "my caption", new DiceResult({ success: 2 }));
+        expect(messageTransformerMock.fromRoll).toHaveBeenCalledWith("text", new DiceRoll({ yellow: [7] }), "my caption", new DiceResult({ success: 2 }), undefined);
     });
 
     it("passes through the roll and caption and result and description", () => {
         const actual = classUnderTest.toMessage("text", new DiceRoll({ yellow: [7] }), "my caption", new DiceResult({ success: 2 }), "the description");
 
-        expect(messageTransformerMock.fromRoll).toHaveBeenCalledWith("the description", new DiceRoll({ yellow: [7] }), "my caption", new DiceResult({ success: 2 }));
+        expect(messageTransformerMock.fromRoll).toHaveBeenCalledWith("the description", new DiceRoll({ yellow: [7] }), "my caption", new DiceResult({ success: 2 }), undefined);
+    });
+
+    it("passes through the expanded flag", () => {
+        const actual = classUnderTest.toMessage("text", new DiceRoll({ yellow: [7] }), "my caption", new DiceResult({ success: 2 }), "the description", true);
+
+        expect(messageTransformerMock.fromRoll).toHaveBeenCalledWith("the description", new DiceRoll({ yellow: [7] }), "my caption", new DiceResult({ success: 2 }), true);
     });
 });

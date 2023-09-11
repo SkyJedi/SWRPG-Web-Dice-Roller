@@ -1,7 +1,7 @@
 import { child, getDatabase, onValue, ref, remove } from "@firebase/database";
 import { useEffect, useState } from 'react';
 import { Button, Col, Container, Image, Modal, Row } from 'react-bootstrap';
-import { XLg } from 'react-bootstrap-icons';
+import { ArrowsAngleContract, ArrowsAngleExpand, XLg } from 'react-bootstrap-icons';
 import { Flipped, Flipper } from "react-flip-toolkit";
 import styles from './Message.module.scss';
 import { isNewSessionText } from './functions/misc';
@@ -21,6 +21,8 @@ const MessageModule = () => {
 
   const [keyToDelete, setKeyToDelete] = useState(null);
   const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
+
+  const [expanded, setExpanded] = useState(true);
 
   let reRoll = _ => { };
 
@@ -79,7 +81,7 @@ const MessageModule = () => {
     return styles.rollMessageSuccess;
   }
 
-  const toReact = (key: string, message: Message) => {
+  const toReact = (key: string, message: Message, expanded: boolean) => {
 
     let result: JSX.Element[] = [];
 
@@ -92,7 +94,7 @@ const MessageModule = () => {
       }
       if (entry instanceof SymbolEntry) {
         const symbol = entry as SymbolEntry;
-        result.push(<Image key={key + index} className={styles.diceface} src={`/images/${symbol.symbol}.png`} alt={Symbol[symbol.symbol]} />);
+        result.push(<Image key={key + index + expanded} className={styles.diceface} src={`/images/${symbol.symbol}.png`} alt={Symbol[symbol.symbol]} />);
       }
     });
 
@@ -102,7 +104,10 @@ const MessageModule = () => {
   return (
     <Container className="top-level-container">
       <Row>
-        <Col sm="12"> <strong>Messages </strong></Col>
+        <Col xs="10" lg="11"> <strong>Messages </strong></Col>
+        <Col className="toggleCornerColumn" xs='2' lg='1'>
+          <Button className="toggleCornerButton" title='Click to Expand/Collapse Results' variant={!expanded ? 'primary' : 'light'} onClick={() => setExpanded(!expanded)}>{!expanded ? <ArrowsAngleExpand></ArrowsAngleExpand> : <ArrowsAngleContract></ArrowsAngleContract>}</Button>
+        </Col>
       </Row>
       <Row className={styles.messageContainer}>
         <Flipper flipKey={Object.keys(messages).length} spring='gentle'>
@@ -112,7 +117,7 @@ const MessageModule = () => {
                 <Container key={k}>
                   <Row id={index === 0 ? 'newestRoll' : k} className={determineMessageClassNames(message)}>
                     <Col onClick={doReRoll.bind(this, k)} className={isRollMessage(message) ? styles.pseudoButtonDark : styles.noPseudoButton} xs='10' lg='11'>
-                      {toReact(k, messageTransformer.toMessage(message.text, message.roll, message.caption, message.results))}
+                      {toReact(k, messageTransformer.toMessage(message.text, message.roll, message.caption, message.results, undefined, expanded), expanded)}
                     </Col>
                     <Col className={styles.closeMessageColumn} xs='2' lg='1'>
                       <Button className={styles.closeMessageButton} title='Delete message' variant='danger' onClick={setKeyToDelete.bind(this, k)}> <XLg></XLg></Button>
