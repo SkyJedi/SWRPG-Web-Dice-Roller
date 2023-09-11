@@ -20,7 +20,7 @@
     "sass": "^1.66.1",
     "seedrandom": "^3.0.5",
     "ts-jest": "^29.1.1",
-    "universal-cookie": "^6.1.0",
+    "universal-cookie": "^6.1.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
