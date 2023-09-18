@@ -17,7 +17,7 @@
     "react-cookie": "^6.1.1",
     "react-dom": "^18.2.0",
     "react-flip-toolkit": "^7.1.0",
-    "sass": "^1.66.1",
+    "sass": "^1.67.0",
     "seedrandom": "^3.0.5",
     "ts-jest": "^29.1.1",
     "universal-cookie": "^6.1.1",
