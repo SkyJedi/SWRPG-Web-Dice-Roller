@@ -20,8 +20,7 @@
     "sass": "^1.67.0",
     "seedrandom": "^3.0.5",
     "ts-jest": "^29.1.1",
-    "universal-cookie": "^6.1.1",
-    "uuid": "^9.0.0"
+    "universal-cookie": "^6.1.1"
   },
   "devDependencies": {
     "react-scripts": "^5.0.1"
