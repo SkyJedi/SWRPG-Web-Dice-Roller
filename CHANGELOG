@@ -1,3 +1,28 @@
+2.0.0
+  Changes:
+    -upgrading dependencies; fixing breaking changes
+    -functional paradigm used to make components less verbose
+    -switched from plain CSS to bootstrap
+    -switched popups to bootstrap modals to kick out an outdated dependency
+    -switched to SCSS to adjust the default bootstrap theme to make it look closer to the previous App version
+    -overhauled the login page form and introduced (opt-in) cookies to remember values
+    -migrated deprecated refs-API for react properties
+    -everything that's clickable now acts like a button to make it very clear to the user what's interactable
+    -all sections can now be minimized to show only the most important information/controls
+    -slightly changed the order of the dice to always have a consistent theme in each row
+    -messages and chats are color coded
+    -message for resetting the destiny pool now contains the previous state
+    -rolling brings the result automatically into view; most likely only relevant for small screens, for example on mobile
+    -creating and editing a character now happens inside the character block, not inside a separate modal
+    -added a few animations
+    -added ability to collapse dice results to only show the rolled amount per symbol
+
+  Bugfixes:
+    -fixed XSS vulnerabilities - not in the cleanest way possible but for now it has to be 100% backwards compatible
+    -two edge cases where undefined fields were accessed
+    -initiative tracker now works with a single entry as well
+
+
 1.3.1
   -unmatched fortuneRoll
 
