@@ -1,0 +1,64 @@
+@import "../bootstrap/our-component-imports.scss";
+@import "../Modals.module.scss";
+
+.innerColumn {
+    @extend .p-0;
+}
+
+.flipRow {
+    @extend .mb-2;
+}
+
+.faceWrapperCenter {
+    @extend .px-0;
+    @extend .px-md-2;
+
+    @extend .d-flex;
+    @extend .align-items-center;
+    @extend .justify-content-center;
+}
+
+.faceWrapperLeft {
+    @extend .d-flex;
+    @extend .align-items-center;
+    @extend .justify-content-center;
+}
+
+.faceWrapperRight {
+    flex-flow: row wrap;
+    @extend .d-flex;
+    @extend .align-items-center;
+    @extend .justify-content-start;
+}
+
+.originalFaceImage {
+    height: auto;
+    @extend .w-100;
+}
+
+.diceButton {
+    @extend .p-1;
+    position: relative;
+}
+
+.die {
+    height: 4em;
+}
+
+.badge {
+    height: 50%;
+    position: absolute;
+    right: 0em;
+    bottom: 0em;
+}
+
+.rollGroup {
+    @extend .mt-2;
+    @extend .w-100;
+}
+
+.captionBox {
+    @extend .rounded-start-0;
+    @extend .rounded-end;
+    @extend .border-start-0;
+}

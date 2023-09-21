@@ -1,0 +1,49 @@
+/* Overriding Bootstrap default theme */
+$body-bg: #F7F7F7;
+$primary: hsl(214, 86%, 50%);
+
+/* Importing Bootstrap and its default variables*/
+@import './bootstrap/our-imports.scss';
+
+/* Mini-Icon-Buttons */
+.icon-button {
+    @extend .pt-0;
+    @extend .px-0;
+    @extend .w-100;
+    font-size: 1.2rem;
+}
+
+.icon-button-grouped {
+    @extend .icon-button;
+    @extend .border;
+}
+
+/* Theming modals */
+.modal-header {
+    @extend .bg-primary;
+
+    .modal-title {
+        color: white;
+    }
+
+    .btn-close {
+        @extend .btn-close-white;
+    }
+}
+
+.top-level-container {
+    @extend .border;
+    @extend .border-dark;
+    @extend .py-2;
+}
+
+.toggleCornerColumn {
+    @extend .p-1;
+    @extend .pt-0;
+    @extend .pe-2;
+}
+
+.toggleCornerButton {
+    @extend .w-100;
+    @extend .pt-1;
+}

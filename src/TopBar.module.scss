@@ -1,0 +1,15 @@
+@import "./bootstrap/our-component-imports.scss";
+
+.buttonsContainer {
+    @extend .ps-2;
+}
+
+.buttonWrapper {
+    @extend .ps-0;
+    @extend .pe-2;
+}
+
+.button {
+    @extend .w-100;
+    @extend .h-100;
+}

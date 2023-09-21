@@ -1,0 +1,36 @@
+@import "./bootstrap/our-component-imports.scss";
+
+.mainColumn {
+    @extend .p-0;
+
+    >* {
+        @extend .mb-1;
+    }
+}
+
+.mainRow {
+    @extend .mt-1;
+
+    > :first-child>* {
+        @extend .ms-0;
+    }
+
+    >*>* {
+        @extend .ms-0;
+        @extend .ms-md-1;
+    }
+}
+
+.topbarFirst {
+    @include media-breakpoint-up(md) {
+        display: none;
+    }
+}
+
+.topbarSecond {
+    display: none;
+
+    @include media-breakpoint-up(md) {
+        display: block;
+    }
+}

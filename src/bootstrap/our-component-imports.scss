@@ -1,0 +1,19 @@
+/**
+    Only import what we actually need for our components
+    after ./our-imports.scss has already been loaded for the whole App.
+    
+    It only contains thing we wish to extend upon, which is mostly utility stuff
+    like spacing, alignments, and justifications.
+*/
+
+// Configuration
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/variables-dark";
+@import "bootstrap/scss/maps";
+@import "bootstrap/scss/mixins";
+@import "bootstrap/scss/utilities";
+
+
+// Utilities
+@import "bootstrap/scss/utilities/api";

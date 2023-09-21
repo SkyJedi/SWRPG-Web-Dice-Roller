@@ -1,18 +1,23 @@
+import { initializeApp } from '@firebase/app';
 import React from 'react';
-import ReactDOM from 'react-dom';
-import Popup from 'react-popup';
-import Destiny from './Destiny';
+import { Col, Container, Row, ThemeProvider } from 'react-bootstrap';
+import { CookiesProvider } from 'react-cookie';
+import ReactDOM from 'react-dom/client';
+import './App.scss';
 import Channel from './Channel';
-import Message from './Message';
-import Dice from './Dice';
-import Chat from './Chat';
 import Character from './Character';
+import Chat from './Chat.module';
+import Destiny from './Destiny';
+import Dice from './Dice';
+import Initiative from './Initiative.js';
+import MessageModule from './Message.module';
 import TopBar from './TopBar';
-import Initiative from './Initiative.js'
-import './index.css';
-import * as firebase from 'firebase';
 import config from './config';
-firebase.initializeApp(config.config);
+import styles from './index.module.scss';
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+
+initializeApp(config.config);
 
 if (window.location.pathname !== '/') {
   var channel = window.location.pathname.slice(1).toLowerCase();
@@ -24,41 +29,47 @@ if (channel !== undefined) {
   setChanPage();
 }
 
-function setChanName(chanName, userName) {
+function setChannelUser(chanName, userName) {
   window.location = `/${chanName}?${userName}`;
 }
 
-function setChanPage () {
-  ReactDOM.render(
-    <Channel setFormChan={setChanName} />,
-    document.getElementById('root')
+function wrapPage(inner) {
+  return <ThemeProvider breakpoints={['xl', 'lg', 'md', 'sm', 'xs']}
+    minBreakpoint="xs" >
+    <CookiesProvider>
+      <Container className='p-0'>
+        {inner}
+      </Container>
+    </CookiesProvider>
+  </ThemeProvider>;
+}
+
+function setChanPage() {
+  root.render(
+    wrapPage(<Channel setChannelUser={setChannelUser} />)
   );
 }
 
-function startUp () {
-  var webApp =
-  <div style={{minWidth:'950px'}}>
-    <div className='left'>
-      <Destiny />
-      <Initiative />
-      <Dice />
-      <Message />
-    </div>
-    <div className='right'>
-      <TopBar />
-      <Character />
-      <Chat />
-    </div>
-  </div>;
-
-
-  ReactDOM.render(
-    webApp,
-    document.getElementById('root')
+function startUp() {
+  let webApp = wrapPage(
+    <Row className={styles.mainRow}>
+      <Col className={styles.mainColumn} xs={{ offset: 1, span: 10 }} sm={{ offset: 0, span: 12 }} md={6} lg={7}>
+        <TopBar className={styles.topbarFirst} />
+        <Destiny />
+        <Initiative />
+        <Dice />
+        <MessageModule />
+      </Col>
+      <Col className={styles.mainColumn} xs={{ offset: 1, span: 10 }} sm={{ offset: 0, span: 12 }} md={6} lg={5}>
+        <TopBar className={styles.topbarSecond} />
+        <Character />
+        <Chat />
+      </Col>
+    </Row>
   );
 
-  ReactDOM.render(
-    <Popup />,
-    document.getElementById('popupContainer')
+
+  root.render(
+    webApp
   );
 };

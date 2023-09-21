@@ -1,60 +1,56 @@
-import React, { Component } from 'react';
-import Popup from 'react-popup';
-import * as firebase from 'firebase';
-import './index.css';
-import './popup.css';
+import { child, getDatabase, push, ref, remove } from '@firebase/database';
+import React from 'react';
+import { Button, Col, Container, Modal, Row } from 'react-bootstrap';
+import { CashCoin, DoorClosed, PlusCircle, XLg } from 'react-bootstrap-icons';
+import styles from './TopBar.module.scss';
 
 var channel = window.location.pathname.slice(1).toLowerCase();
 
-class TopBar extends Component {
+const TopBar = (props) => {
+  const [showDeleteModal, setShowDeleteModal] = React.useState(false);
 
-constructor() {
-  super();
-  this.state = {
-    databaseRef: firebase.database().ref(),
-  };
-}
+  const newSession = () => {
+    remove(child(ref(getDatabase()), `${channel}/destiny`));
+    push(child(ref(getDatabase()), `${channel}/chat`), `<span>----------------------------------------------</span>`);
+    push(child(ref(getDatabase()), `${channel}/message`), { text: '--------------------------------------------------------------------' })
+  }
 
-signOut() {
-  window.location = `/`;
-}
-
-popupDeleteChannel() {
-  Popup.create({
-  title: 'Delete Channel',
-  content: 'Are you sure, this will delete all Data in ' + channel,
-  className: 'alert',
-  buttons: {
-      left: ['cancel'],
-      right: [{
-          text: 'DELETE',
-          className: 'danger',
-          action: () => {
-            firebase.database().ref().child(`${channel}`).remove();
-            this.signOut();
-            Popup.close();
-          }
-      }]
-  }});
-}
-
-newSession() {
-  firebase.database().ref().child(`${channel}`).child('destiny').remove();
-  firebase.database().ref().child(`${channel}`).child('chat').push().set(`<span>----------------------------------------------</span>`)
-  firebase.database().ref().child(`${channel}`).child('message').push().set({text: '--------------------------------------------------------------------'})
-
-}
-
-render() {
   return (
-    <div>
-      <button className='btnAdd' style={{float: 'right', width: '70px', marginRight: '3px', fontSize: '70%'}} onClick={this.newSession.bind(this)}>New Session</button>
-      <button className='btnAdd' style={{float: 'right', width: '70px', marginRight: '3px', fontSize: '70%'}} onClick={this.popupDeleteChannel.bind(this)}>Delete Channel</button>
-      <button className='btnAdd' style={{float: 'right', width: '70px', marginRight: '3px'}} onClick={this.signOut.bind(this)}>Logout</button>
-      <a className='btnAdd' style={{float: 'right', width: '70px', marginRight: '3px', textAlign: 'center', lineHeight: '35px'}} href='https://paypal.me/SkyJedi' target="_blank">Donate</a>
-
-</div>
+    <Container className={`${props.className ?? ''} top-level-container`}>
+      <Row className={styles.buttonsContainer}>
+        <Col className={styles.buttonWrapper} xs='3'>
+          <Button className={styles.button} variant='success' href='https://paypal.me/SkyJedi' target="_blank" title='Visit SkyJedi PayPal page'><CashCoin></CashCoin> Donate</Button>
+        </Col>
+        <Col className={styles.buttonWrapper} xs='3'>
+          <Button className={styles.button} variant='secondary' href='/' title='Return to login'><DoorClosed></DoorClosed> Logout</Button>
+        </Col>
+        <Col className={styles.buttonWrapper} xs='3'>
+          <Button className={styles.button} variant='danger' onClick={setShowDeleteModal.bind(this, true)} title='Delete whole channel'><XLg></XLg> Delete</Button>
+          <Modal show={showDeleteModal} onHide={(_) => setShowDeleteModal(false)}>
+            <Modal.Header closeButton>
+              <Modal.Title>Delete Channel</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>Are you sure, this will delete all Data in <strong>{channel}</strong></Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={(_) => setShowDeleteModal(false)}>
+                Cancel
+              </Button>
+              <Button variant="danger" onClick={(_) => {
+                remove(child(ref(getDatabase()), `${channel}`));
+                setShowDeleteModal(false);
+                window.location = `/`;
+              }
+              }>
+                DELETE
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </Col>
+        <Col className={styles.buttonWrapper} xs='3'>
+          <Button className={styles.button} variant='primary' onClick={newSession.bind(this)} title='New Session'><PlusCircle></PlusCircle> Session</Button>
+        </Col>
+      </Row>
+    </Container>
   );
-}
 }
 export default TopBar;

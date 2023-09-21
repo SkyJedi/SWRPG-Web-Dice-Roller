@@ -1,361 +1,415 @@
-import React, { Component } from 'react';
-import Popup from 'react-popup';
-import * as firebase from 'firebase';
-import './index.css';
+import { child, getDatabase, onValue, orderByChild, push, query, ref, remove, set, update } from '@firebase/database';
+import React, { useEffect } from 'react';
+import { Button, ButtonGroup, Col, Container, Modal, Row } from 'react-bootstrap';
+import { ArrowRepeat, ArrowsAngleContract, ArrowsAngleExpand, CaretLeft, CaretRight, DashLg, PlusLg, Trash, XLg } from 'react-bootstrap-icons';
+import { Flipped, Flipper } from "react-flip-toolkit";
+import styles from "./Initiative.module.scss";
 const dice = require("./functions/misc.js").dice;
 
 var channel = window.location.pathname.slice(1).toLowerCase();
 
-class Initiative extends Component {
-  constructor() {
-    super();
-    this.state = {
-      slideout: 'none',
-      messageRef: firebase.database().ref().child(`${channel}`).child('message'),
-      InitiativeRef: firebase.database().ref().child(`${channel}`).child('Initiative').child('order'),
-      Initiative: [],
-      InitiativePastRef: firebase.database().ref().child(`${channel}`).child('Initiative').child('past'),
-      InitiativePast: [],
-      position: {},
-      positionRef: firebase.database().ref().child(`${channel}`).child('Initiative').child('position'),
-      character: {},
-      characterRef: firebase.database().ref().child(`${channel}`).child('character'),
-    };
-  }
+const Initiative = () => {
+  const [expanded, setExpanded] = React.useState(false);
+  const initiativeRef = child(ref(getDatabase()), `${channel}/Initiative/order`);
+  const [initiative, setInitiative] = React.useState([]);
+  const initiativePastRef = child(ref(getDatabase()), `${channel}/Initiative/past`);
+  const [initiativePast, setInitiativePast] = React.useState([]);
+  const [position, setPosition] = React.useState({ round: 1, turn: 1 });
+  const positionRef = child(ref(getDatabase()), `${channel}/Initiative/position`);
+  const [character, setCharacter] = React.useState({});
+  const characterRef = child(ref(getDatabase()), `${channel}/character`);
 
-  componentDidMount() {
-    this.state.InitiativeRef.orderByChild('roll').on('value', snap => {
+  const [showResetModal, setShowResetModal] = React.useState(false);
+  const [modifyModalTarget, setModifyModalTarget] = React.useState(null);
+
+  useEffect(() => {
+    onValue(query(initiativeRef, orderByChild('roll')), snap => {
       let final = [];
-      snap.forEach(function(child) {
+      snap.forEach(function (child) {
         let tempBonus = [];
         let temp = child.val();
         temp['key'] = child.key;
-        for(var i=0; i<Object.keys(temp.bonusDie).length; i++) {
-          var colorDie = Object.keys(temp.bonusDie)[i];
-          for(var j=0; j<temp.bonusDie[colorDie]; j++) {
-            tempBonus.push(`${colorDie}`);
-          }}
+        if (temp.bonusDie != null) {
+          for (var i = 0; i < Object.keys(temp.bonusDie).length; i++) {
+            let colorDie = Object.keys(temp.bonusDie)[i];
+            for (var j = 0; j < temp.bonusDie[colorDie]; j++) {
+              tempBonus.push(`${colorDie}`);
+            }
+          }
+        }
         temp.bonusDie = tempBonus;
         final.push(temp);
       });
       final.reverse();
       if (final != null) {
-        this.setState({Initiative: final});
+        setInitiative(final);
       } else {
-        this.setState({Initiative: 0});
+        setInitiative(0);
       }
     });
 
-    this.state.InitiativePastRef.orderByChild('roll').on('value', snap => {
+    onValue(query(initiativePastRef, orderByChild('roll')), snap => {
       let final = [];
-      snap.forEach(function(child) {
+      snap.forEach(function (child) {
         let tempBonus = [];
         let temp = child.val();
         temp['key'] = child.key;
-        for(var i=0; i<Object.keys(temp.bonusDie).length; i++) {
-          var colorDie = Object.keys(temp.bonusDie)[i];
-          for(var j=0; j<temp.bonusDie[colorDie]; j++) {
+        for (var i = 0; i < Object.keys(temp.bonusDie).length; i++) {
+          let colorDie = Object.keys(temp.bonusDie)[i];
+          for (var j = 0; j < temp.bonusDie[colorDie]; j++) {
             tempBonus.push(`${colorDie}`);
-          }}
+          }
+        }
         temp.bonusDie = tempBonus;
         final.push(temp);
       });
       final.reverse();
       if (final != null) {
-        this.setState({InitiativePast: final});
+        setInitiativePast(final);
       } else {
-        this.setState({InitiativePast: 0});
+        setInitiativePast(0);
       }
     });
 
-    this.state.positionRef.on('value', snap => {
+    onValue(positionRef, snap => {
       if (snap.val() != null) {
-        this.setState({position: snap.val()});
+        setPosition(snap.val());
       } else {
-        this.setState({position: {round: 1,turn: 1}});
+        setPosition({ round: 1, turn: 1 });
       }
     });
 
-    this.state.characterRef.on('value', snap => {
+    onValue(characterRef, snap => {
       if (snap.val() !== null) {
-        this.setState({character: snap.val()});
+        setCharacter(snap.val());
       } else {
-        this.setState({character: {}});
+        setCharacter({});
       }
     });
 
+  },
+    // eslint-disable-next-line
+    []);
+
+  const initiativeAdd = () => {
+    let i = 0;
+    let Initiative = Object.assign({}, initiative);
+
+    if (Object.keys(Initiative).length > 0) {
+      i = ((+Initiative[0].roll) - 10).toString()
+    } else {
+      i = 0;
+    }
+    push(initiativeRef, { type: 'pc', roll: i, bonusDie: { blue: 0, black: 0 } });
   }
 
-slideOut() {
-  if (this.state.slideout !== 'none'){
-    this.setState({slideout: 'none'});
-  } else {
-    this.setState({slideout: 'block'});
+  const initiativeRemove = () => {
+    if (initiative.length !== 0) {
+      remove(child(initiativeRef, initiative[initiative.length - 1].key));
+    }
   }
-}
 
-InitiativeAdd() {
-  let i=0;
-  let Initiative = Object.assign({}, this.state.Initiative);
+  const initiativePrevious = () => {
+    let currPos = Object.assign({}, position);
+    let Initiative = initiative;
+    let InitiativePast = initiativePast;
+    if (currPos.turn === 1 && currPos.round === 1) {
+      return;
+    }
+    if (currPos.turn - 1 < 1) {
+      currPos.turn = initiative.length + initiativePast.length;
+      currPos.round--;
 
-  if (Object.keys(Initiative).length > 0) {
-    i = ((+Initiative[0].roll)-10).toString()
-  } else {
-    i = 0;
+      /*
+        Work-around: if there is only one entry in the initiative
+        we will not be notified by firebase because technically it has not changed before and after.
+        In all other cases things progress as expected.
+      */
+      if (initiative.length + initiativePast.length !== 1) {
+        InitiativePast = Initiative;
+        Initiative = [InitiativePast.pop()];
+      }
+    } else {
+      currPos.turn--;
+      Initiative.unshift(InitiativePast.pop());
+    }
+    set(positionRef, currPos);
+    set(initiativeRef, objectify(Initiative));
+    set(initiativePastRef, objectify(InitiativePast));
   }
-  this.state.InitiativeRef.push().set({type: 'pc', roll: i, bonusDie: {blue: 0, black: 0}});
-}
 
-InitiativeRemove() {
-  if (this.state.Initiative.length !== 0) {
-    this.state.InitiativeRef.child((this.state.Initiative[this.state.Initiative.length-1]).key).remove();
-  }
-}
+  const initiativeNext = () => {
+    if (initiative.length + initiativePast.length === 0) {
+      return;
+    }
+    let currPos = Object.assign({}, position);
+    let Initiative = initiative;
+    let InitiativePast = initiativePast;
+    Initiative[0].bonusDie = [];
+    if (currPos.turn >= initiative.length + initiativePast.length) {
+      currPos.turn = 1;
+      currPos.round++;
 
-InitiativePrevious() {
-  let position = Object.assign({}, this.state.position);
-  let Initiative = this.state.Initiative;
-  let InitiativePast = this.state.InitiativePast;
-  if (position.turn === 1 && position.round === 1) {
-    return;
+      /*
+        Work-around: if there is only one entry in the initiative
+        we will not be notified by firebase because technically it has not changed before and after.
+        In all other cases things progress as expected.
+      */
+      if (initiative.length + initiativePast.length !== 1) {
+        InitiativePast.push(Initiative.shift());
+        Initiative = InitiativePast;
+        InitiativePast = 0;
+      }
+      clearMarks();
+    } else {
+      currPos.turn++;
+      InitiativePast.push(Initiative.shift());
+    }
+    set(positionRef, currPos);
+    set(initiativeRef, objectify(Initiative));
+    set(initiativePastRef, objectify(InitiativePast));
   }
-  if (position.turn - 1 < 1) {
-    position.turn = this.state.Initiative.length + this.state.InitiativePast.length;
-    position.round--;
-    InitiativePast = Initiative;
-    Initiative = [InitiativePast.pop()];
-  } else {
-    position.turn--;
-    Initiative.unshift(InitiativePast.pop());
-  }
-  this.state.positionRef.set(position);
-  this.state.InitiativeRef.set(this.objectify(Initiative));
-  this.state.InitiativePastRef.set(this.objectify(InitiativePast));
-}
 
-InitiativeNext() {
-  if (this.state.Initiative.length + this.state.InitiativePast.length === 0) {
-    return;
+  const objectify = (array) => {
+    if (array === 0) { return 0; }
+    let object = {};
+    array.forEach(function (originalSlot) {
+      let slot = Object.assign({}, originalSlot);
+      let key = slot.key;
+      delete slot.key;
+      let tempbonusDie = { blue: 0, black: 0, upgrade: 0, downgrade: 0 }
+      for (var i = 0; i < slot.bonusDie.length; i++) {
+        tempbonusDie[slot.bonusDie[i]]++;
+      }
+      slot.bonusDie = tempbonusDie;
+      object[key] = slot;
+    });
+    return object;
   }
-  let position = Object.assign({}, this.state.position);
-  let Initiative = this.state.Initiative;
-  let InitiativePast = this.state.InitiativePast;
-  Initiative[0].bonusDie = [];
-  if (position.turn >= this.state.Initiative.length + this.state.InitiativePast.length) {
-    position.turn = 1;
-    position.round++;
-    InitiativePast.push(Initiative.shift());
-    Initiative = InitiativePast;
-    InitiativePast = 0;
-    this.clearMarks();
-  } else {
-    position.turn++;
-    InitiativePast.push(Initiative.shift());
-  }
-  this.state.positionRef.set(position);
-  this.state.InitiativeRef.set(this.objectify(Initiative));
-  this.state.InitiativePastRef.set(this.objectify(InitiativePast));
-}
 
-objectify(array) {
-  if (array === 0) {return 0;}
-  let object = {};
-  array.forEach(function(slot) {
-    let key = slot.key;
-    delete slot.key;
-    let tempbonusDie = {blue: 0, black:0, upgrade:0, downgrade:0}
-    for(var i=0; i<slot.bonusDie.length; i++) {
+  const flip = (slot, time) => {
+    if (time === 'current') {
+      if (slot.type === 'pc') {
+        update(child(initiativeRef, slot.key), { 'type': 'npc' });
+        update(child(initiativeRef, slot.key), { 'roll': (+slot.roll - 1).toString() });
+
+      } else {
+        update(child(initiativeRef, slot.key), { 'type': 'pc' });
+        update(child(initiativeRef, slot.key), { 'roll': (+slot.roll + 1).toString() });
+
+      }
+    } else {
+      if (slot.type === 'pc') {
+        update(child(initiativePastRef, slot.key), { 'type': 'npc' });
+        update(child(initiativeRef, slot.key), { 'roll': (+slot.roll - 1).toString() });
+
+      } else {
+        update(child(initiativePastRef, slot.key), { 'type': 'pc' });
+        update(child(initiativeRef, slot.key), { 'roll': (+slot.roll + 1).toString() });
+
+      }
+    }
+  }
+
+  const removeInitiative = (slot, time) => {
+    if (time === 'current') {
+      remove(child(initiativeRef, slot.key));
+    } else {
+      remove(child(initiativePastRef, slot.key));
+    }
+  }
+
+  const addBonusDice = (slot, time, color) => {
+    let tempbonusDie = { blue: 0, black: 0, upgrade: 0, downgrade: 0 }
+
+    for (var i = 0; i < slot.bonusDie.length; i++) {
       tempbonusDie[slot.bonusDie[i]]++;
     }
-    slot.bonusDie = tempbonusDie;
-    object[key] = slot;
-  });
-  return object;
-}
-
-flip (slot, time) {
-  if (time === 'current') {
-    if (slot.type === 'pc') {
-      this.state.InitiativeRef.child(slot.key).update({'type': 'npc'});
-      this.state.InitiativeRef.child(slot.key).update({'roll': (+slot.roll-1).toString()});
-
-    } else {
-      this.state.InitiativeRef.child(slot.key).update({'type': 'pc'});
-      this.state.InitiativeRef.child(slot.key).update({'roll': (+slot.roll+1).toString()});
+    if (time === 'current') {
+      tempbonusDie[color]++;
+      update(child(initiativeRef, slot.key), { 'bonusDie': tempbonusDie });
 
     }
-  } else {
-      if (slot.type === 'pc') {
-        this.state.InitiativePastRef.child(slot.key).update({'type': 'npc'});
-        this.state.InitiativeRef.child(slot.key).update({'roll': (+slot.roll-1).toString()});
+    if (time === 'past') {
+      tempbonusDie[color]++;
+      update(child(initiativePastRef, slot.key), { 'bonusDie': tempbonusDie });
 
-      } else {
-        this.state.InitiativePastRef.child(slot.key).update({'type': 'pc'});
-        this.state.InitiativeRef.child(slot.key).update({'roll': (+slot.roll+1).toString()});
-
-      }
+    }
   }
-}
 
-Remove (slot, time) {
-  if (time === 'current') {
-      this.state.InitiativeRef.child(slot.key).remove();
-  } else {
-      this.state.InitiativePastRef.child(slot.key).remove();
+  const reset = () => {
+    remove(child(ref(getDatabase()), `${channel}/Initiative`));
   }
-}
 
-addBonusDice(slot, time, color) {
-  let tempbonusDie = {blue:0, black:0, upgrade:0, downgrade:0}
-
-  for(var i=0; i<slot.bonusDie.length; i++) {
-    tempbonusDie[slot.bonusDie[i]]++;
+  const clearMarks = () => {
+    if (Object.keys(character).length !== 0) {
+      let newCharacters = Object.assign({}, character);
+      Object.keys(newCharacters).forEach((key) =>
+        newCharacters[key].init = '',
+      );
+      set(characterRef, newCharacters);
+    }
   }
-  if (time === 'current') {
-    tempbonusDie[color]++;
-    this.state.InitiativeRef.child(slot.key).update({'bonusDie': tempbonusDie});
 
+  const genKey = () => {
+    let text = "";
+    let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (var i = 0; i < 15; i++)
+      text += possible.charAt(dice(possible.length) - 1);
+    return text;
   }
-  if (time === 'past') {
-    tempbonusDie[color]++;
-    this.state.InitiativePastRef.child(slot.key).update({'bonusDie': tempbonusDie});
 
-  }
-}
-
-Reset() {
-  firebase.database().ref().child(`${channel}`).child('Initiative').remove();
-}
-
-clearMarks() {
-  if (Object.keys(this.state.character).length !== 0) {
-    let character = Object.assign({}, this.state.character);
-    Object.keys(character).forEach((key)=>
-      character[key].init = '',
-    );
-  this.state.characterRef.set(character);
-  }
-}
-
-popupModifyInitiativeSlot(slot, time) {
-  Popup.create({
-  title: 'Modify Initiative Slot',
-  content: 'What would like to do to this Initiative Slot?',
-  className: 'initiative',
-  buttons: {
-      left: [{
-          text: 'Bonus',
-          className: 'bonus',
-          action: () => {
-            this.addBonusDice(slot, time, 'blue');
-            Popup.close();
-          }
-        }, {
-          text: 'Setback',
-          className: 'setback',
-          action: () => {
-            this.addBonusDice(slot, time, 'black');
-            Popup.close();
-          }
-        }, {
-            text: 'DELETE',
-            className: 'danger',
-            action: () => {
-              this.Remove(slot,time);
-              Popup.close();
-            }
-        }],
-      right: [{
-            text: 'Upgrade',
-            className: 'upgrade',
-            action: () => {
-              this.addBonusDice(slot, time, 'upgrade');
-              Popup.close();
-            }
-        }, {
-            text: 'Downgrade',
-            className: 'downgrade',
-            action: () => {
-              this.addBonusDice(slot, time, 'downgrade');
-              Popup.close();
-            }
-        },  {
-          text: 'Flip',
-          action: () => {
-            this.flip(slot,time);
-            Popup.close();
-          }
-      }]
-  }});
-}
-
-popupReset() {
-  Popup.create({
-  title: 'Reset Initiative',
-  content: 'Would you like to reset Initiative?',
-  className: 'alert',
-  buttons: {
-      left: ['cancel'],
-      right: [{
-          text: 'RESET',
-          className: 'danger',
-          action: () => {
-            this.Reset();
-            Popup.close();
-          }
-      }],
-  }});
-}
-
-genKey() {
-  var text = "";
-  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  for( var i=0; i < 15; i++ )
-      text += possible.charAt(dice(possible.length)-1);
-  return text;
-}
-
-  render() {
-    return (
-      <div>
-        <div className='destiny-box' style={{display: this.state.slideout, minHeight: '150px'}}>
-          <div style={{maxWidth: '90px', float: 'left', marginLeft: '6px'}}>
-            <button title='Add Initiative Slot' onClick={this.InitiativeAdd.bind(this)} className='btnAdd' style={{display: 'inline-block'}}>+</button>
-            <button title='Next Initiative Slot' onClick={this.InitiativeNext.bind(this)}className='btnAdd' style={{display: 'inline-block'}}>→</button>
-            <br/>
-            <button title='Remove Initiative Slot' onClick={this.InitiativeRemove.bind(this)} className='btnAdd' style={{display: 'inline-block'}}>-</button>
-            <button title='Previous Initiative Slot' onClick={this.InitiativePrevious.bind(this)}className='btnAdd' style={{display: 'inline-block'}}>←</button>
-            <br/>
-            <button title='Reset Initiative' type="button" className='lrgButton' style={{marginBottom: '0.25em', fontSize: '14px', background: '#9e9e9e', margin: '0', width: '58px', height: '20px'}} onClick={this.popupReset.bind(this)}>Reset</button>
-            <b>Round: {this.state.position.round}<br/>Turn: {this.state.position.turn}</b>
-          </div>
-          <div style={{marginLeft: '90px'}}>
-            {this.state.Initiative.map((slot)=>
-              <div style={{display: 'inline-block', height: '50px', width:'50px'}} key={slot.key}>
-                <div style={{position: 'absolute'}}>
-                {slot.bonusDie.reverse().map((type)=>
-                  <img src={`/images/${type}.png`} alt={type} key={this.genKey()} className='tinydie' />
+  return (
+    <Container className="top-level-container">
+      <Row>
+        <Col xs="3" sm="2" hidden={!expanded}>
+          <Row>
+            <Col xs="6" className={styles.buttonColumn}>
+              <ButtonGroup vertical className={styles.buttonGroup}>
+                <Button className='icon-button-grouped' size='sm' variant="primary" title='Add Initiative Slot' onClick={initiativeAdd.bind(this)}><PlusLg></PlusLg></Button>
+                <Button className='icon-button-grouped' size='sm' variant="danger" title='Remove Initiative Slot' onClick={initiativeRemove.bind(this)}><DashLg></DashLg></Button>
+              </ButtonGroup>
+            </Col>
+            <Col xs="6" className={styles.buttonColumn}>
+              <ButtonGroup vertical className={styles.buttonGroup}>
+                <Button className='icon-button-grouped' size='sm' variant="primary" title='Next Initiative Slot' onClick={initiativeNext.bind(this)}><CaretRight></CaretRight></Button>
+                <Button className='icon-button-grouped' size='sm' variant="secondary" title='Previous Initiative Slot' onClick={initiativePrevious.bind(this)}><CaretLeft></CaretLeft></Button>
+              </ButtonGroup>
+            </Col>
+            <Col className={styles.doubleButtonColumn}>
+              <div className={styles.doubleButtonPixelFix}>
+                <Button className='icon-button-grouped' size='sm' variant="danger" title='Reset Initiative' onClick={(_) => setShowResetModal(true)}><XLg></XLg> Reset</Button>
+              </div>
+              <Modal show={showResetModal} onHide={(_) => setShowResetModal(false)}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Reset Initiative</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Would you like to reset Initiative?</Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={(_) => setShowResetModal(false)}>
+                    Cancel
+                  </Button>
+                  <Button variant="danger" onClick={(_) => {
+                    reset();
+                    setShowResetModal(false);
+                  }
+                  }>
+                    RESET
+                  </Button>
+                </Modal.Footer>
+              </Modal>
+            </Col>
+          </Row>
+        </Col>
+        <Col xs={expanded ? '7' : '10'} sm={expanded ? '8' : '10'} lg={expanded ? '9' : '11'} className={styles.contentColumn}>
+          <Row>
+            <Col><strong>Initiative</strong> &nbsp; Round: {position.round} | Turn: {position.turn}</Col>
+          </Row>
+          <Row>
+            <Col className={styles.tokenContainer}>
+              <Flipper flipKey={`${initiative.length}-${initiativePast.length}`} spring='gentle'>
+                {initiative.map((slot) =>
+                  <Flipped key={slot.key} flipId={slot.key} >
+                    <Button title='Click to Modify Initiative Slot' className={styles.initiativeButton} variant='light' key={slot.key} onClick={(_) => setModifyModalTarget({ slot: slot, time: 'current' })}>
+                      <div className={styles.badgeContainer}>
+                        {slot.bonusDie.reverse().map((type) =>
+                          <img className={styles.badge} src={`/images/${type}.png`} alt={type} key={genKey()} />
+                        )}
+                      </div>
+                      <img className={styles.token} src={`/images/${slot.type}.png`} alt={slot.type} />
+                    </Button>
+                  </Flipped>
                 )}
-                </div>
-              <img title='Click to Modify Initiative Slot' src={`/images/${slot.type}.png`} alt={slot.type} className='tokens' style={{height: '45px', width:'45px'}} onClick={this.popupModifyInitiativeSlot.bind(this, slot, 'current')} />
-              </div>
-            )}
-            <img src={`/images/repeat.png`} alt='' className='tokens' style={{height: '45px', width:'45px'}}/>
-            {this.state.InitiativePast.map((slot)=>
-              <div style={{display: 'inline-block', height: '50px', width:'50px'}} key={slot.key}>
-              <div style={{position: 'absolute'}}>
-              {slot.bonusDie.reverse().map((type)=>
-                <img src={`/images/${type}.png`} alt={type} key={this.genKey()} className='tinydie' />
-              )}
-              </div>
-              <img title='Click to Modify Initiative Slot' src={`/images/${slot.type}.png`} alt={slot.type} className='tokens' style={{height: '45px', width:'45px'}} onClick={this.popupModifyInitiativeSlot.bind(this, slot, 'past')} />
-              </div>
-            )}
-          </div>
-        </div>
-        <button title='Click to Show/Hide Initiative Tracker' type="button" style={{margin: '0.5em', fontSize: '14px', height: '15px', width: '55px'}}onClick={this.slideOut.bind(this)} className='lrgButton'>Initiative</button>
-    </div>
-    );
-  }
+                <Flipped key='divider' flipId='divider' >
+                  <img className={styles.initiativeSlot} src={`/images/repeat.png`} hidden={initiative.length + initiativePast.length <= 0} alt='End of round' />
+                </Flipped>
+                {initiativePast.map((slot) =>
+                  <Flipped key={slot.key} flipId={slot.key} stagger>
+                    <Button title='Click to Modify Initiative Slot' className={styles.initiativeButton} variant='light' key={slot.key} onClick={(_) => setModifyModalTarget({ slot: slot, time: 'past' })}>
+                      <div className={styles.badgeContainer}>
+                        {slot.bonusDie.reverse().map((type) =>
+                          <img className={styles.badge} src={`/images/${type}.png`} alt={type} key={genKey()} />
+                        )}
+                      </div>
+                      <img className={styles.token} src={`/images/${slot.type}.png`} alt={slot.type} />
+                    </Button>
+                  </Flipped>
+                )}
+              </Flipper>
+
+              <Modal show={modifyModalTarget != null} onHide={(_) => setModifyModalTarget(null)}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Modify Initiative Slot</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>What would like to do to this Initiative Slot?</Modal.Body>
+                <Modal.Footer className={styles.modalButtonContainer}>
+                  <Row>
+                    <Col xs="4" className={styles.modalButtonWrapper}>
+                      <Button className={styles.modalButton} variant="light" onClick={(_) => {
+                        addBonusDice(modifyModalTarget.slot, modifyModalTarget.time, 'blue');
+                        setModifyModalTarget(null);
+                      }}>
+                        <img src={`/images/blue.png`} alt="Blue die" className={styles.inlineTextImage} />
+                        Bonus
+                      </Button>
+                    </Col>
+                    <Col xs="4" className={styles.modalButtonWrapper}>
+                      <Button className={styles.modalButton} variant="light" onClick={(_) => {
+                        addBonusDice(modifyModalTarget.slot, modifyModalTarget.time, 'black');
+                        setModifyModalTarget(null);
+                      }}>
+                        <img src={`/images/black.png`} alt="Black die" className={styles.inlineTextImage} />
+                        Setback
+                      </Button>
+                    </Col>
+                    <Col xs="4" className={styles.modalButtonWrapper}>
+                      <Button className={styles.modalButton} variant="danger" onClick={(_) => {
+                        removeInitiative(modifyModalTarget.slot, modifyModalTarget.time);
+                        setModifyModalTarget(null);
+                      }}>
+                        <Trash className={styles.inlineTextImage}></Trash>
+                        DELETE
+                      </Button>
+                    </Col>
+                    <Col xs="4" className={styles.modalButtonWrapper}>
+                      <Button className={styles.modalButton} variant="light" onClick={(_) => {
+                        addBonusDice(modifyModalTarget.slot, modifyModalTarget.time, 'upgrade');
+                        setModifyModalTarget(null);
+                      }}>
+                        <img src={`/images/upgrade.png`} alt="Upgrade die" className={styles.inlineTextImage} />
+                        Upgrade
+                      </Button>
+                    </Col>
+                    <Col xs="4" className={styles.modalButtonWrapper}>
+                      <Button className={styles.modalButton} variant="light" onClick={(_) => {
+                        addBonusDice(modifyModalTarget.slot, modifyModalTarget.time, 'downgrade');
+                        setModifyModalTarget(null);
+                      }}>
+                        <img src={`/images/downgrade.png`} alt="Downgrade die" className={styles.inlineTextImage} />
+                        Downgrade
+                      </Button>
+                    </Col>
+                    <Col xs="4" className={styles.modalButtonWrapper}>
+                      <Button className={styles.modalButton} variant="primary" onClick={(_) => {
+                        flip(modifyModalTarget.slot, modifyModalTarget.time);
+                        setModifyModalTarget(null);
+                      }}>
+                        <ArrowRepeat className={styles.inlineTextImage}></ArrowRepeat>
+                        Flip
+                      </Button>
+                    </Col>
+                  </Row>
+                </Modal.Footer>
+              </Modal>
+            </Col>
+          </Row>
+        </Col>
+        <Col xs='2' lg='1' className="toggleCornerColumn">
+          <Button className="toggleCornerButton" title='Click to Show/Hide Initiative Controls' variant={!expanded ? 'primary' : 'light'} onClick={(_) => setExpanded(!expanded)}>{!expanded ? <ArrowsAngleExpand></ArrowsAngleExpand> : <ArrowsAngleContract></ArrowsAngleContract>}</Button>
+        </Col>
+      </Row>
+    </Container>
+  );
+
 }
-  export default Initiative;
+export default Initiative;
